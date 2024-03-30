@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.549">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Trey Saddler">
+<meta name="dcterms.date" content="2024-03-29">
+
+<title>ToxPipe LLM Model Testing - Initial Prompt Testing</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">ToxPipe LLM Model Testing</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../reports/index.html"> 
+<span class="menu-text">Reports</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#basic-prompt" id="toc-basic-prompt" class="nav-link" data-scroll-target="#basic-prompt">Basic Prompt</a></li>
+  <li><a href="#medium-prompt" id="toc-medium-prompt" class="nav-link" data-scroll-target="#medium-prompt">Medium Prompt</a>
+  <ul class="collapse">
+  <li><a href="#medium-prompt---followup" id="toc-medium-prompt---followup" class="nav-link" data-scroll-target="#medium-prompt---followup">Medium Prompt - Followup</a></li>
+  </ul></li>
+  <li><a href="#advanced-prompt" id="toc-advanced-prompt" class="nav-link" data-scroll-target="#advanced-prompt">Advanced Prompt</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Initial Prompt Testing</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Trey Saddler </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 29, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>These tests were performed using a variety of user interfaces. Therefore, minor editing of the markdown syntax was performed to ensure consistency across the different platforms. However, none of the content of the LLM responses was altered.</p>
+</section>
+<section id="basic-prompt" class="level2">
+<h2 class="anchored" data-anchor-id="basic-prompt">Basic Prompt</h2>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+User Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>I see the following genes going up in the liver of rats after treatment with chemical. Acot1, acot2, decr1, hmgcs2, Cyp4a1, ehhadh, and vnn1. What do you surmise is happening?</p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">GPT-4 1106-preview</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Claude 3 Opus</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Gemini Pro 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Gemini Pro 1.5</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">Mistral Large</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>The upregulation of these genes in the liver of rats after exposure to a chemical suggests alterations in hepatic metabolism, particularly in fatty acid oxidation, ketogenesis, and detoxification pathways. Here’s a breakdown of the function of each mentioned gene:</p>
+<ol type="1">
+<li><p><strong>Acot1 (Acyl-CoA Thioesterase 1)</strong>: Involved in the hydrolysis of acyl-CoAs to the free fatty acid and coenzyme A (CoA), which helps regulate intracellular levels of acyl-CoAs and free fatty acids.</p></li>
+<li><p><strong>Acot2 (Acyl-CoA Thioesterase 2)</strong>: Similar to ACOT1, it plays a role in the metabolism of fatty acids by converting acyl-CoAs to free fatty acids and CoA.</p></li>
+<li><p><strong>Decr1 (2,4-Dienoyl-CoA Reductase 1)</strong>: Participates in the beta-oxidation of unsaturated fatty acids, particularly those with double bonds at the even-numbered position in the fatty acyl chain.</p></li>
+<li><p><strong>Hmgcs2 (3-Hydroxy-3-Methylglutaryl-CoA Synthase 2)</strong>: Responsible for the synthesis of ketone bodies in the liver during periods of low glucose availability, such as fasting, starvation, or a low-carbohydrate diet.</p></li>
+<li><p><strong>Cyp4a1 (Cytochrome P450, Family 4, Subfamily A, Polypeptide 1)</strong>: Part of the cytochrome P450 superfamily, which is involved in the oxidation of fatty acids and the metabolism of drugs and other xenobiotics. It is known to be involved in the omega-hydroxylation of fatty acids.</p></li>
+<li><p><strong>Ehhadh (Enoyl-CoA Hydratase and 3-Hydroxyacyl CoA Dehydrogenase)</strong>: Encodes a bifunctional enzyme that is part of the peroxisomal fatty acid beta-oxidation pathway, critical for breaking down very-long-chain and branched-chain fatty acids.</p></li>
+<li><p><strong>Vnn1 (Vanin 1)</strong>: Encodes pantetheinase, which hydrolyzes pantetheine to pantothenic acid (Vitamin B5) and cysteamine. It has a role in tissue response to stress and the inflammatory process.</p></li>
+</ol>
+<p>Given the functions of these genes, the treatment with the chemical might be causing the following:</p>
+<ul>
+<li><p><strong>Induction of fatty acid oxidation</strong>: The upregulation of genes involved in the breakdown of fatty acids (Acot1, Acot2, Decr1, Ehhadh) suggests that the liver is mobilizing energy from fat stores. This can occur in response to increased energy demand or perturbations in lipid metabolism due to chemical exposure.</p></li>
+<li><p><strong>Stimulation of ketogenesis</strong>: The increase in expression of Hmgcs2 indicates that the liver may be producing more ketone bodies, possibly due to a shift in energy metabolism or a response to altered systemic carbohydrate availability or utilization.</p></li>
+<li><p><strong>Increased detoxification activity</strong>: Cyp4a1 upregulation is indicative of elevated xenobiotic metabolism, implying that the liver is working to detoxify and excrete the chemical or its metabolites.</p></li>
+<li><p><strong>Stress or inflammation</strong>: Vnn1 induction could point towards an increased inflammatory or stress response in the liver.</p></li>
+</ul>
+<p>It’s important to note that these changes could be direct effects of the chemical or compensatory responses to maintain metabolic homeostasis. Further investigation into the precise nature of the chemical, dosing, duration of exposure, along with comprehensive biomarkers (e.g., blood lipid levels, inflammatory markers, liver function tests) and histopathological examination of the liver, would be required to more accurately interpret the meaning of these gene expression changes. Additionally, the interconnection between these gene pathways suggests a complex response that may involve cross-regulation and feedback mechanisms within the liver.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Based on the genes you mentioned that are upregulated in the liver of rats after treatment with a chemical, it appears that the chemical is inducing a response related to lipid and fatty acid metabolism. Here’s a brief overview of what these genes suggest:</p>
+<ul>
+<li><strong>Acot1 and Acot2 (Acyl-CoA thioesterase 1 and 2):</strong> These enzymes hydrolyze long-chain acyl-CoAs to free fatty acids and coenzyme A, which is important for regulating lipid metabolism and energy homeostasis.</li>
+<li><strong>Decr1 (2,4-dienoyl-CoA reductase 1):</strong> This enzyme is involved in the beta-oxidation of unsaturated fatty acids, a process that breaks down fatty acids for energy production.</li>
+<li><strong>Hmgcs2 (3-hydroxy-3-methylglutaryl-CoA synthase 2):</strong> This enzyme is a key regulator of ketogenesis, a process that produces ketone bodies from fatty acids when glucose availability is low.</li>
+<li><strong>Cyp4a1 (Cytochrome P450 4A1):</strong> This enzyme is involved in the omega-oxidation of fatty acids, an alternative pathway for fatty acid metabolism.</li>
+<li><strong>Ehhadh (Enoyl-CoA hydratase and 3-hydroxyacyl CoA dehydrogenase):</strong> This bifunctional enzyme is involved in the peroxisomal beta-oxidation of fatty acids.</li>
+<li><strong>Vnn1 (Vanin 1):</strong> This enzyme is involved in the catabolism of pantothenic acid (vitamin B5), which is essential for the synthesis of coenzyme A, a crucial molecule in fatty acid metabolism.</li>
+</ul>
+<p>The upregulation of these genes suggests that the chemical treatment is inducing a metabolic shift towards increased fatty acid oxidation and ketogenesis in the liver. This could be a response to increased lipid uptake, reduced glucose availability, or a direct effect of the chemical on lipid metabolism pathways. Such changes are often associated with metabolic stress, fasting, or high-fat diets. To better understand the specific effects of the chemical, further investigation into the dose, duration of exposure, and other metabolic parameters would be necessary.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>The upregulation of these genes in the liver of rats after treatment with a chemical suggests that the chemical is inducing a peroxisome proliferator-activated receptor alpha (PPARα) response. PPARα is a nuclear receptor that regulates the expression of genes involved in lipid metabolism, inflammation, and cell proliferation.</p>
+<p>The genes that are upregulated in this case are all known to be targets of PPARα. Acot1 and acot2 are involved in fatty acid oxidation, decr1 is involved in peroxisome biogenesis, hmgcs2 is involved in cholesterol synthesis, Cyp4a1 is involved in drug metabolism, ehhadh is involved in fatty acid elongation, and vnn1 is involved in cell proliferation.</p>
+<p>The upregulation of these genes suggests that the chemical is causing an increase in peroxisome proliferation and activity, as well as an increase in lipid metabolism and cell proliferation. This response is likely to be a compensatory response to the toxic effects of the chemical.</p>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<p>Based on the upregulation of the listed genes in the rat liver after chemical treatment, it is likely that the chemical is inducing <strong>peroxisome proliferation</strong>.</p>
+<p>Here’s why:</p>
+<ul>
+<li><strong>Acot1, Acot2, Decr1, Ehhadh:</strong> These genes are involved in fatty acid beta-oxidation, a process that occurs in both mitochondria and peroxisomes. Their upregulation suggests increased fatty acid metabolism.</li>
+<li><strong>Hmgcs2:</strong> This gene encodes an enzyme involved in ketogenesis, another pathway linked to fatty acid metabolism.</li>
+<li><strong>Cyp4a1:</strong> This gene encodes a cytochrome P450 enzyme involved in fatty acid omega-hydroxylation, a process primarily occurring in peroxisomes.</li>
+<li><strong>Vnn1:</strong> This gene encodes a protein involved in peroxisome biogenesis and proliferation.</li>
+</ul>
+<p>Peroxisomes are organelles involved in various metabolic processes, including fatty acid oxidation, detoxification of reactive oxygen species, and bile acid synthesis. When the liver is exposed to certain chemicals, including some drugs and environmental pollutants, it can trigger peroxisome proliferation as an adaptive response.</p>
+<p>However, excessive or uncontrolled peroxisome proliferation can be harmful and has been linked to liver toxicity and carcinogenicity.</p>
+<p>Therefore, it is important to consider the specific chemical involved and its potential effects on liver function and health. Further investigation is needed to determine the exact mechanism of action and potential consequences of the observed gene expression changes.</p>
+</div>
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<p>Based on the genes you’ve mentioned, it seems like the treatment with the chemical is inducing changes in the liver of the rats that are related to fatty acid metabolism and oxidative stress.</p>
+<ul>
+<li><p>Acot1 and Acot2: These genes are involved in fatty acid metabolism, specifically in the breakdown of fatty acids in the mitochondria.</p></li>
+<li><p>Decr1: This gene is involved in fatty acid beta-oxidation and the regulation of lipid metabolism.</p></li>
+<li><p>Hmgcs2: This gene is involved in ketogenesis, a process that provides energy to the body when glucose is not available. It’s also a key gene in the metabolism of fatty acids.</p></li>
+<li><p>Cyp4a1: This gene is involved in the metabolism of drugs and toxins, as well as fatty acid oxidation. Its upregulation could indicate an increase in oxidative stress.</p></li>
+<li><p>Ehhadh: This gene is involved in the peroxisomal beta-oxidation of fatty acids.</p></li>
+<li><p>Vnn1: This gene is involved in various biological processes, including cell adhesion and inflammation. Its upregulation could indicate an inflammatory response.</p></li>
+</ul>
+<p>In summary, the upregulation of these genes suggests that the chemical treatment is causing an increase in fatty acid metabolism, possibly as a response to increased energy demands or oxidative stress. Additionally, there may be an inflammatory response occurring. However, further analysis would be needed to confirm these hypotheses and to understand the full impact of the chemical treatment.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="medium-prompt" class="level2">
+<h2 class="anchored" data-anchor-id="medium-prompt">Medium Prompt</h2>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+User Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>I have run an experiment where I identified a set of up-regulated in liver after repeated exposure. Below is the list of genes I want you to analyze and tell me what you think is happening in the liver at molecular process, biological process and cellular process level.</p>
+<p>Abcd3 Pctp Sorl1 Vnn1 Cyp4a1 Resp18 Acox1 Decr2 Decr1 Ehhadh Retsat Crot Abhd1 Pgrmc2 Cyp4a2 Cd36 Impa2 Acaa1a Eci1 Gde1 Ech1 Ephx2 Acsl4 Acaa2 Hadha Hadhb Adh7 Acot2 Vwa8 Wfdc3 Cyp4a3 Hsdl2 RGD1309651 Chchd10 Cyp17a1 Acadl Aco1 Hmgcl Acot1 Miox Aig1 Acat1 Slc27a2 Acad11 Acsm5 Nim1k Angptl4 Tmem56 Gnat3 Lpcat3 LOC102546784 Gfra3 Hdc Cpt2 Slc22a5 Colq Cyp2j4 Pex11a Slc25a20 Tmem14c Dhrs4 Tor3a Crat Acot3 LOC498675 Acot4 Rhof Pkib Cpt1b Acot7 Aqp7 Adcy10 Pdk4 Acot8 Sacs Qpct Ten1 Nudt7 Prrg4 Ccdc62 Adig Acadvl Nbn Bbs2 Nceh1 Rab30 Creb3l3 Mpc2 Rbp2 Epn2 Rph3al Supt3h Eci2 Sugct Acadm Hacd2 Adtrp Klhdc7a Abhd6 Stk24 Dact2 Plin5 Acbd6 Klf11 Gtf3c3 Abhd16a Mospd2 Elovl2 Ldha</p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">GPT-4 1106-preview</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Claude 3 Opus</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Gemini Pro 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false">Gemini Pro 1.5</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" role="tab" aria-controls="tabset-2-5" aria-selected="false">Mistral Large</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>The upregulation of the listed genes in the liver after repeated exposure suggests a response to metabolic, detoxification, and regulatory stressors. Here, I’ll categorize the genes based on the functional insights they provide in terms of molecular, biological, and cellular processes. However, for a more specific and detailed analysis, information about the nature of the exposure and context of the experiment would be necessary.</p>
+<p><strong>Molecular Processes:</strong></p>
+<ul>
+<li><strong>Detoxification and Oxidation-Reduction:</strong> Several Cytochrome P450 enzymes (CYP4A1, CYP4A2, CYP4A3, CYP2J4, CYP17A1) are involved in the oxidative breakdown of various substances, including toxins and drugs.</li>
+<li><strong>Fatty Acid Oxidation:</strong> Genes like ACOX1, EHHADH, DECR1, and DECR2 suggest elevated peroxisomal and mitochondrial fatty acid beta-oxidation.</li>
+<li><strong>Steroid Hormone Synthesis:</strong> CYP17A1 is crucial for the synthesis of steroid hormones.</li>
+<li><strong>Lipid Metabolism:</strong> Genes such as CD36 (fatty acid translocase), ACAA1A, ACAA2, ACADL, ACADM, and ACSM5 denote changes in lipid uptake and metabolism.</li>
+</ul>
+<p><strong>Biological Processes:</strong></p>
+<ul>
+<li><strong>Energy Homeostasis:</strong> Genes like PDK4 (pyruvate dehydrogenase kinase 4) indicate a shift in energy production from glycolysis to gluconeogenesis or fatty acid metabolism.</li>
+<li><strong>Inflammation:</strong> VNN1 (vanin 1) and ANGPTL4 (angiopoietin-like 4) are associated with inflammatory responses and regulation of lipid metabolism.</li>
+<li><strong>Lipid Transport and Storage:</strong> ABCD3 (ATP-binding cassette sub-family D member 3) and SLC27A2 (fatty acid transport protein) are involved in the transport and homeostasis of lipids.</li>
+</ul>
+<p><strong>Cellular Processes:</strong></p>
+<ul>
+<li><strong>Beta-Oxidation:</strong> Induction of genes associated with mitochondrial (ACADL, ACADM, ECI1) and peroxisomal (ACOX1, EHHADH) fatty acid beta-oxidation suggests cellular adaptations to increased fatty acid utilization.</li>
+<li><strong>Lipid Droplet Formation:</strong> PLIN5 (perilipin 5) is involved in the formation and regulation of lipid droplets.</li>
+<li><strong>Apoptosis and Cell Death:</strong> Genes such as BBS2 (Bardet-Biedl syndrome 2) could indicate cellular stress and potential apoptosis pathways being affected.</li>
+</ul>
+<p>The upregulation of these genes reflects the liver’s central role in metabolism, detoxification, and synthesis of critical biological molecules. Repeated exposure triggering these genes implies an adaptive response to increased workloads, such as the breakdown of exogenous substances or shifts in energy metabolism. This response can protect the liver and maintain homeostasis, but it could also indicate the onset of liver stress or damage if the exposure is harmful or excessive.</p>
+<p>It is essential to interpret these findings in conjunction with phenotypic observations, biomarkers of liver function, and the nature of the exposure. Moreover, changes in gene expression do not always translate to changes in protein levels or activity, so these data points would ideally be complemented by proteomic or functional assays.</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p>Based on the list of up-regulated genes you provided, it appears that there are several molecular, biological, and cellular processes being affected in the liver after repeated exposure. Let’s break it down:</p>
+<p><strong>Molecular Processes:</strong></p>
+<ul>
+<li><strong>Fatty acid metabolism:</strong> Many of the up-regulated genes, such as Acox1, Acaa1a, Eci1, Ech1, Acsl4, Acaa2, Hadha, Hadhb, Acadl, Acad11, Cpt2, Acadvl, and Acadm, are involved in fatty acid oxidation and metabolism.</li>
+<li><strong>Lipid metabolism:</strong> Genes like Cyp4a1, Cyp4a2, Cyp4a3, Cyp2j4, Acat1, Lpcat3, and Elovl2 are involved in lipid metabolism, including the synthesis and degradation of fatty acids and cholesterol.</li>
+<li><strong>Peroxisomal processes:</strong> Abcd3, Acox1, Decr2, Decr1, Ehhadh, and Pex11a are associated with peroxisomal functions, which are essential for lipid metabolism and detoxification.</li>
+</ul>
+<p><strong>Biological Processes:</strong></p>
+<ul>
+<li><strong>Oxidation-reduction processes:</strong> Many of the up-regulated genes, such as Cyp4a1, Cyp4a2, Cyp4a3, Cyp2j4, Cyp17a1, Decr2, Decr1, Ehhadh, and Dhrs4, are involved in oxidation-reduction reactions, which are crucial for metabolic processes and detoxification.</li>
+<li><strong>Xenobiotic metabolism:</strong> Genes like Cyp4a1, Cyp4a2, Cyp4a3, and Cyp2j4 are part of the cytochrome P450 family, which plays a key role in the metabolism of xenobiotics (foreign substances) and drugs.</li>
+<li><strong>Energy homeostasis:</strong> Genes such as Pdk4, Mpc2, and Ldha are involved in regulating energy homeostasis and glucose metabolism.</li>
+</ul>
+<p><strong>Cellular Processes:</strong></p>
+<ul>
+<li><strong>Mitochondrial processes:</strong> Several up-regulated genes, including Hadhb, Chchd10, Cpt2, Slc25a20, Crat, Cpt1b, Acadvl, and Acadm, are associated with mitochondrial functions, particularly in relation to fatty acid oxidation and energy production.</li>
+<li><strong>Peroxisomal processes:</strong> As mentioned earlier, genes like Abcd3, Acox1, Decr2, Decr1, Ehhadh, and Pex11a are involved in peroxisomal processes, which occur within the peroxisome organelle.</li>
+<li><strong>Membrane transport:</strong> Genes such as Slc27a2, Slc22a5, Aqp7, and Mpc2 are involved in the transport of various substances across cell membranes.</li>
+</ul>
+<p>Overall, the up-regulation of these genes suggests that the liver is undergoing adaptive changes in response to repeated exposure, with a particular emphasis on lipid and fatty acid metabolism, oxidation-reduction processes, xenobiotic metabolism, and mitochondrial and peroxisomal functions. These changes likely represent the liver’s attempt to maintain homeostasis and cope with the increased metabolic demands and potential toxicity associated with the repeated exposure.</p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<p><strong>Molecular Process Level</strong></p>
+<ul>
+<li><p><strong>Lipid metabolism:</strong> Up-regulation of genes involved in lipid metabolism, such as Abcd3, Pctp, Sorl1, Vnn1, Cyp4a1, Resp18, Acox1, Decr2, Decr1, Ehhadh, Retsat, Crot, Abhd1, Pgrmc2, Cyp4a2, Cd36, Impa2, Acaa1a, Eci1, Gde1, Ech1, Ephx2, Acsl4, Acaa2, Hadha, Hadhb, Adh7, Acot2, Vwa8, Wfdc3, Cyp4a3, Hsdl2, RGD1309651, Chchd10, Cyp17a1, Acadl, Aco1, Hmgcl, Acot1, Miox, Aig1, Acat1, Slc27a2, Acad11, Acsm5, Nim1k, Angptl4, Tmem56, Gnat3, Lpcat3, LOC102546784, Gfra3, Hdc, Cpt2, Slc22a5, Colq, Cyp2j4, Pex11a, Slc25a20, Tmem14c, Dhrs4, Tor3a, Crat, Acot3, LOC498675, Acot4, Rhof, Pkib, Cpt1b, Acot7, Aqp7, Adcy10, Pdk4, Acot8, Sacs, Qpct, Ten1, Nudt7, Prrg4, Ccdc62, Adig, Acadvl, Nbn, Bbs2, Nceh1, Rab30, Creb3l3, Mpc2, Rbp2, Epn2, Rph3al, Supt3h, Eci2, Sugct, Acadm, Hacd2, Adtrp, Klhdc7a, Abhd6, Stk24, Dact2, Plin5, Acbd6, Klf11, Gtf3c3, Abhd16a, Mospd2, Elovl2, Ldha. This suggests an increase in lipid synthesis, transport, and catabolism.</p></li>
+<li><p><strong>Carbohydrate metabolism:</strong> Up-regulation of genes involved in carbohydrate metabolism, such as G6pc, Pgk1, Aldoa, Eno1, Pgam1, Pgam2, Ldha, Pdk4. This suggests an increase in glucose production and glycolysis.</p></li>
+<li><p><strong>Amino acid metabolism:</strong> Up-regulation of genes involved in amino acid metabolism, such as Got1, Gpt2, Aass, Asns, Psme1, Psme2, Psme3, Ube2b, Ube2d1, Ube2d2, Ube2d3, Ube2d4, Ube2e1, Ube2e2, Ube2e3, Ube2f, Ube2g1, Ube2g2, Ube2h, Ube2i, Ube2j1, Ube2j2, Ube2k, Ube2l3, Ube2m, Ube2n, Ube2o, Ube2p1, Ube2p2, Ube2p3, Ube2q1, Ube2q2, Ube2r1, Ube2r2, Ube2s, Ube2t, Ube2v1, Ube2v2, Ube2w, Ube2z, Usp1, Usp2, Usp3, Usp4, Usp5, Usp6, Usp7, Usp8, Usp9, Usp10, Usp11, Usp12, Usp13, Usp14, Usp15, Usp16, Usp17, Usp18, Usp19, Usp20, Usp21, Usp22, Usp23, Usp24, Usp25, Usp26, Usp27, Usp28, Usp29, Usp30, Usp31, Usp32, Usp33, Usp34, Usp35, Usp36, Usp37, Usp38, Usp39, Usp40, Usp41, Usp42, Usp43, Usp44, Usp45, Usp46, Usp47, Usp48, Usp49, Usp50, Usp51, Usp52, Usp53, Usp54, Usp55, Usp56, Usp57, Usp58, Usp59, Usp60, Usp61, Usp62, Usp63, Usp64, Usp65, Usp66, Usp67, Usp68, Usp69, Usp70, Usp71, Usp72, Usp73, Usp74, Usp75, Usp76, Usp77, Usp78, Usp79, Usp80, Usp81, Usp82, Usp83, Usp84, Usp85, Usp86, Usp87, Usp88, Usp89, Usp90, Usp91, Usp92, Usp93, Usp94, Usp95, Usp96, Usp97, Usp98, Usp99, Usp100, Usp101, Usp102, Usp103, Usp104, Usp105, Usp106, Usp107, Usp108, Usp109, Usp110, Usp111, Usp112, Usp113, Usp114, Usp115, Usp116, Usp117, Usp118, Usp119, Usp120, Usp121, Usp122, Usp123, Usp124, Usp125, Usp126, Usp127, Usp128, Usp129, Usp130, Usp131, Usp132, Usp133, Usp134, Usp135, Usp136, Usp13</p></li>
+</ul>
+</div>
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<p><strong>Analysis of Up-regulated Genes in Liver after Repeated Exposure</strong></p>
+<p>Based on the list of up-regulated genes you provided, it appears that several key processes are being affected in the liver:</p>
+<p><strong>Molecular Processes:</strong></p>
+<ul>
+<li><p><strong>Fatty acid metabolism:</strong> A significant number of genes are involved in fatty acid metabolism, including:</p>
+<ul>
+<li><strong>Fatty acid oxidation:</strong> Acox1, Decr1, Decr2, Ehhadh, Crot, Abhd1, Acaa1a, Acaa2, Hadha, Hadhb, Acot2, Acot3, Acot4, Acot7, Acot8, Cpt1b, Cpt2</li>
+<li><strong>Fatty acid uptake and transport:</strong> Cd36, Slc27a2, Acsl4</li>
+<li><strong>Ketogenesis:</strong> Hmgcl</li>
+<li><strong>Fatty acid desaturation:</strong> Elovl2</li>
+</ul></li>
+<li><p><strong>Lipid metabolism:</strong> Several genes are involved in various aspects of lipid metabolism, including:</p>
+<ul>
+<li><strong>Cholesterol metabolism:</strong> Cyp17a1, Hmgcl</li>
+<li><strong>Lipoprotein metabolism:</strong> Angptl4, Lpcat3</li>
+<li><strong>Phospholipid metabolism:</strong> Pctp, Impa2</li>
+</ul></li>
+<li><p><strong>Drug metabolism and detoxification:</strong> Several genes are associated with drug metabolism and detoxification pathways, including:</p>
+<ul>
+<li><strong>Cytochrome P450 enzymes:</strong> Cyp4a1, Cyp4a2, Cyp4a3, Cyp2j4</li>
+<li><strong>Other detoxification enzymes:</strong> Ephx2, Gstp1</li>
+</ul></li>
+</ul>
+<p><strong>Biological Processes:</strong></p>
+<ul>
+<li><strong>Increased energy demand:</strong> The upregulation of genes involved in fatty acid oxidation and ketogenesis suggests an increased demand for energy in the liver. This could be due to the repeated exposure to a stressor that requires the liver to work harder.</li>
+<li><strong>Oxidative stress:</strong> The upregulation of detoxification enzymes suggests that the liver is experiencing oxidative stress. This could be a direct result of the repeated exposure or a consequence of increased metabolic activity.</li>
+<li><strong>Lipid accumulation:</strong> The upregulation of genes involved in lipid uptake and transport could indicate an increased accumulation of lipids in the liver. This could be a sign of liver damage or a protective mechanism against the stressor.</li>
+</ul>
+<p><strong>Cellular Processes:</strong></p>
+<ul>
+<li><strong>Mitochondrial biogenesis and function:</strong> Many of the upregulated genes are involved in mitochondrial fatty acid oxidation, suggesting increased mitochondrial activity and possibly biogenesis.</li>
+<li><strong>Peroxisome proliferation:</strong> The upregulation of Pex11a suggests an increase in peroxisome number or activity, which could be related to increased fatty acid oxidation.</li>
+<li><strong>Endoplasmic reticulum stress:</strong> The upregulation of some genes, such as Creb3l3, could be indicative of endoplasmic reticulum stress, potentially caused by the repeated exposure.</li>
+</ul>
+<p><strong>Overall:</strong></p>
+<p>The upregulation of these genes suggests that the liver is responding to the repeated exposure by increasing its metabolic activity, particularly fatty acid oxidation, and activating detoxification pathways. However, the specific interpretation of these changes depends on the nature of the repeated exposure and further investigation is needed to determine the long-term consequences of these changes.</p>
+<p>It is important to note that this analysis is based solely on the list of genes provided and additional information about the experiment, such as the nature of the repeated exposure and any observed phenotypic changes, would be necessary for a more complete understanding of the processes occurring in the liver.</p>
+</div>
+<div id="tabset-2-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-5-tab">
+<p>Based on the list of genes you provided, here’s an analysis of what might be happening in the liver at the molecular, biological, and cellular process levels:</p>
+<p><strong>Molecular Process:</strong></p>
+<ul>
+<li><strong>Fatty acid metabolism:</strong> Many of the genes listed, such as Abcd3, Acox1, Cyp4a1, Ehhadh, and Acsl4, are involved in fatty acid metabolism. This suggests that repeated exposure to a certain substance might be increasing fatty acid oxidation and metabolism in the liver.</li>
+<li><strong>Lipid transport:</strong> Genes like Abcd3, Sorl1, Cd36, and Lpcat3 are involved in lipid transport, indicating an increase in lipid transport within the liver cells.</li>
+<li><strong>Cholesterol biosynthesis:</strong> Genes such as Cyp17a1, Hmgcl, and Acat1 are involved in cholesterol biosynthesis, suggesting an increase in cholesterol production.</li>
+</ul>
+<p><strong>Biological Process:</strong></p>
+<ul>
+<li><strong>Detoxification:</strong> The Cyp4a family of genes (Cyp4a1, Cyp4a2, Cyp4a3) are involved in drug metabolism and detoxification, suggesting an increased need for detoxification in the liver.</li>
+<li><strong>Response to oxidative stress:</strong> Genes like Ephx2 and Gde1 are involved in response to oxidative stress, indicating an increase in oxidative stress in the liver.</li>
+<li><strong>Angiogenesis:</strong> The presence of Angptl4 suggests possible changes in angiogenesis (the formation of new blood vessels).</li>
+</ul>
+<p><strong>Cellular Process:</strong></p>
+<ul>
+<li><strong>Peroxisome biogenesis and proliferation:</strong> Genes like Pex11a and Acox1 are involved in peroxisome biogenesis and proliferation, suggesting an increase in these processes.</li>
+<li><strong>Mitochondrial function:</strong> Genes such as Hadha, Hadhb, and Slc25a20 are involved in mitochondrial function, indicating an increase in mitochondrial activity.</li>
+<li><strong>Lipid droplet formation:</strong> The presence of Plin5 suggests possible changes in lipid droplet formation and lipid storage.</li>
+</ul>
+<p>In summary, it appears that repeated exposure to a certain substance might be leading to increased fatty acid metabolism, lipid transport, cholesterol biosynthesis, detoxification, response to oxidative stress, angiogenesis, peroxisome biogenesis and proliferation, mitochondrial function, and lipid droplet formation in the liver.</p>
+</div>
+</div>
+</div>
+<section id="medium-prompt---followup" class="level3">
+<h3 class="anchored" data-anchor-id="medium-prompt---followup">Medium Prompt - Followup</h3>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+User Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>What signaling pathway is most likely driving expression of these genes?</p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">GPT-4 1106-preview</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Claude 3 Opus</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Gemini Pro 1.5</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">Mistral Large</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>The upregulation of the various genes involved in detoxification, fatty acid metabolism, and other metabolic processes suggests that several signaling pathways could be at play. Without information on the specific exposure or additional experimental data (like proteomic or phosphorylation status), it is challenging to pinpoint a single pathway. However, based on the functions of the listed genes, here are some signaling pathways that are likely involved in driving the expression of these genes:</p>
+<ul>
+<li><p><strong>Peroxisome Proliferator-Activated Receptor (PPAR) Signaling:</strong> PPARs are nuclear hormone receptors that regulate gene expression in response to lipids and other metabolites. The alpha and gamma isoforms, in particular, are highly expressed in the liver and influence the expression of genes involved in fatty acid oxidation (e.g., ACOX1, CROT, ACAA1a, ACAA2), fatty acid transport (e.g., CD36, SLC27A2), and lipogenesis. Upregulation of genes associated with fatty acid metabolism suggests that PPAR signaling may be active.</p></li>
+<li><p><strong>Nuclear Factor-E2-Related Factor 2 (Nrf2) Signaling:</strong> Nrf2 is a transcription factor that regulates the expression of many antioxidant and detoxification genes. It responds to oxidative stress and controls the expression of Cytochrome P450 enzymes (e.g., CYP4A1, CYP4A2, CYP4A3, CYP17A1, CYP2J4), as well as genes involved in glutathione metabolism and other detoxification processes.</p></li>
+<li><p><strong>Sterol Regulatory Element-Binding Proteins (SREBP) Pathway:</strong> SREBPs are transcription factors that control the synthesis and uptake of cholesterol, fatty acids, and triglycerides. These factors may regulate some of the genes involved in cholesterol and fatty acid metabolism.</p></li>
+<li><p><strong>Liver X Receptor (LXR) Signaling:</strong> LXRs are nuclear receptors that sense the levels of cholesterol derivatives and regulate genes involved in cholesterol homeostasis and metabolism, such as ABC transporters.</p></li>
+<li><p><strong>Insulin and Insulin-Like Growth Factor Signaling:</strong> Insulin signaling can affect a wide range of metabolic processes in the liver, including glucose and lipid metabolism.</p></li>
+<li><p><strong>AMP-Activated Protein Kinase (AMPK) Pathway:</strong> AMPK is an energy sensor that is activated under conditions of low energy (high AMP levels) and can induce a switch from anabolic to catabolic metabolism, influencing the expression of genes related to fatty acid oxidation and gluconeogenesis.</p></li>
+</ul>
+<p>To establish which signaling pathway or combination of pathways is most responsible for driving the expression of these genes, a targeted approach using inhibitors or activators of specific pathways, transcriptomic analyses under variable conditions, and luciferase reporter assays to monitor pathway activity could be employed. It’s also important to mention that cross-talk among different signaling pathways is common, especially in a highly interdisciplinary organ like the liver, which manages diverse metabolic functions.</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>Based on the list of up-regulated genes you provided, there are several signaling pathways that could be driving their expression. However, the most likely candidate appears to be the Peroxisome Proliferator-Activated Receptor (PPAR) signaling pathway. Here’s why:</p>
+<ul>
+<li><p>PPARs are nuclear receptors that act as transcription factors, regulating the expression of genes involved in lipid and glucose metabolism, inflammation, and cell differentiation. There are three main types of PPARs: PPARα, PPARβ/δ, and PPARγ.</p></li>
+<li><p>Many of the up-regulated genes in your list are known targets of PPARα, which is highly expressed in the liver. PPARα plays a crucial role in regulating fatty acid oxidation, lipid metabolism, and energy homeostasis. Some of the PPARα target genes in your list include:</p>
+<ul>
+<li>Acox1, Ehhadh, and Cpt1b: involved in peroxisomal and mitochondrial fatty acid oxidation</li>
+<li>Acaa1a, Acaa2, Acadl, Acadvl, and Acadm: involved in mitochondrial fatty acid β-oxidation</li>
+<li>Cd36 and Slc27a2: involved in fatty acid uptake and transport</li>
+<li>Angptl4 and Pdk4: involved in lipid and glucose metabolism</li>
+</ul></li>
+<li><p>PPARα is activated by endogenous ligands, such as free fatty acids, and by synthetic ligands, such as fibrates (a class of lipid-lowering drugs). Repeated exposure to certain compounds, such as environmental pollutants or pharmaceuticals, may activate PPARα signaling, leading to the up-regulation of its target genes.</p></li>
+<li><p>Other signaling pathways that may contribute to the expression of some of the up-regulated genes include the Aryl hydrocarbon receptor (AhR) pathway, which is involved in xenobiotic metabolism and can cross-talk with PPARα signaling, and the Farnesoid X receptor (FXR) pathway, which regulates bile acid and lipid metabolism.</p></li>
+</ul>
+<p>In summary, while multiple signaling pathways may be involved, the PPAR signaling pathway, particularly PPARα, is the most likely candidate driving the expression of many of the up-regulated genes in your list, given its central role in regulating lipid and energy metabolism in the liver and its known target genes among those you provided.</p>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<p>Several signaling pathways could be driving the expression of the genes you listed, and the most likely candidate depends on the specific nature of the repeated exposure. However, some potential pathways include:</p>
+<ul>
+<li><strong>PPAR signaling pathway:</strong> Peroxisome proliferator-activated receptors (PPARs) are nuclear receptors that play a key role in regulating lipid and glucose metabolism. Activation of PPARs, particularly PPARα, leads to the upregulation of genes involved in fatty acid oxidation, ketogenesis, and other metabolic processes. This pathway could be activated by various stimuli, including fatty acids, fibrates, and some environmental pollutants.</li>
+<li><strong>Nrf2 signaling pathway:</strong> Nuclear factor erythroid 2-related factor 2 (Nrf2) is a transcription factor that regulates the expression of antioxidant and detoxification genes. Nrf2 is activated in response to oxidative stress and can lead to the upregulation of many of the detoxification enzymes you listed.</li>
+<li><strong>AMPK signaling pathway:</strong> AMP-activated protein kinase (AMPK) is a sensor of cellular energy status. When energy levels are low, AMPK is activated and promotes processes that generate ATP, such as fatty acid oxidation. AMPK can also inhibit anabolic processes, such as lipid synthesis. This pathway could be activated by the increased energy demand caused by the repeated exposure.</li>
+<li><strong>ER stress signaling pathways:</strong> If the repeated exposure induces endoplasmic reticulum (ER) stress, several signaling pathways can be activated, including the unfolded protein response (UPR). These pathways can lead to the upregulation of genes involved in protein folding, ER-associated degradation, and other processes aimed at restoring ER homeostasis.</li>
+</ul>
+<p>It is also possible that multiple pathways are involved, and their relative contributions may depend on the specific context of the experiment. Further investigation, such as measuring the levels of key signaling molecules or using specific pathway inhibitors, would be needed to determine which pathway(s) are most important in driving the expression of these genes.</p>
+</div>
+<div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
+<p>Based on the list of genes provided and their associated functions, it appears that the Peroxisome Proliferator-Activated Receptor (PPAR) signaling pathway might be driving the expression of these genes.</p>
+<p>PPARs are nuclear receptors that function as transcription factors regulating the expression of genes involved in various aspects of lipid metabolism, including fatty acid oxidation, transport, and lipid droplet formation. They are activated by fatty acids and their derivatives and play a crucial role in maintaining lipid homeostasis in the liver.</p>
+<p>Many of the genes listed in the question are known targets of PPARs, particularly PPAR alpha, which is highly expressed in the liver. These genes include Abcd3, Acox1, Cyp4a1, Ehhadh, Crot, Cyp4a2, Acaa1a, Eci1, Acsl4, Hadha, Hadhb, Acot2, Vwa8, Cyp4a3, Acadl, Aco1, Acot1, Acat1, Slc27a2, Acad11, Acsm5, Cpt2, Lpcat3, Cyp2j4, Pex11a, Slc25a20, Acot3, Acot4, Acot7, Aqp7, Acot8, Acadvl, Acadm, Adtrp, Plin5, and Elovl2.</p>
+<p>Moreover, the presence of genes like Angptl4, which is a target of PPAR delta, and Lpcat3, which is a target of PPAR gamma, suggests that multiple PPAR subtypes might be involved in regulating the expression of these genes.</p>
+<p>Therefore, it is likely that the PPAR signaling pathway is driving the expression of these genes in response to repeated exposure to a certain substance.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="advanced-prompt" class="level2">
+<h2 class="anchored" data-anchor-id="advanced-prompt">Advanced Prompt</h2>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+System Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>You are world class bioinformatician and toxicologist. You worked at NIH to discover molecular pathways that play a role in adverse outcomes, and now you are leading path/tox department of big pharma. One of your responsibilities is to oversee the scientific output of your research team. Currently they are doing a big project that involves use of Large Language Models to process scientific literature and extract information related to the response of genes following toxicological challenge. The team wants to evaluate the quality of LLM summaries. With your extensive background in biology you volunteered to help your scientific team and annotate the statements based on how probable they are. You talked to scientists and came up with the system of Confidence Scores: - Confidence Score 10 means you are absolutely confident the statement is true. - Confidence Score 0 means you are uncertain about the statement, and do not know background facts that would be pro or con - Confidence Score -10 means you know for sure that the statement it false. You decided that the best way to annotate would be to just add confidence scores to the text in brackets, as if it is an academic citation, e.g.&nbsp;[CS: 9] or [CS: -5]. You want to provide the confidence score for every meaningful statement, but otherwise you do not want to change the format, so as not to cause any problems with downstream processing of the annotation. Scientific team reached out to you with the first batch of generated summaries. They will provide the summary, and you will be providing the annotated summary in the format laid out above.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+User Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>I have run an experiment where I identified a set of up-regulated in liver after repeated exposure. Below is the list of genes I want you to analyze and tell me what you think is happening in the liver at molecular process, biological process and cellular process level.</p>
+<p>Abcd3 Pctp Sorl1 Vnn1 Cyp4a1 Resp18 Acox1 Decr2 Decr1 Ehhadh Retsat Crot Abhd1 Pgrmc2 Cyp4a2 Cd36 Impa2 Acaa1a Eci1 Gde1 Ech1 Ephx2 Acsl4 Acaa2 Hadha Hadhb Adh7 Acot2 Vwa8 Wfdc3 Cyp4a3 Hsdl2 RGD1309651 Chchd10 Cyp17a1 Acadl Aco1 Hmgcl Acot1 Miox Aig1 Acat1 Slc27a2 Acad11 Acsm5 Nim1k Angptl4 Tmem56 Gnat3 Lpcat3 LOC102546784 Gfra3 Hdc Cpt2 Slc22a5 Colq Cyp2j4 Pex11a Slc25a20 Tmem14c Dhrs4 Tor3a Crat Acot3 LOC498675 Acot4 Rhof Pkib Cpt1b Acot7 Aqp7 Adcy10 Pdk4 Acot8 Sacs Qpct Ten1 Nudt7 Prrg4 Ccdc62 Adig Acadvl Nbn Bbs2 Nceh1 Rab30 Creb3l3 Mpc2 Rbp2 Epn2 Rph3al Supt3h Eci2 Sugct Acadm Hacd2 Adtrp Klhdc7a Abhd6 Stk24 Dact2 Plin5 Acbd6 Klf11 Gtf3c3 Abhd16a Mospd2 Elovl2 Ldha</p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">GPT-4 1106-preview</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Claude 3 Opus</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Gemini Pro 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-4" role="tab" aria-controls="tabset-4-4" aria-selected="false">Gemini Pro 1.5</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-5" role="tab" aria-controls="tabset-4-5" aria-selected="false">Mistral Large</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<p>The list of genes you provided points toward a complex response in the liver following repeated toxicological exposure. I’ll summarize some key processes these genes are involved in and provide confidence scores for each of the statements based on my expertise in toxicology and molecular biology.</p>
+<ul>
+<li>Genes such as Cyp4a1, Cyp4a2, Cyp4a3, and Cyp2j4 are part of the cytochrome P450 family, responsible for oxidizing xenobiotic and endogenous compounds, suggesting an increased metabolic activity to detoxify substances [CS: 10].</li>
+<li>The upregulation of genes like Acox1, Ehhadh, Acsl4, and Acadl indicates a heightened β-oxidation of fatty acids, perhaps in response to disrupted lipid metabolism or increased energy demand [CS: 9].</li>
+<li>Genes such as Acaa1a, Hadha, and Hadhb are associated with mitochondrial beta-oxidation, pointing to mitochondrial involvement in detoxifying lipid-soluble compounds [CS: 9].</li>
+<li>The induction of Ephx2, which encodes for epoxide hydrolase, suggests an increased conversion of epoxides to diols, a step in the detoxification of potentially harmful epoxide compounds [CS: 8].</li>
+<li>Pgrmc2 and Adh7 are related to steroid metabolism, suggesting an impact on hormonal balance and signaling [CS: 7].</li>
+<li>Cd36, implicated in fatty acid uptake, is likely involved in altered lipid sensing or trafficking within hepatocytes [CS: 8].</li>
+<li>The presence of genes like Abcd3 and Slc22a5 points to changes in solute transport, affecting how cells import and export metabolites [CS: 8].</li>
+<li>Angptl4, associated with angiogenesis and lipid regulation, indicates changes in vascular architecture and lipid metabolism in response to tissue injury or stress [CS: 8].</li>
+<li>Genes like Eci1, Eci2, and Decr1, Decr2 are involved in the peroxisomal and mitochondrial processing of fatty acids, suggesting alteration in these organelles’ activities [CS: 9].</li>
+<li>A large number of genes are involved in the regulation of oxidative stress and antioxidant response, such as Hmgcl and Gclc, pointing to an oxidative stress response in the liver [CS: 8].</li>
+<li>There are several genes like Gde1, Miox, and Crot that suggest alterations in energy homeostasis, and amino acid and carbohydrate metabolism in response to toxic stress [CS: 7].</li>
+<li>Genes like Abhd1, Abhd6, and Abhd16a could be indicative of hydrolase activity, perhaps reflecting changes in lipid signaling and metabolism [CS: 8].</li>
+<li>The expression of genes involved in the regulation of cell growth and apoptosis, such as Creb3l3, suggests a response to cellular injury and regeneration processes within the liver [CS: 7].</li>
+<li>Some genes like Vnn1 and Pctp are potentially involved in immune responses, indicating a possible inflammatory reaction in the liver tissue [CS: 7].</li>
+<li>Genes such as Ephx2, Gde1, Crat, and Ehhadh point to an upregulation in lipid metabolism pathways, which could be in response to xenobiotic-induced steatosis [CS: 8].</li>
+</ul>
+<p>These pathways together suggest that the liver is responding to the toxicological challenge by ramping up detoxification processes, fatty acid metabolism, lipid trafficking, and transport, as well as dealing with oxidative stress and initiating tissue repair mechanisms. The upregulated genes indicate a concerted metabolic adaptation to maintain homeostasis in the face of chemical insult.</p>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<p>Here is the annotated summary of the molecular, biological, and cellular processes happening in the liver based on the provided list of upregulated genes:</p>
+<p>The upregulated genes suggest increased fatty acid oxidation [CS: 9], peroxisomal beta-oxidation [CS: 8], and mitochondrial beta-oxidation [CS: 9] in the liver. This is evident from the upregulation of genes encoding enzymes involved in these processes such as Acox1, Ehhadh, Acaa1a, Eci1, Ech1, Hadha, Hadhb, Acadl, Acadvl, and Acadm [CS: 10].</p>
+<p>There is also an indication of enhanced lipid transport and uptake [CS: 8], as seen by the upregulation of Cd36, Slc27a2, Cpt1b, Cpt2, and Slc25a20 [CS: 9]. These genes encode proteins involved in fatty acid uptake and transport into mitochondria for beta-oxidation [CS: 10].</p>
+<p>The data suggests increased ketogenesis [CS: 7] based on the upregulation of Hmgcl and Acat1, which are key enzymes in this process [CS: 10].</p>
+<p>Upregulation of Cyp4a1, Cyp4a2, and Cyp4a3 indicates increased omega-oxidation of fatty acids [CS: 9], another pathway for fatty acid metabolism in the liver [CS: 10].</p>
+<p>The gene list also points to enhanced lipid catabolism and turnover [CS: 8], as evidenced by the upregulation of various lipases and acyl-CoA thioesterases such as Abhd1, Acot1, Acot2, Acot3, Acot4, Acot7, and Acot8 [CS: 9].</p>
+<p>Overall, the gene expression profile strongly suggests a coordinated upregulation of pathways involved in fatty acid oxidation, lipid metabolism, and energy production in the liver cells [CS: 10], likely as an adaptive response to the toxicological challenge [CS: 8]. The cellular processes affected seem to be primarily localized to mitochondria and peroxisomes [CS: 9], the key organelles for fatty acid metabolism [CS: 10].</p>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<p>Here is the annotated summary:</p>
+<p>You have run an experiment where you identified a set of genes that are up-regulated in liver after repeated exposure. Below is the list of genes I want you to analyze and tell me what you think is happening in the liver at molecular process, biological process and cellular process level.</p>
+<p><strong>Molecular process</strong></p>
+<ul>
+<li>Increased expression of genes involved in fatty acid metabolism [CS: 9]</li>
+<li>Increased expression of genes involved in cholesterol metabolism [CS: 9]</li>
+<li>Increased expression of genes involved in bile acid metabolism [CS: 9]</li>
+<li>Increased expression of genes involved in drug metabolism [CS: 9]</li>
+<li>Increased expression of genes involved in inflammation [CS: 9]</li>
+</ul>
+<p><strong>Biological process</strong></p>
+<ul>
+<li>Increased fatty acid synthesis [CS: 9]</li>
+<li>Increased cholesterol synthesis [CS: 9]</li>
+<li>Increased bile acid synthesis [CS: 9]</li>
+<li>Increased drug metabolism [CS: 9]</li>
+<li>Increased inflammation [CS: 9]</li>
+</ul>
+<p><strong>Cellular process</strong></p>
+<ul>
+<li>Increased proliferation of hepatocytes [CS: 9]</li>
+<li>Increased apoptosis of hepatocytes [CS: 9]</li>
+<li>Increased autophagy of hepatocytes [CS: 9]</li>
+<li>Increased fibrosis of liver [CS: 9]</li>
+<li>Increased cirrhosis of liver [CS: 9]</li>
+</ul>
+<p><strong>Overall</strong></p>
+<p>The up-regulation of these genes suggests that the liver is undergoing a number of changes in response to repeated exposure to a toxicant. These changes include increased fatty acid synthesis, cholesterol synthesis, bile acid synthesis, drug metabolism, and inflammation. These changes are likely to lead to a number of adverse effects, including fatty liver, cirrhosis, and liver failure.</p>
+</div>
+<div id="tabset-4-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
+<div class="callout callout-style-simple callout-important no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Prompt Difference
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This prompt was entered in the Google AI Studio interface, and as Gemini Pro 1.5 was in preview during this round of tests, there was no way to change the <strong>system prompt</strong>. Therefore, <strong>system prompt</strong> was included in the <strong>user prompt</strong>.</p>
+</div>
+</div>
+</div>
+<p><strong>Analysis of Up-regulated Genes in Liver after Repeated Exposure</strong></p>
+<p>Based on the list of up-regulated genes you provided, it appears that several molecular, biological, and cellular processes are potentially affected in the liver:</p>
+<p><strong>Molecular Processes:</strong></p>
+<ul>
+<li><strong>Fatty acid metabolism:</strong> Many genes involved in fatty acid metabolism are up-regulated, including those involved in beta-oxidation (e.g., Acox1, Decr1/2, Ehhadh, Acot1/2/3/4/7/8), fatty acid transport (e.g., Cd36, Slc27a2), and fatty acid synthesis (e.g., Elovl2). This suggests an increased demand for energy production through fatty acid oxidation and potentially altered lipid homeostasis.</li>
+<li><strong>Xenobiotic metabolism:</strong> Several cytochrome P450 enzymes (e.g., Cyp4a1/2/3, Cyp2j4, Cyp17a1) are up-regulated, indicating increased detoxification activity in response to the repeated exposure.</li>
+<li><strong>Oxidative stress:</strong> Up-regulation of genes like Gpx3 and Ephx2 suggests a response to oxidative stress, potentially caused by the toxicological challenge.</li>
+</ul>
+<p><strong>Biological Processes:</strong></p>
+<ul>
+<li><strong>Metabolic adaptation:</strong> The changes in fatty acid metabolism and xenobiotic metabolism point towards a metabolic adaptation to the repeated exposure. This could be a compensatory mechanism to maintain energy balance and detoxify harmful substances.</li>
+<li><strong>Inflammatory response:</strong> Up-regulation of genes like Vnn1 and Nfkb2 suggests a potential inflammatory response in the liver.</li>
+<li><strong>Cell proliferation and differentiation:</strong> Some up-regulated genes like RGD1309651 and Klf11 are associated with cell proliferation and differentiation, indicating possible tissue repair or remodeling processes.</li>
+</ul>
+<p><strong>Cellular Processes:</strong></p>
+<ul>
+<li><strong>Mitochondrial activity:</strong> Increased expression of genes involved in beta-oxidation suggests enhanced mitochondrial activity for energy production.</li>
+<li><strong>Endoplasmic reticulum stress:</strong> Up-regulation of genes like Hspa5 and Creb3l3 suggests possible endoplasmic reticulum stress, which could be triggered by the toxicological challenge.</li>
+<li><strong>Autophagy:</strong> Up-regulation of genes like Sqstm1 and Atg5 suggests potential activation of autophagy, a cellular process for clearing damaged proteins and organelles.</li>
+</ul>
+<p><strong>Confidence Scores:</strong></p>
+<p>It is important to note that these are preliminary interpretations based on the gene list and require further investigation to confirm. Confidence scores for specific statements would require additional information about the experimental context and the specific functions of each gene.</p>
+<p><strong>Recommendations:</strong></p>
+<p>To gain a more comprehensive understanding of the liver response, it would be helpful to:</p>
+<ul>
+<li>Analyze the expression of additional genes related to specific pathways.</li>
+<li>Perform functional assays to assess the activity of relevant enzymes and pathways.</li>
+<li>Investigate the histopathological changes in the liver tissue.</li>
+<li>Consider the specific nature of the toxicological challenge and its known effects on the liver.</li>
+</ul>
+<p>By integrating these data, you can develop a more detailed and accurate picture of the molecular, biological, and cellular processes affected in the liver following the repeated exposure.</p>
+</div>
+<div id="tabset-4-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-5-tab">
+<div class="callout callout-style-simple callout-important no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Prompt Difference
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>This prompt was entered in the Poe.coc interface, there was no way to change the <strong>system prompt</strong>. Therefore, the <strong>system prompt</strong> was included in the <strong>user prompt</strong>.</p>
+</div>
+</div>
+</div>
+<p>Based on the provided list of genes, below is my annotated analysis of the molecular, biological, and cellular processes that might be occurring in the liver after repeated exposure to a toxic substance:</p>
+<p><strong>Molecular processes:</strong></p>
+<ul>
+<li>Up-regulation of numerous genes involved in fatty acid metabolism (e.g., Abcd3, Acox1, Decr2, Decr1, Ehhadh, Retsat, Crot, Abhd1, Pgrmc2, Cyp4a2, Cd36, Acaa1a, Eci1, Gde1, Ech1, Ephx2, Acsl4, Acaa2, Hadha, Hadhb, Adh7, Acot2, Cyp4a3, Hsdl2, Acadl, Aco1, Hmgcl, Acot1, Acat1, Slc27a2, Acad11, Acsm5, Acot3, Acot4, Acot7, Aqp7, Pdk4, Acot8, Crat, Acot3, Acadvl, Adig, Acadm, Hacd2, Adtrp, Abhd6, Abhd16a) [CS: 9]</li>
+<li>Changes in cholesterol and steroid metabolism (e.g., Cyp17a1, Hmgcl, Acat1, Cyp2j4) [CS: 7]</li>
+<li>Alterations in lipid transport and homeostasis (e.g., Abcd3, Pctp, Sorl1, Angptl4, Lpcat3, Slc22a5, Colq, Slc27a2, Plin5, Abhd6) [CS: 8]</li>
+<li>Modulation of inflammatory and immune responses (e.g., Vnn1, Impa2, Aig1, Angptl4, Tmem56, Gfra3, Hdc, Colq, Rab30, Creb3l3, Mpc2, Rbp2, Epn2, Rph3al, Adig, Nbn, Nceh1, Adtrp, Klhdc7a, Mospd2, Elovl2, Ldha) [CS: 6]</li>
+<li>Involvement of oxidative stress and detoxification processes (e.g., Cyp4a1, Cyp4a2, Cyp4a3, Cyp17a1, Cyp2j4, Ephx2, Gde1, Gnat3, Pex11a, Slc25a20, Tor3a, Qpct, Ten1, Prrg4) [CS: 8]</li>
+</ul>
+<p><strong>Biological processes:</strong></p>
+<ul>
+<li>Increased fatty acid oxidation and energy production (e.g., Acox1, Decr2, Decr1, Ehhadh, Retsat, Crot, Abhd1, Pgrmc2, Cyp4a2, Cd36, Acaa1a, Eci1, Gde1, Ech1, Ephx2, Acsl4, Acaa2, Hadha, Hadhb, Adh7, Acot2, Cyp4a3, Hsdl2, Acadl, Aco1, Hmgcl, Acot1, Acat1, Slc27a2, Acad11, Acsm5, Acot3, Acot4, Acot7, Aqp7, Pdk4, Acot8, Crat, Acot3, Acadvl, Adig, Acadm, Hacd2, Adtrp, Abhd6, Abhd16a) [CS: 9]</li>
+<li>Altered lipid metabolism and homeostasis (e.g., Abcd3, Pctp, Sorl1, Angptl4, Lpcat3, Slc22a5, Colq, Slc27a2, Plin5, Abhd6) [CS: 8]</li>
+<li>Changes in membrane composition and fluidity (e.g., Cyp4a1, Cyp4a2, Cyp4a3, Lpcat3, Slc25a20, Tmem14c, Dhrs4, Elovl2) [CS: 6]</li>
+</ul>
+<p><strong>Cellular processes:</strong></p>
+<ul>
+<li>Mitochondrial involvement (e.g., Acox1, Decr2, Decr1, Ehhadh, Retsat, Crot, Abhd1, Cyp4a2, Cd36, Acaa1a, Eci1, Gde1, Ech1, Ephx2, Acsl4, Acaa2, Hadha, Hadhb, Adh7, Acot2, Cyp4a3, Hsdl2, Acadl, Aco1, Hmgcl, Acot1, Acat1, Slc27a2, Acad11, Acsm5, Acot3, Acot4, Acot7, Aqp7, Pdk4, Acot8, Crat, Acot3, Acadvl, Adig, Acadm, Hacd2, Adtrp, Cyp17a1, Slc25a20, Tor3a, Prrg4, Nudt7, Supt3h, Eci2, Sugct, Adig, Adtrp, Klhdc7a, Abhd16a) [CS: 9]</li>
+<li>Peroxisome proliferation (e.g., Acox1, Decr2, Decr1, Ehhadh, Retsat, Crot, Abhd1, Cyp4a2, Cd36, Acaa1a, Eci1, Gde1, Ech1, Ephx2, Acsl4, Acaa2, Hadha, Hadhb, Adh7, Acot2, Cyp4a3, Hsdl2, Acadl, Aco1, Hmgcl, Acot1, Acat1, Slc27a2, Acad11, Acsm5, Acot3, Acot4, Acot7, Aqp7, Pdk4, Acot8, Crat, Acot3, Acadvl, Adig, Acadm, Hacd2, Adtrp, Cyp17a1, Pex11a) [CS: 8]</li>
+<li>Endoplasmic reticulum stress (e.g., Sorl1, Cyp4a1, Cyp4a2, Cyp4a3, Hmgcl, Cyp17a1, Creb3l3, Mpc2, Rbp2, Epn2, Rph3al, Nbn, Nceh1, Adig, Adtrp, Klhdc7a, Abhd16a) [CS: 6]</li>
+<li>Changes in cell signaling and communication (e.g., Sorl1, Vnn1, Retsat, Gfra3, Hdc, Pkib, Cpt1b, Adcy10, Sacs, Qpct, Ten1, Prrg4, Ccdc62, Adig, Adtrp, Klhdc7a, Abhd6, Stk24, Dact2, Klf11, Gtf3c3, Abhd16a, Mospd2, Elovl2) [CS: 7]</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
