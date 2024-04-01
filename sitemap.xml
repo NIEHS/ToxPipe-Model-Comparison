@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://NIEHS.github.io/toxpipe-model-comparison/reports/index.html</loc>
-    <lastmod>2024-03-30T16:19:16.318Z</lastmod>
+    <loc>https://NIEHS.github.io/toxpipe-model-comparison/tools.html</loc>
+    <lastmod>2024-04-01T01:15:23.332Z</lastmod>
   </url>
   <url>
-    <loc>https://NIEHS.github.io/toxpipe-model-comparison/index.html</loc>
-    <lastmod>2024-03-30T16:19:16.312Z</lastmod>
+    <loc>https://NIEHS.github.io/toxpipe-model-comparison/reports/2024-03-29-initial-prompts.html</loc>
+    <lastmod>2024-03-31T13:02:11.142Z</lastmod>
   </url>
   <url>
     <loc>https://NIEHS.github.io/toxpipe-model-comparison/about.html</loc>
     <lastmod>2024-03-30T16:19:16.310Z</lastmod>
   </url>
   <url>
-    <loc>https://NIEHS.github.io/toxpipe-model-comparison/reports/2024-03-29-initial-prompts.html</loc>
-    <lastmod>2024-03-30T16:19:16.315Z</lastmod>
+    <loc>https://NIEHS.github.io/toxpipe-model-comparison/index.html</loc>
+    <lastmod>2024-03-30T16:19:16.312Z</lastmod>
+  </url>
+  <url>
+    <loc>https://NIEHS.github.io/toxpipe-model-comparison/reports/index.html</loc>
+    <lastmod>2024-03-30T16:19:16.318Z</lastmod>
   </url>
 </urlset>

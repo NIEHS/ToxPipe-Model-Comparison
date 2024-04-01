@@ -1,14 +1,14 @@
 [
   {
-    "listing": "/reports/index.html",
+    "listing": "/index.html",
     "items": [
+      "/reports/index.html",
       "/reports/2024-03-29-initial-prompts.html"
     ]
   },
   {
-    "listing": "/index.html",
+    "listing": "/reports/index.html",
     "items": [
-      "/reports/index.html",
       "/reports/2024-03-29-initial-prompts.html"
     ]
   }
