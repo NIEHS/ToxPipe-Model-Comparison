@@ -1,0 +1,17 @@
+---
+title: "Tools"
+author: "Trey Saddler"
+date: "2024/03/31"
+---
+
+## Introduction
+
+This page will document various tools that could help with this process.
+
+- [LangChain Model Laboratory](https://python.langchain.com/docs/guides/model_laboratory)
+- [Microsoft PromptBench](https://github.com/microsoft/promptbench)
+- https://github.com/hegelai/prompttools
+- https://github.com/underlines/awesome-ml/blob/master/llm-tools.md#benchmark-suites
+- https://www.promptingguide.ai/tools
+- https://github.com/agiresearch/OpenAGI
+- 
