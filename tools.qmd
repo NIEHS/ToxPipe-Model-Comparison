@@ -10,8 +10,7 @@ This page will document various tools that could help with this process.
 
 - [LangChain Model Laboratory](https://python.langchain.com/docs/guides/model_laboratory)
 - [Microsoft PromptBench](https://github.com/microsoft/promptbench)
-- https://github.com/hegelai/prompttools
-- https://github.com/underlines/awesome-ml/blob/master/llm-tools.md#benchmark-suites
-- https://www.promptingguide.ai/tools
-- https://github.com/agiresearch/OpenAGI
-- 
+- [HegelAI PromptTools](https://github.com/hegelai/prompttools)
+- [Awesome-ML LLM Tools - GitHub](https://github.com/underlines/awesome-ml/blob/master/llm-tools.md#benchmark-suites)
+- [PromptingGuide.ai | Dair.ai](https://www.promptingguide.ai/tools)
+- [OpenAGI | GitHub](https://github.com/agiresearch/OpenAGI)
