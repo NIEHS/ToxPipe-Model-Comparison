@@ -1,0 +1,5 @@
+providers:
+  - id: azureopenai:chat:gpt-4-1106-preview
+    config:
+      apiHost: 'toxpipe-chat.openai.azure.com'
+      deployment_id: 'gpt-4-1106-preview'

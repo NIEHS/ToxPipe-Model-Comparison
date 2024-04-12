@@ -1,0 +1,19 @@
+---
+title: "Multi-agent Testing"
+date: "2024-04-12"
+---
+
+The purpose of this page is to explore using multiple AI agents and their capabilities.
+
+## Introduction
+
+Based on some of the prompts provided by Dr. Scott Auerbach, we would like to find the various methods that can be used to create and manage various AI agents. This would ideally be in addition to retrieval-augmented generation (RAG) and tool usage to provide the agents the best possible data sources for generation.
+
+## Resources
+
+- {{< iconify logos youtube-icon >}} [AI Pioneer Shows The Power of AI AGENTS - "The Future Is Agentic"](https://www.youtube.com/watch?v=ZYf9V2fSFwU)
+- {{< iconify logos youtube-icon >}} [GPT Mentions: Multi-GPT Workflow That Automates My Business! | AI Foundations](https://www.youtube.com/watch?v=nF-RkpzvAp4)
+- {{< iconify cib arxiv >}} 2024-04-03 [Empowering Biomedical Discovery with AI Agents](https://arxiv.org/abs/2404.00283)
+- {{< iconify cib arxiv >}} 2024-02-03 [More Agents Is All You Need](https://arxiv.org/abs/2402.05120)
+- {{< iconify logos openai-icon >}} 2024-04-12 [Gene Expression AI Agents | Auerbach ChatGPT Conversation](https://chat.openai.com/share/955b632e-b499-49cf-8c47-c0c76e534d4b)
+- {{< iconify logos medium-icon >}} 2024-03-15 [Intro to LLM Agents with Langchain: When RAG is Not Enough | TowardsDataScience.com](https://towardsdatascience.com/intro-to-llm-agents-with-langchain-when-rag-is-not-enough-7d8c08145834)
