@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.549">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -157,6 +157,10 @@ window.Quarto = {
 <span class="menu-text">Reports</span></a>
   </li>  
   <li class="nav-item">
+    <a class="nav-link" href="./tools.html"> 
+<span class="menu-text">Tools</span></a>
+  </li>  
+  <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
@@ -207,7 +211,21 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="reports">Reports</h2>
 <div id="listing-reports" class="quarto-listing quarto-listing-container-default">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1711815556318" data-listing-reading-time-sort="1" data-listing-word-count-sort="1">
+<div class="quarto-post image-right" data-index="0" data-listing-file-modified-sort="1712762730000" data-listing-reading-time-sort="1" data-listing-word-count-sort="1">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./reports/2024-04-10-promptfoo-trial.html" class="no-external">Untitled</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./reports/2024-04-10-promptfoo-trial.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="./reports/2024-04-10-promptfoo-trial.html" class="no-external"></a></p><a href="./reports/2024-04-10-promptfoo-trial.html" class="no-external">
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-listing-file-modified-sort="1712762560000" data-listing-reading-time-sort="1" data-listing-word-count-sort="1">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./reports/index.html" class="no-external">Reports</a>
@@ -221,7 +239,41 @@ window.Quarto = {
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1711684800000" data-listing-file-modified-sort="1711890131142" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="36" data-listing-word-count-sort="7142">
+<div class="quarto-post image-right" data-index="2" data-listing-date-sort="1712894400000" data-listing-file-modified-sort="1712944527340" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="160">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./reports/2024-04-12-multi-agent-testing.html" class="no-external">Multi-agent Testing</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./reports/2024-04-12-multi-agent-testing.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./reports/2024-04-12-multi-agent-testing.html" class="no-external">
+<div class="listing-date">
+Apr 12, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-listing-date-sort="1712030400000" data-listing-file-modified-sort="1712762560000" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="48">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./reports/2024-04-02-langchain-multiple-prompt.html" class="no-external">Multi-model Prompt Testing using LangChain</a>
+</h3>
+<div class="listing-subtitle">
+<a href="./reports/2024-04-02-langchain-multiple-prompt.html" class="no-external"></a>
+</div>
+</div>
+<div class="metadata">
+<a href="./reports/2024-04-02-langchain-multiple-prompt.html" class="no-external">
+<div class="listing-date">
+Apr 2, 2024
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-listing-date-sort="1711684800000" data-listing-file-modified-sort="1712762560000" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="36" data-listing-word-count-sort="7142">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./reports/2024-03-29-initial-prompts.html" class="no-external">Initial Prompt Testing</a>
@@ -328,6 +380,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/NIEHS\.github\.io\/ToxPipe-Model-Comparison\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -362,7 +432,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');

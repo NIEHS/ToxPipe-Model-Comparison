@@ -1,1 +1,1 @@
-Sitemap: https://NIEHS.github.io/toxpipe-model-comparison/sitemap.xml
+Sitemap: https://NIEHS.github.io/ToxPipe-Model-Comparison/sitemap.xml
