@@ -1,5 +1,8 @@
 project:
   type: website
+  render: 
+    - "*.qmd"
+    - "!toxpipe-model-comparison"
 
 website:
   title: "ToxPipe LLM Model Testing"
