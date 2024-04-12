@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-04-02-langchain-multiple-prompt.html</loc>
-    <lastmod>2024-04-10T15:22:40.000Z</lastmod>
-  </url>
-  <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/index.html</loc>
+    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/tools.html</loc>
     <lastmod>2024-04-10T15:22:40.000Z</lastmod>
   </url>
   <url>
@@ -13,27 +9,11 @@
     <lastmod>2024-04-12T17:55:27.340Z</lastmod>
   </url>
   <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/idna-3.7.dist-info/LICENSE.html</loc>
-    <lastmod>2024-04-12T16:17:55.178Z</lastmod>
-  </url>
-  <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/soupsieve-2.5.dist-info/licenses/LICENSE.html</loc>
-    <lastmod>2024-04-12T16:17:49.603Z</lastmod>
-  </url>
-  <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/cffi/recompiler.html</loc>
-    <lastmod>2024-04-12T16:18:05.901Z</lastmod>
-  </url>
-  <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/httpcore-1.0.5.dist-info/licenses/LICENSE.html</loc>
-    <lastmod>2024-04-12T16:18:05.609Z</lastmod>
-  </url>
-  <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/index.html</loc>
+    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-04-02-langchain-multiple-prompt.html</loc>
     <lastmod>2024-04-10T15:22:40.000Z</lastmod>
   </url>
   <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/tools.html</loc>
+    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/index.html</loc>
     <lastmod>2024-04-10T15:22:40.000Z</lastmod>
   </url>
   <url>
@@ -41,27 +21,15 @@
     <lastmod>2024-04-10T15:22:40.000Z</lastmod>
   </url>
   <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/QtPy-2.4.1.dist-info/AUTHORS.html</loc>
-    <lastmod>2024-04-12T16:18:01.157Z</lastmod>
-  </url>
-  <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/numpy/random/LICENSE.html</loc>
-    <lastmod>2024-04-12T17:32:28.759Z</lastmod>
-  </url>
-  <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/pyzmq-25.1.2.dist-info/AUTHORS.html</loc>
-    <lastmod>2024-04-12T16:17:49.833Z</lastmod>
-  </url>
-  <url>
-    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/httpx-0.27.0.dist-info/licenses/LICENSE.html</loc>
-    <lastmod>2024-04-12T16:18:08.064Z</lastmod>
-  </url>
-  <url>
     <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-03-29-initial-prompts.html</loc>
     <lastmod>2024-04-10T15:22:40.000Z</lastmod>
   </url>
   <url>
     <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-04-10-promptfoo-trial.html</loc>
-    <lastmod>2024-04-10T15:25:30.000Z</lastmod>
+    <lastmod>2024-04-12T18:06:28.528Z</lastmod>
+  </url>
+  <url>
+    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/index.html</loc>
+    <lastmod>2024-04-10T15:22:40.000Z</lastmod>
   </url>
 </urlset>
