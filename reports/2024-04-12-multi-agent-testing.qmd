@@ -17,3 +17,4 @@ Based on some of the prompts provided by Dr. Scott Auerbach, we would like to fi
 - {{< iconify cib arxiv >}} 2024-02-03 [More Agents Is All You Need](https://arxiv.org/abs/2402.05120)
 - {{< iconify logos openai-icon >}} 2024-04-12 [Gene Expression AI Agents | Auerbach ChatGPT Conversation](https://chat.openai.com/share/955b632e-b499-49cf-8c47-c0c76e534d4b)
 - {{< iconify logos medium-icon >}} 2024-03-15 [Intro to LLM Agents with Langchain: When RAG is Not Enough | TowardsDataScience.com](https://towardsdatascience.com/intro-to-llm-agents-with-langchain-when-rag-is-not-enough-7d8c08145834)
+- {{< iconify logos github-icon >}} ![GitHub License](https://img.shields.io/github/license/Mintplex-Labs/openai-assistant-swarm) [OpenAI Assistant Swarm | Mintplex-Labs](https://github.com/Mintplex-Labs/openai-assistant-swarm)

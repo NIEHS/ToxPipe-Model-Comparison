@@ -9,8 +9,8 @@ date: "2024/03/31"
 This page will document various tools that could help with this process.
 
 - [LangChain Model Laboratory](https://python.langchain.com/docs/guides/model_laboratory)
-- [Microsoft PromptBench](https://github.com/microsoft/promptbench)
-- [HegelAI PromptTools](https://github.com/hegelai/prompttools)
-- [Awesome-ML LLM Tools - GitHub](https://github.com/underlines/awesome-ml/blob/master/llm-tools.md#benchmark-suites)
-- [PromptingGuide.ai | Dair.ai](https://www.promptingguide.ai/tools)
-- [OpenAGI | GitHub](https://github.com/agiresearch/OpenAGI)
+- {{< iconify logos github-icon >}} [Microsoft PromptBench](https://github.com/microsoft/promptbench)
+- {{< iconify logos github-icon >}}[HegelAI PromptTools](https://github.com/hegelai/prompttools)
+- {{< iconify logos github-icon >}} [Awesome-ML LLM Tools](https://github.com/underlines/awesome-ml/blob/master/llm-tools.md#benchmark-suites)
+- ![](https://raw.githubusercontent.com/dair-ai/Prompt-Engineering-Guide/main/public/144-favicon.svg){height=1em} [PromptingGuide.ai | Dair.ai](https://www.promptingguide.ai/tools)
+- {{< iconify logos github-icon >}} [OpenAGI](https://github.com/agiresearch/OpenAGI)
