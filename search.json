@@ -4,14 +4,14 @@
     "href": "tools.html",
     "title": "Tools",
     "section": "",
-    "text": "This page will document various tools that could help with this process.\n\nLangChain Model Laboratory\nMicrosoft PromptBench\nHegelAI PromptTools\nAwesome-ML LLM Tools - GitHub\nPromptingGuide.ai | Dair.ai\nOpenAGI | GitHub"
+    "text": "This page will document various tools that could help with this process.\n\nLangChain Model Laboratory\n Microsoft PromptBench\nHegelAI PromptTools\n Awesome-ML LLM Tools\n PromptingGuide.ai | Dair.ai\n OpenAGI"
   },
   {
     "objectID": "tools.html#introduction",
     "href": "tools.html#introduction",
     "title": "Tools",
     "section": "",
-    "text": "This page will document various tools that could help with this process.\n\nLangChain Model Laboratory\nMicrosoft PromptBench\nHegelAI PromptTools\nAwesome-ML LLM Tools - GitHub\nPromptingGuide.ai | Dair.ai\nOpenAGI | GitHub"
+    "text": "This page will document various tools that could help with this process.\n\nLangChain Model Laboratory\n Microsoft PromptBench\nHegelAI PromptTools\n Awesome-ML LLM Tools\n PromptingGuide.ai | Dair.ai\n OpenAGI"
   },
   {
     "objectID": "reports/2024-04-12-multi-agent-testing.html",
@@ -32,7 +32,7 @@
     "href": "reports/2024-04-12-multi-agent-testing.html#resources",
     "title": "Multi-agent Testing",
     "section": "Resources",
-    "text": "Resources\n\n AI Pioneer Shows The Power of AI AGENTS - “The Future Is Agentic”\n GPT Mentions: Multi-GPT Workflow That Automates My Business! | AI Foundations\n 2024-04-03 Empowering Biomedical Discovery with AI Agents\n 2024-02-03 More Agents Is All You Need\n 2024-04-12 Gene Expression AI Agents | Auerbach ChatGPT Conversation\n 2024-03-15 Intro to LLM Agents with Langchain: When RAG is Not Enough | TowardsDataScience.com"
+    "text": "Resources\n\n AI Pioneer Shows The Power of AI AGENTS - “The Future Is Agentic”\n GPT Mentions: Multi-GPT Workflow That Automates My Business! | AI Foundations\n 2024-04-03 Empowering Biomedical Discovery with AI Agents\n 2024-02-03 More Agents Is All You Need\n 2024-04-12 Gene Expression AI Agents | Auerbach ChatGPT Conversation\n 2024-03-15 Intro to LLM Agents with Langchain: When RAG is Not Enough | TowardsDataScience.com\n  OpenAI Assistant Swarm | Mintplex-Labs"
   },
   {
     "objectID": "reports/2024-04-02-langchain-multiple-prompt.html",
