@@ -1,0 +1,67 @@
+The request is to create a Quarto `targets` pipeline that uses Semantic Scholar to grab data for network graph creation. Below is a hypothetical Quarto `targets` pipeline written in R that could fulfill such a request. This is a basic framework and would require the user to have the necessary API keys and libraries to interact with Semantic Scholar. Please note that for a real-world scenario, error handling, rate limiting, and other API constraints would need to be considered.
+
+```{r}
+library(targets)
+library(tarchetypes)
+library(jsonlite)
+library(httr)
+library(igraph)
+library(networkD3)
+library(reticulate)
+```
+
+```{r}
+# User-provided list of identifiers (e.g., paper DOIs, titles, Semantic Scholar IDs)
+identifiers <- c("identifier1", "identifier2", "identifier3")
+```
+
+```{r}
+# Function to get data from Semantic Scholar using an identifier
+get_paper_data <- function(identifier) {
+  # Semantic Scholar API URL with identifier placeholder
+  url <- paste0("https://api.semanticscholar.org/v1/paper/", identifier)
+  response <- httr::GET(url)
+  
+  # Check if the request was successful
+  if (response$status_code == 200) {
+    content <- httr::content(response, "text", encoding = "UTF-8")
+    json_data <- jsonlite::fromJSON(content)
+  } else {
+    # Return NULL or raise an error if response is not successful
+    NULL
+  }
+}
+```
+
+```{r}
+test_paper <- get_paper_data("DOI:10.18653/v1/N18-3011")
+```
+
+
+
+```{r}
+# Define targets
+list(
+  tar_target(identifiers, identifiers),
+  # Use map to iterate over identifiers and get paper data
+  tar_map(
+    values = tarchetypes::tar_bind(identifiers),
+    # Call get_paper_data for each identifier
+    names = names(identifiers),
+    pattern = map(identifiers),
+    tar_target(paper_data, get_paper_data(identifiers))
+  )
+)
+```
+
+
+
+```{python}
+import requests
+r2 = requests.get('https://api.semanticscholar.org/datasets/v1/release/latest').json()
+print(r2['release_id'])
+```
+```{python}
+r_id = requests.get("https://api.semanticscholar.org/datasets/v1/release/2024-04-16").json()
+```
+
