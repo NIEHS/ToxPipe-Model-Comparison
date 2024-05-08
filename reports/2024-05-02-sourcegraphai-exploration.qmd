@@ -1,0 +1,63 @@
+---
+title: "Scrapegraph-ai Exploration"
+author: "Trey Saddler"
+date: "2024-05-02"
+---
+
+## Introduction
+
+- https://github.com/VinciGit00/Scrapegraph-ai
+- https://scrapegraph-ai.readthedocs.io/en/latest/
+
+ScrapeGraphAI is a web scraping python library that uses LLM and direct graph logic to create scraping pipelines for websites, documents and XML files. Just say which information you want to extract and the library will do it for you!
+
+## Installing
+
+To install ScrapeGraphAI, run the pip installation command:
+
+```{python}
+!pip install scrapegraphai
+```
+
+```{python}
+import asyncio
+
+async def main():
+    smart_scraper_graph = SmartScraperGraph(
+        # Your initialization params..
+    )
+    result = await smart_scraper_graph.run()
+    print(result)
+
+# Run the main coroutine
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())
+
+```
+
+```{python}
+from scrapegraphai.graphs import SmartScraperGraph
+
+graph_config = {
+    "llm": {
+        "model": "ollama/mistral",
+        "temperature": 0,
+        "format": "json",  # Ollama needs the format to be specified explicitly
+        "base_url": "http://localhost:11434",  # set Ollama URL
+    },
+    "embeddings": {
+        "model": "ollama/nomic-embed-text",
+        "base_url": "http://localhost:11434",  # set Ollama URL
+    }
+}
+
+smart_scraper_graph = SmartScraperGraph(
+    prompt="List me all the articles",
+    # also accepts a string with the already downloaded HTML code
+    source="https://perinim.github.io/projects",
+    config=graph_config
+)
+
+result = await smart_scraper_graph.run()
+print(result)
+```

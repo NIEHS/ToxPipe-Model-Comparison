@@ -4,6 +4,8 @@
 .venv
 .tool-versions
 
+*.pyc
+
 /toxpipe-model-comparion/
 .jupyter_cache/
 .Rproj.user
