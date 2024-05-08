@@ -1,6 +1,8 @@
 /.quarto/
 /_site/
 .env
+.venv
+.tool-versions
 
 /toxpipe-model-comparion/
 .jupyter_cache/
