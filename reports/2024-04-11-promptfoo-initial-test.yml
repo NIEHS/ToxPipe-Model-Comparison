@@ -1,5 +1,27 @@
+prompts:
+- 'Convert this English to {{language}}: {{input}}'
+- 'Translate to {{language}}: {{input}}'
+
 providers:
   - id: azureopenai:chat:gpt-4-1106-preview
     config:
       apiHost: 'toxpipe-chat.openai.azure.com'
-      deployment_id: 'gpt-4-1106-preview'
+  - id: azureopenai:chat:gpt-4-turbo-20240409
+    config:
+      apiHost: 'toxpipe-chat.openai.azure.com'
+  - id: openai:chat:claude-3-opus
+
+tests:
+  - vars:
+      language: French
+      input: Hello world
+  - vars:
+      language: Spanish
+      input: Where is the library?
+
+defaultTest:
+  options:
+    provider:
+      id: azureopenai:chat:gpt-4-1106-preview
+      config:
+        apiHost: 'toxpipe-chat.openai.azure.com'
