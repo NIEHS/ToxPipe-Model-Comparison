@@ -2,12 +2,12 @@
 # Learn more: https://promptfoo.dev/docs/configuration/guide
 description: 'My first eval'
 
+providers: 
+  id: openai:chat:azure-gpt-4-turbo-20240409
+
 prompts:
   - "Write a tweet about {{topic}}"
   - "Write a very concise, funny tweet about {{topic}}"
-
-providers:
-  - id: openai:chat:azure-gpt-4
 
 tests:
   - vars:
@@ -28,3 +28,10 @@ tests:
       # For more information on model-graded evals, see https://promptfoo.dev/docs/configuration/expected-outputs/model-graded
       - type: llm-rubric
         value: ensure that the output is funny
+
+defaultTest:
+  options:
+    provider:
+      id: openai:chat:azure-gpt-4-turbo-20240409
+      config:
+        apiHost: 'litellm.toxpipe.niehs.nih.gov'

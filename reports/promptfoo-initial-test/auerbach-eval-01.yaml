@@ -1,0 +1,70 @@
+description: Evaluate the role of a gene in adapting to or resolving toxicity/disease in a specific tissue
+
+providers: 
+  - id: openai:chat:azure-gpt-4-turbo-20240409
+
+prompts:
+  - file://functional_analysis.txt
+  - file://protective_mechanisms.txt
+  - file://interactions_mitigation.txt
+
+tests:
+  - vars:
+      gene: EGFR
+      tissue: lung
+  - vars:  
+      gene: BRCA1
+      tissue: breast
+  - vars:
+      gene: APOE4 
+      tissue: brain
+
+defaultTest:
+  options:
+    provider:
+      id: openai:chat:azure-gpt-4-turbo-20240409
+      config:
+        apiHost: 'litellm.toxpipe.niehs.nih.gov'
+  vars:
+    confidence_scoring: |
+      For each statement made, include a confidence score between 1-10 (1 being the lowest and 10 being the highest) in the form of "(CS= [score])". This score should reflect the level of scientific consensus or evidence supporting the statement, with 1 indicating speculative or weakly supported claims and 5 indicating well-established facts. Only include statements of fact in the generative response that have a Confidence Score of 6 or higher.
+    narrative_structure: |
+      Structure the response in a 3-paragraph narrative format, with each paragraph addressing one of the above points (Functional Analysis, Protective Mechanisms, Interactions and Mitigation). Ensure the narrative is substantial and focused on the topic, without a concluding paragraph.
+    evidence_based: | 
+      Ensure that the information provided is backed by current scientific understanding, citing relevant studies or expert opinions where applicable. Avoid speculative or unverified claims.
+    tissue_specific: |
+      Tailor the response to explicitly address the unique aspects of {{tissue}}, considering its specific physiology and relevance to the toxicity/disease in question.
+
+  assert:
+    - type: javascript
+      value: |
+        // Check if output contains at least 10 confidence scores
+        let numConfidenceScores = (output.match(/\(CS=\s*(\d+)\)/g) || []).length;
+        if (numConfidenceScores >= 10) {
+          return 1;  
+        } else {
+          return 0;
+        }
+    - type: javascript  
+      value: |
+        // Check if output contains at least 3 cited studies or expert opinions
+        let numCitations = (output.match(/\[\d+\]/g) || []).length;
+        if (numCitations >= 3) {
+          return 1;
+        } else {
+          return 0;  
+        }
+    - type: javascript
+      value: |  
+        // Check if output mentions the specific tissue at least 5 times
+        let tissueMentions = (output.match(new RegExp({{tissue}}, 'gi')) || []).length;  
+        if (tissueMentions >= 5) {
+          return 1;
+        } else {
+          return 0;
+        }
+
+eval: 
+  - functional_analysis
+  - protective_mechanisms
+  - interactions_mitigation

@@ -1,0 +1,1 @@
+Elaborate on the function of the protein encoded by {{gene}} in the context of adapting to or resolving toxicity/disease in {{tissue}}, with a specific focus on its interactions with other genes. Detail how these interactions influence biological pathways and cellular processes, and their overall impact on {{tissue}} health.
