@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Trey Saddler">
-<meta name="dcterms.date" content="2024-04-10">
+<meta name="dcterms.date" content="2024-03-29">
 
-<title>ToxPipe LLM Model Testing - Promptfoo Trial</title>
+<title>ToxPipe LLM Model Testing - Initial Prompt Testing</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -41,6 +41,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-contrib/iconify-2.0.0/iconify-icon.min.js"></script>
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -122,7 +123,10 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#resources" id="toc-resources" class="nav-link active" data-scroll-target="#resources">Resources</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#prompt-1" id="toc-prompt-1" class="nav-link" data-scroll-target="#prompt-1">Prompt 1</a></li>
+  <li><a href="#prompt-2" id="toc-prompt-2" class="nav-link" data-scroll-target="#prompt-2">Prompt 2</a></li>
+  <li><a href="#prompt-3" id="toc-prompt-3" class="nav-link" data-scroll-target="#prompt-3">Prompt 3</a></li>
   </ul>
 </nav>
     </div>
@@ -131,7 +135,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Promptfoo Trial</h1>
+<h1 class="title">Initial Prompt Testing</h1>
 </div>
 
 
@@ -148,10 +152,16 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 10, 2024</p>
+      <p class="date">March 29, 2024</p>
     </div>
   </div>
   
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">May 12, 2024</p>
+    </div>
+  </div>
     
   </div>
   
@@ -160,12 +170,138 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>This page documents trials of using promptfoo for prompt testing.</p>
-<section id="resources" class="level2">
-<h2 class="anchored" data-anchor-id="resources">Resources</h2>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>These tests were performed using a variety of user interfaces. Therefore, minor editing of the markdown syntax was performed to ensure consistency across the different platforms. However, none of the content of the LLM responses was altered.</p>
+</section>
+<section id="prompt-1" class="level2">
+<h2 class="anchored" data-anchor-id="prompt-1">Prompt 1</h2>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+User Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>I see the following genes going up in the liver of rats after treatment with chemical. Acot1, acot2, decr1, hmgcs2, Cyp4a1, ehhadh, and vnn1. What do you surmise is happening?</p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true"><iconify-icon inline="" icon="logos:openai-icon" aria-label="Icon openai-icon from logos Iconify.design set." title="Icon openai-icon from logos Iconify.design set."></iconify-icon> GPT-4 1106-preview</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false"><iconify-icon inline="" icon="logos:anthropic-icon" aria-label="Icon anthropic-icon from logos Iconify.design set." title="Icon anthropic-icon from logos Iconify.design set."></iconify-icon> Claude 3 Opus</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>The upregulation of these genes in the liver of rats after exposure to a chemical suggests alterations in hepatic metabolism, particularly in fatty acid oxidation, ketogenesis, and detoxification pathways. Here’s a breakdown of the function of each mentioned gene:</p>
+<ol type="1">
+<li><p><strong>Acot1 (Acyl-CoA Thioesterase 1)</strong>: Involved in the hydrolysis of acyl-CoAs to the free fatty acid and coenzyme A (CoA), which helps regulate intracellular levels of acyl-CoAs and free fatty acids.</p></li>
+<li><p><strong>Acot2 (Acyl-CoA Thioesterase 2)</strong>: Similar to ACOT1..</p></li>
+</ol>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>Based on the genes you mentioned that are upregulated in the liver of rats after treatment with a chemical, it appears that the chemical is inducing a response related to lipid and fatty acid metabolism. Here’s a brief overview of what these genes suggest:</p>
 <ul>
-<li><a href="https://www.promptfoo.dev/docs/intro">promptfoo docs | Intro</a></li>
+<li><strong>Acot1 and Acot2 (Acyl-CoA thioesterase 1 and 2):</strong> These enzymes hydrolyze long-chain acyl-CoAs to free fatty acids and coenzyme A, which is important for regulating lipid metabolism and energy homeostasis.</li>
+<li><strong>Decr1 (2,4-dienoyl-CoA reductase 1):</strong> This enzyme is…</li>
 </ul>
+</div>
+</div>
+</div>
+</section>
+<section id="prompt-2" class="level2">
+<h2 class="anchored" data-anchor-id="prompt-2">Prompt 2</h2>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+User Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>I have run an experiment where I identified a set of up-regulated in liver after repeated exposure. Below is the list of genes I want you to analyze and tell me what you think is happening in the liver at molecular process, biological process and cellular process level.</p>
+<p>Abcd3 Pctp Sorl1…</p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true"><iconify-icon inline="" icon="logos:openai-icon" aria-label="Icon openai-icon from logos Iconify.design set." title="Icon openai-icon from logos Iconify.design set."></iconify-icon> GPT-4 1106-preview</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false"><iconify-icon inline="" icon="logos:anthropic-icon" aria-label="Icon anthropic-icon from logos Iconify.design set." title="Icon anthropic-icon from logos Iconify.design set."></iconify-icon> Claude 3 Opus</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>The upregulation of the listed genes in the liver after repeated exposure suggests a response to metabolic, detoxification, and regulatory stressors. Here, I’ll categorize the genes based on the functional insights they provide in terms of molecular, biological, and cellular processes. However, for a more specific and detailed analysis, information about the nature of the exposure and context of the experiment would be necessary.</p>
+<p><strong>Molecular Processes:</strong></p>
+<ul>
+<li><strong>Detoxification and Oxidation-Reduction:</strong> Several Cytochrome P450 enzymes (CYP4A1, CYP4A2, CYP4A3, CYP2J4, CYP17A1) are involved in the oxidative breakdown of various substances, including toxins and drugs.</li>
+<li><strong>Fatty Acid Oxidation:</strong> Genes like ACOX1…</li>
+</ul>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<p>Based on the list of up-regulated genes you provided, it appears that there are several molecular, biological, and cellular processes being affected in the liver after repeated exposure. Let’s break it down:</p>
+<p><strong>Molecular Processes:</strong></p>
+<ul>
+<li><strong>Fatty acid metabolism:</strong> Many of the…</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="prompt-3" class="level2">
+<h2 class="anchored" data-anchor-id="prompt-3">Prompt 3</h2>
+<div class="callout callout-style-simple callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+System Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>You are world class bioinformatician and toxicologist. You worked at NIH to…</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+User Prompt
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>I have run an experiment where I identified a set of up-regulated in liver after repeated exposure. Below is the list of genes I want you to analyze and tell me what you think is happening in the liver at molecular process, biological process and cellular process level.</p>
+<p>Abcd3 Pctp Sorl1…</p>
+</div>
+</div>
+</div>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true"><iconify-icon inline="" icon="logos:openai-icon" aria-label="Icon openai-icon from logos Iconify.design set." title="Icon openai-icon from logos Iconify.design set."></iconify-icon> GPT-4 1106-preview</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false"><iconify-icon inline="" icon="logos:anthropic-icon" aria-label="Icon anthropic-icon from logos Iconify.design set." title="Icon anthropic-icon from logos Iconify.design set."></iconify-icon> Claude 3 Opus</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>The list of genes you provided points toward a complex response in the liver following repeated toxicological exposure. I’ll summarize some key processes these genes are involved in and provide confidence scores for each of the statements based on my expertise in toxicology and molecular biology.</p>
+<ul>
+<li>Genes such as Cyp4a1…</li>
+</ul>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>Here is the annotated summary of the molecular, biological, and cellular processes happening in the liver based on the provided list of upregulated genes:</p>
+<p>The upregulated genes suggest…</p>
+</div>
+</div>
+</div>
 
 
 </section>
@@ -252,7 +388,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/NIEHS\.github\.io\/ToxPipe-Model-Comparison\/");
+      var filterRegex = new RegExp('/' + window.location.host + '/');
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }

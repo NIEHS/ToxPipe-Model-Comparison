@@ -2,11 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/tools.html</loc>
-    <lastmod>2024-04-15T01:18:48.240Z</lastmod>
+    <lastmod>2024-04-23T20:39:15.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-05-16-promptfoo-output-test.html</loc>
+    <lastmod>2024-05-16T16:30:05.416Z</lastmod>
   </url>
   <url>
     <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-04-12-multi-agent-testing.html</loc>
-    <lastmod>2024-04-15T01:14:19.227Z</lastmod>
+    <lastmod>2024-04-15T01:14:19.000Z</lastmod>
   </url>
   <url>
     <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-04-02-langchain-multiple-prompt.html</loc>
@@ -22,11 +26,15 @@
   </url>
   <url>
     <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-03-29-initial-prompts.html</loc>
-    <lastmod>2024-04-10T15:22:40.000Z</lastmod>
+    <lastmod>2024-05-13T01:05:12.000Z</lastmod>
   </url>
   <url>
     <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-04-10-promptfoo-trial.html</loc>
     <lastmod>2024-04-12T18:15:31.000Z</lastmod>
+  </url>
+  <url>
+    <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/2024-05-02-sourcegraphai-exploration.html</loc>
+    <lastmod>2024-05-16T01:45:59.000Z</lastmod>
   </url>
   <url>
     <loc>https://NIEHS.github.io/ToxPipe-Model-Comparison/reports/index.html</loc>
