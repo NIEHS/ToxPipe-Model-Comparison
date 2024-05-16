@@ -3,7 +3,7 @@
 description: 'My first eval'
 
 providers: 
-  id: openai:chat:azure-gpt-4-turbo-20240409
+  - id: openai:chat:azure-gpt-4-turbo-20240409
 
 prompts:
   - "Write a tweet about {{topic}}"
@@ -35,3 +35,7 @@ defaultTest:
       id: openai:chat:azure-gpt-4-turbo-20240409
       config:
         apiHost: 'litellm.toxpipe.niehs.nih.gov'
+
+sharing:
+  apiBaseUrl: https://evals.toxpipe.niehs.nih.gov
+  appBaseUrl: https://evals.toxpipe.niehs.nih.gov 

@@ -1,0 +1,246 @@
+{
+  "head": {
+    "prompts": [
+      {
+        "raw": "{{question}}",
+        "display": "{{question}}",
+        "id": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "provider": "openai:chat:azure-gpt-4-turbo-20240409",
+        "metrics": {
+          "score": 2,
+          "testPassCount": 2,
+          "testFailCount": 8,
+          "assertPassCount": 2,
+          "assertFailCount": 8,
+          "totalLatencyMs": 85492,
+          "tokenUsage": {
+            "total": 999,
+            "prompt": 317,
+            "completion": 682,
+            "cached": 0
+          },
+          "namedScores": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "{{question}}",
+        "display": "{{question}}",
+        "id": "d3bcaf71c11c2678899be04d872718325f0916b3b0705e805ee29930663a42e2",
+        "provider": "openai:chat:azure-gpt-4",
+        "metrics": {
+          "score": 3,
+          "testPassCount": 3,
+          "testFailCount": 7,
+          "assertPassCount": 3,
+          "assertFailCount": 6,
+          "totalLatencyMs": 275989,
+          "tokenUsage": {
+            "total": 2294,
+            "prompt": 317,
+            "completion": 1977,
+            "cached": 0
+          },
+          "namedScores": {},
+          "cost": 0
+        }
+      }
+    ],
+    "vars": [
+      "question"
+    ]
+  },
+  "body": [
+    {
+      "outputs": [
+        {
+          "pass": true,
+          "score": 1,
+          "namedScores": {},
+          "text": "In male and female rats exposed to riddelliine, the types of tumors observed are hemangiosarcomas. These tumors are observed in the liver tissue, and the type of cancer observed is a form of blood vessel cancer.",
+          "prompt": "What types of tumors are observed in male and female rats that are exposed to riddelliine? What tissue type are the tumors observed in, and what type of cancer is observed?",
+          "provider": "openai:chat:azure-gpt-4-turbo-20240409",
+          "latencyMs": 4905,
+          "tokenUsage": {
+            "total": 92,
+            "prompt": 44,
+            "completion": 48
+          },
+          "gradingResult": {
+            "pass": true,
+            "score": 1,
+            "reason": "All assertions passed",
+            "namedScores": {},
+            "tokensUsed": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0
+            },
+            "componentResults": [
+              {
+                "pass": true,
+                "score": 1,
+                "reason": "Assertion passed",
+                "assertion": {
+                  "type": "icontains-all",
+                  "value": [
+                    "liver",
+                    "hemangiosarcoma"
+                  ]
+                }
+              }
+            ],
+            "assertion": null
+          },
+          "cost": 0
+        },
+        {
+          "pass": true,
+          "score": 1,
+          "namedScores": {},
+          "text": "Riddelliine is a pyrrolizidine alkaloid found in certain plants, such as those belonging to the genus Senecio (ragwort). It is a hepatotoxic compound that can cause liver damage and has been classified as a carcinogen. When male and female rats are exposed to riddelliine, they can develop a variety of tumors.\n\nThe primary tissue type affected by riddelliine is the liver, and the tumors observed are typically hepatic (liver) tumors. These can include hepatocellular adenomas and carcinomas. Hepatocellular carcinoma is a type of liver cancer that can develop following chronic exposure to riddelliine.\n\nIn addition to liver tumors, riddelliine exposure has also been associated with the development of vascular tumors, such as hemangiosarcomas, in the liver and other organs. These are cancers that originate from the cells lining the blood vessels.\n\nIt's important to note that the carcinogenic effects of ridd",
+          "prompt": "What types of tumors are observed in male and female rats that are exposed to riddelliine? What tissue type are the tumors observed in, and what type of cancer is observed?",
+          "provider": "openai:chat:azure-gpt-4",
+          "latencyMs": 27110,
+          "tokenUsage": {
+            "total": 244,
+            "prompt": 44,
+            "completion": 200
+          },
+          "gradingResult": {
+            "pass": true,
+            "score": 1,
+            "reason": "All assertions passed",
+            "namedScores": {},
+            "tokensUsed": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0
+            },
+            "componentResults": [
+              {
+                "pass": true,
+                "score": 1,
+                "reason": "Assertion passed",
+                "assertion": {
+                  "type": "icontains-all",
+                  "value": [
+                    "liver",
+                    "hemangiosarcoma"
+                  ]
+                }
+              }
+            ],
+            "assertion": null
+          },
+          "cost": 0
+        }
+              ],
+      "test": {
+        "vars": {
+          "question": "What types of tumors are observed in male and female rats that are exposed to riddelliine? What tissue type are the tumors observed in, and what type of cancer is observed?"
+        },
+        "assert": [
+          {
+            "type": "icontains-all",
+            "value": [
+              "liver",
+              "hemangiosarcoma"
+            ]
+          }
+        ],
+        "options": {
+          "provider": {
+            "id": "openai:chat:azure-gpt-4-turbo-20240409",
+            "config": {
+              "apiHost": "litellm.toxpipe.niehs.nih.gov"
+            }
+          }
+        }
+      },
+      "vars": [
+        "What types of tumors are observed in male and female rats that are exposed to riddelliine? What tissue type are the tumors observed in, and what type of cancer is observed?"
+      ]
+    },
+    {
+      "outputs": [
+        {
+          "pass": false,
+          "score": 0,
+          "namedScores": {},
+          "text": "Expected output to contain \"hyaline glomerulopathy\"\n---\nChronic exposure to pulegone in rats and mice leads to histopathological manifestations in the liver such as hepatocellular hypertrophy, necrosis, and increased liver weights. Additionally, there may be evidence of bile duct hyperplasia and oval cell hyperplasia. These changes are indicative of liver damage and potential pre-cancerous conditions.",
+          "prompt": "What histopathological manifestation occurs in the liver of rats and mice that are chronically exposed to pulegone?",
+          "provider": "openai:chat:azure-gpt-4-turbo-20240409",
+          "latencyMs": 5701,
+          "tokenUsage": {
+            "total": 100,
+            "prompt": 30,
+            "completion": 70
+          },
+          "gradingResult": {
+            "pass": false,
+            "score": 0,
+            "reason": "Expected output to contain \"hyaline glomerulopathy\"",
+            "namedScores": {},
+            "tokensUsed": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0
+            },
+            "componentResults": [
+              {
+                "pass": false,
+                "score": 0,
+                "reason": "Expected output to contain \"hyaline glomerulopathy\"",
+                "assertion": {
+                  "type": "icontains",
+                  "value": "hyaline glomerulopathy"
+                }
+              }
+            ],
+            "assertion": null
+          },
+          "cost": 0
+        },
+        {
+          "pass": false,
+          "score": 0,
+          "namedScores": {},
+          "text": "Expected output to contain \"hyaline glomerulopathy\"\n---\nPulegone is a monoterpene found in various essential oils, including pennyroyal and mint oils. It has been used as a flavoring agent and in some traditional medicinal applications. However, pulegone is also known to be hepatotoxic, meaning it can cause liver damage.\n\nIn rats and mice that are chronically exposed to pulegone, the histopathological manifestations in the liver can include hepatocellular necrosis, increased liver weight, centrilobular hypertrophy, and the formation of hepatic lesions. Chronic exposure can lead to oxidative stress, which in turn can cause damage to cellular structures, including lipids, proteins, and DNA.\n\nThe specific damage can vary depending on the dose and duration of exposure. At higher doses, there may be more severe liver damage, potentially leading to liver failure. Additionally, pulegone is metabolized by the liver into more toxic metabolites, such as menthofuran, which can exacerbate the hepatotoxic effects.\n\nIt's",
+          "prompt": "What histopathological manifestation occurs in the liver of rats and mice that are chronically exposed to pulegone?",
+          "provider": "openai:chat:azure-gpt-4",
+          "latencyMs": 51455,
+          "tokenUsage": {
+            "total": 230,
+            "prompt": 30,
+            "completion": 200
+          },
+          "gradingResult": {
+            "pass": false,
+            "score": 0,
+            "reason": "Expected output to contain \"hyaline glomerulopathy\"",
+            "namedScores": {},
+            "tokensUsed": {
+              "total": 0,
+              "prompt": 0,
+              "completion": 0
+            },
+            "componentResults": [
+              {
+                "pass": false,
+                "score": 0,
+                "reason": "Expected output to contain \"hyaline glomerulopathy\"",
+                "assertion": {
+                  "type": "icontains",
+                  "value": "hyaline glomerulopathy"
+                }
+              }
+            ],
+            "assertion": null
+          },
+          "cost": 0
+        }
+      ]
+    }
+  ]
+}

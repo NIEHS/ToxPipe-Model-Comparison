@@ -1,0 +1,129 @@
+# This configuration compares LLM output of 2 prompts x 2 GPT models across 3 test cases.
+# Learn more: https://promptfoo.dev/docs/configuration/guide
+description: 'Short Tox Evaluation'
+
+providers: 
+  - id: openai:chat:azure-gpt-4-turbo-20240409
+    config:
+      temperature: 0
+      max_tokens: 200
+  - id: openai:chat:azure-gpt-4
+    config:
+      temperature: 0
+      max_tokens: 200
+  - id: openai:chat:claude-3-opus
+    config:
+      temperature: 0
+      max_tokens: 200
+  - id: openai:chat:gemini-1.5-pro
+    config:
+      temperature: 0
+      max_tokens: 200
+  - id: openai:chat:ollama-llama3-70b
+    config:
+      temperature: 0
+      max_tokens: 200
+  - id: openai:chat:mistral-large
+    config:
+      temperature: 0
+      max_tokens: 200
+
+prompts:
+  - '{{question}}'
+
+tests:
+  - vars:
+      question: "What types of tumors are observed in male and female rats that are exposed to riddelliine? What tissue type are the tumors observed in, and what type of cancer is observed?"
+    assert:
+      - type: icontains-all
+        value:
+          - "liver"
+          - "hemangiosarcoma"
+
+  - vars:
+      question: "What histopathological manifestation occurs in the liver of rats and mice that are chronically exposed to pulegone?"
+    assert:
+      - type: icontains
+        value: "hyaline glomerulopathy"
+ 
+  - vars:
+      question: "What relatively rare non-neoplastic histopathological manifestation occurs in rats chronically exposed to indole-3-carbinol?"
+    assert:
+      - type: icontains-all
+        value: 
+          - "lymphatic"
+          - "ectasia"
+          - "small intestine"
+ 
+  - vars:
+      question: "What histopathological lesion of the ovary in rats is caused by tricresyl phosphate exposure?"
+    assert:
+      - type: icontains-all
+        value:
+          - "ovarian"
+          - "interstitial"
+          - "cell"
+          - "hyperplasia"
+ 
+  - vars:
+      question: "What mechanistic process elicited by tricresyl phosphate causes ovarian interstitial cell hyperplasia and cytoplasmic vacuolization of the adrenal cortex?"
+    assert:
+      - type: icontains-all
+        value:
+          - "inhibition"
+          - "neutral"
+          - "cholesterol"
+          - "ester"
+          - "transferase"
+ 
+  - vars:
+      question: "What is the primary cause of death in chronic of studies of alpha,beta-Thujone in rats?"
+    assert:
+      - type: icontains-all
+        value:
+          - "seizure"
+ 
+  - vars:
+      question: "What is the name of the lung tumor caused by chronic 3,3',4,4'-Tetrachloroazobenzene exposure in rats?"
+    assert:
+      - type: icontains-all
+        value:
+          - "cystic"
+          - "keratinizing"
+          - "epithelioma"
+ 
+  - vars:
+      question: "What is the primary target organ system of Resorcinol in chronic exposure studies in rats?"
+    assert:
+      - type: icontains-any
+        value:
+          - "CNS"
+          - "brain"
+ 
+  - vars:
+      question: "What type of tumors does glycidol cause in rats?"
+    assert:
+      - type: icontains-any
+        value:
+          - "gliomas"
+          - "CNS"
+ 
+  - vars:
+      question: "In subchronic toxicity studies of rotenone in rats, what types of toxicity have been observed?"
+    assert:
+      - type: icontains-all
+        value:
+          - "bone marrow atrophy"
+          - "hyperplasia"
+          - "forestomach"
+
+defaultTest:
+  options:
+    provider:
+      id: openai:chat:azure-gpt-4-turbo-20240409
+      config:
+        apiHost: 'litellm.toxpipe.niehs.nih.gov'
+
+sharing:
+  apiBaseUrl: https://evals.toxpipe.niehs.nih.gov
+  appBaseUrl: https://evals.toxpipe.niehs.nih.gov 
