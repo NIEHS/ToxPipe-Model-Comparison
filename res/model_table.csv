@@ -1,0 +1,27 @@
+﻿model,model_pretty,provider,iconify
+ai21-jurassic-2-ultra,Jurassic 2 Ultra,AI21 Labs,
+amazon-titan-text-premier,Titan Text Premier,Amazon,simple-icons:amazon
+claude-3-opus,Claude 3 Opus,Anthropic,simple-icons:anthropic
+claude-3-sonnet,Claude 3 Sonnet,Anthropic,simple-icons:anthropic
+claude-3-haiku,Claude 3 Haiku,Anthropic,simple-icons:anthropic
+claude-v2.1,Claude 2.1,Anthropic,simple-icons:anthropic
+claude-instant,Claude Instant,Anthropic,simple-icons:anthropic
+azure-gpt-4-turbo-preview,GPT-4 Turbo Preview,OpenAI,simple-icons:openai
+azure-gpt-3.5-turbo,GPT-3.5 Turbo,OpenAI,simple-icons:openai
+azure-gpt-4,GPT-4,OpenAI,simple-icons:openai
+azure-gpt-3.5-turbo-16k,GPT-3.5 Turbo 16k,OpenAI,simple-icons:openai
+azure-gpt-4-32k,GPT-4-32k,OpenAI,simple-icons:openai
+azure-gpt-4-turbo-20240409,GPT-4 Turbo,OpenAI,simple-icons:openai
+cohere-command-r-plus,Command R+,Cohere,
+gemini-1.5-pro,Gemini 1.5 Pro,Google,logos:google-icon
+gemini-pro,Gemini Pro,Google,logos:google-icon
+gemini-pro-vision,Gemini Pro Vision,Google,logos:google-icon
+google-chat-bison,Google Chat Bison,Google,logos:google-icon
+google-chat-bison-32k,Google Chat Bison 32K,Google,logos:google-icon
+llama2-13b,Llama2 13B,Meta AI,simple-icons:meta
+llama2-70b,Llama2 70B,Meta AI,simple-icons:meta
+mistral-large,Mistral Large,Mistral AI,logos:mistral-ai-icon
+mistral-7b-instruct,Mistral 7B Instruct,Mistral AI,logos:mistral-ai-icon
+mixtral-8x7b-instruct,Mistral 8X7B Instruct,Mistral AI,logos:mistral-ai-icon
+ollama-llama3,Llama3,Meta AI,simple-icons:meta
+ollama-llama3-70b,Llama3 70B,Meta AI,simple-icons:meta
