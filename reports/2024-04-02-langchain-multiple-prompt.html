@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.554">
+<meta name="generator" content="quarto-1.4.551">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -200,36 +200,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><a href="https://python.langchain.com/docs/integrations/text_embedding/azureopenai">LangChain Docs | Azure OpenAI</a></li>
 <li><a href="https://python.langchain.com/docs/guides/model_laboratory">LangChain Docs | Model Comparison</a></li>
 </ul>
-<div id="2650d838" class="cell" data-execution_count="2">
+<div id="f8482deb" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> find_dotenv, load_dotenv</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain.model_laboratory <span class="im">import</span> ModelLaboratory</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_core.prompts <span class="im">import</span> PromptTemplate</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> langchain_openai <span class="im">import</span> AzureOpenAI</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="b488891b" class="cell" data-execution_count="3">
+<div id="7a8f05fb" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Import config from .env file</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>load_dotenv(find_dotenv())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<pre><code>True</code></pre>
 </div>
+<div id="9ff1d8c6" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>AZURE_OPENAI_API_KEY <span class="op">=</span> os.getenv(<span class="st">"EASTUS2_API_KEY"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>AZURE_OPENAI_ENDPOINT <span class="op">=</span> os.getenv(<span class="st">"AZURE_OPENAI_ENDPOINT"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>OPENAI_API_VERSION <span class="op">=</span> os.getenv(<span class="st">"OPENAI_API_VERSION"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="8114733e" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>AZURE_OPENAI_API_KEY <span class="op">=</span> os.getenv(<span class="st">"EASTUS2_API_KEY"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>AZURE_OPENAI_ENDPOINT <span class="op">=</span> os.getenv(<span class="st">"AZURE_OPENAI_ENDPOINT"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>OPENAI_API_VERSION <span class="op">=</span> os.getenv(<span class="st">"OPENAI_API_VERSION"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="8496876f" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the Azure OpenAI model</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>llms <span class="op">=</span> [</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    AzureOpenAI(api_key<span class="op">=</span>AZURE_OPENAI_API_KEY, azure_fendpoint<span class="op">=</span>AZURE_OPENAI_ENDPOINT),</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/Users/saddlerto/dev/ToxPipe-Model-Comparison/toxpipe-model-comparison/lib/python3.10/site-packages/langchain_core/utils/utils.py:159: UserWarning: WARNING! azure_fendpoint is not default parameter.
-                azure_fendpoint was transferred to model_kwargs.
-                Please confirm that azure_fendpoint is what you intended.
-  warnings.warn(</code></pre>
-</div>
+<div id="d16da25b" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize the Azure OpenAI model</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>llms <span class="op">=</span> [</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    AzureOpenAI(api_key<span class="op">=</span>AZURE_OPENAI_API_KEY, azure_fendpoint<span class="op">=</span>AZURE_OPENAI_ENDPOINT),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
