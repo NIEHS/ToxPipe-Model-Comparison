@@ -11,3 +11,6 @@
 .Rproj.user
 .Rhistory
 *.Rproj
+reports/**/*
+
+data/*

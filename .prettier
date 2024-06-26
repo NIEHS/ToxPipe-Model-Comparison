@@ -1,0 +1,12 @@
+# Some example settings
+proseWrap: "always"
+semi: true
+singleQuote: false
+tabWidth: 2
+trailingComma: "es5"
+# ...
+overrides:
+  # Format QMD files as MD files
+  - files: "**.qmd"
+    options:
+      parser: "markdown"

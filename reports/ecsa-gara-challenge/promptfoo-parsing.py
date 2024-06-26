@@ -36,14 +36,14 @@ def generate_quarto_doc(json_file, output_file, model_csv):
         # Group the prompts by question
         prompts_by_question = defaultdict(list)
         # Calculate pass rate by model
-        # pass_rate_by_model = defaultdict(lambda: {'total': 0, 'passed': 0})
-        # for result in data['results']['results']:
-        #     prompt = result['prompt']['raw']
-        #     prompts_by_question[prompt].append(result)
-        #     provider = result['provider']['id']
-        #     pass_rate_by_model[provider]['total'] += 1
-        #     if result['gradingResult']['pass']:
-        #         pass_rate_by_model[provider]['passed'] += 1
+        pass_rate_by_model = defaultdict(lambda: {'total': 0, 'passed': 0})
+        for result in data['results']['results']:
+            prompt = result['prompt']['raw']
+            prompts_by_question[prompt].append(result)
+            provider = result['provider']['id']
+            pass_rate_by_model[provider]['total'] += 1
+            if 'gradingResult' in result and result['gradingResult'].get('pass'):
+                pass_rate_by_model[provider]['passed'] += 1
 
         # Write each prompt and its corresponding outputs
         for i, (question, outputs) in enumerate(prompts_by_question.items(), start=1):
@@ -72,10 +72,10 @@ def generate_quarto_doc(json_file, output_file, model_csv):
                 else:
                     file.write(f'## {pretty_name}\n\n')
 
-                if isinstance(output["response"]["output"], dict) and "content" in output["response"]["output"]:
-                    file.write(f'{output["response"]["output"]["content"]}\n\n')
-                else:
+                if 'response' in output and 'output' in output['response']:
                     file.write(f'{output["response"]["output"]}\n\n')
+                else:
+                    file.write("No response available.\n\n")
 
             file.write(':::\n\n')
 
