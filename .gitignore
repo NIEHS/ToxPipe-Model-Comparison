@@ -11,6 +11,13 @@
 .Rproj.user
 .Rhistory
 *.Rproj
-reports/**/*
 
 data/*
+
+reports/*
+!reports/*.*
+reports/.*
+
+node_modules/*
+!node_modules/*.*
+node_modules/.*
