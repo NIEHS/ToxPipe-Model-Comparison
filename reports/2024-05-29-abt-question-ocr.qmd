@@ -1,0 +1,17 @@
+---
+title: "ABT Question OCR and Dataset generation"
+author: "Trey Saddler"
+date: "2024-05-29"
+---
+
+## Introduction
+
+These questions are from American Board of Toxicology (ABT) exams. The questions are run through OCR using [Surya](https://github.com/VikParuchuri/surya). The dataset is generated to conform to Huggingface's [Datasets](https://huggingface.co/docs/datasets/) library.
+
+## Surya processing
+
+The questions are processed using the following command:
+
+```bash
+surya_ocr ../res/dabt-questions --images --langs en --results_dir ../res/dabt-questions-surya
+```

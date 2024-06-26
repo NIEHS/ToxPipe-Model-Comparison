@@ -6,27 +6,23 @@ providers:
   - id: openai:chat:azure-gpt-4-turbo-20240409
     config:
       temperature: 0
-      max_tokens: 200
+      # max_tokens: 200
   - id: openai:chat:azure-gpt-4
     config:
       temperature: 0
-      max_tokens: 200
+      # max_tokens: 200
   - id: openai:chat:claude-3-opus
     config:
       temperature: 0
-      max_tokens: 200
+      # max_tokens: 200
   - id: openai:chat:gemini-1.5-pro
     config:
       temperature: 0
-      max_tokens: 200
-  - id: openai:chat:ollama-llama3-70b
-    config:
-      temperature: 0
-      max_tokens: 200
+      # max_tokens: 200
   - id: openai:chat:mistral-large
     config:
       temperature: 0
-      max_tokens: 200
+      # max_tokens: 200
 
 prompts:
   - '{{question}}'
