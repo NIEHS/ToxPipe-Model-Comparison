@@ -1,0 +1,11 @@
+---
+title: "ECSA GARA Challenge"
+date: "eval-2024-06-26"
+callout-appearance: simple
+callout-icon: false
+---
+
+## Summary
+
+This document contains the results of the evaluation.
+

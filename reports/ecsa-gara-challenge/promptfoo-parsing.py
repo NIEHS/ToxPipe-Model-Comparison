@@ -1,7 +1,22 @@
 import json
+import csv
 from collections import defaultdict
+import argparse
 
-def generate_quarto_doc(json_file, output_file):
+def load_model_info(csv_file):
+    model_info = {}
+    with open(csv_file, 'r', encoding='utf-8-sig') as file:
+        reader = csv.DictReader(file)
+        for row in reader:
+            model_info[row['model']] = {
+                'pretty_name': row['model_pretty'],
+                'iconify': row['iconify']
+            }
+    return model_info
+
+def generate_quarto_doc(json_file, output_file, model_csv):
+    model_info = load_model_info(model_csv)
+
     with open(json_file, 'r') as file:
         data = json.load(file)
 
@@ -9,8 +24,7 @@ def generate_quarto_doc(json_file, output_file):
         # Write the header
         file.write('---\n')
         file.write('title: "ECSA GARA Challenge"\n')
-        # file.write('author: "Trey Saddler"\n')
-        file.write('date: "2024-06-26"\n')
+        file.write(f'date: "{data["evalId"].split("T")[0]}"\n')
         file.write('callout-appearance: simple\n')
         file.write('callout-icon: false\n')
         file.write('---\n\n')
@@ -21,28 +35,15 @@ def generate_quarto_doc(json_file, output_file):
 
         # Group the prompts by question
         prompts_by_question = defaultdict(list)
-        # Calculate pass rate by model - This can be simplified by grabbing from the data['head'] object
-        pass_rate_by_model = defaultdict(lambda: {'total': 0, 'passed': 0})
-        for item in data['body']:
-            for output in item['outputs']:
-                provider = output['provider'].split(':')[-1].replace('-', ' ').title()
-                pass_rate_by_model[provider]['total'] += 1
-                if output['pass']:
-                    pass_rate_by_model[provider]['passed'] += 1
-
-        # Write the pass rate data
-        file.write('## Pass Rate by Model\n\n')
-        file.write('| Model | Pass Rate |\n')
-        file.write('|-------|----------|\n')
-        for model, rate_data in pass_rate_by_model.items():
-            pass_rate = rate_data['passed'] / rate_data['total'] * 100
-            file.write(f'| {model} | {pass_rate:.2f}% |\n')
-
-        file.write('\n')
-        
-        for item in data['body']:
-            for output in item['outputs']:
-                prompts_by_question[output['prompt']].append(output)
+        # Calculate pass rate by model
+        # pass_rate_by_model = defaultdict(lambda: {'total': 0, 'passed': 0})
+        # for result in data['results']['results']:
+        #     prompt = result['prompt']['raw']
+        #     prompts_by_question[prompt].append(result)
+        #     provider = result['provider']['id']
+        #     pass_rate_by_model[provider]['total'] += 1
+        #     if result['gradingResult']['pass']:
+        #         pass_rate_by_model[provider]['passed'] += 1
 
         # Write each prompt and its corresponding outputs
         for i, (question, outputs) in enumerate(prompts_by_question.items(), start=1):
@@ -55,19 +56,34 @@ def generate_quarto_doc(json_file, output_file):
             file.write('::: {.panel-tabset}\n\n')
 
             for output in outputs:
-                provider_name = output['provider'].split(':')[-1].replace('-', ' ').title()
-                # file.write(f'## {{{{< iconify logos {provider_name.lower().replace(" ", "-")}-icon >}}}} {provider_name}\n\n')
-                file.write(f'## {provider_name}\n\n')
+                provider_id = output['provider']['id']
+                # Extract the model name without the prefix
+                model_name = provider_id.split(':')[-1]
+                
+                if model_name in model_info:
+                    pretty_name = model_info[model_name]['pretty_name']
+                    icon = model_info[model_name]['iconify']
+                else:
+                    pretty_name = model_name.replace('-', ' ').title()
+                    icon = ''
 
-                # Remove error text from output: "Expected output to contain all of \"liver, hemangiosarcoma\"\n---\n"
-                if 'Expected output' in output['text']:
-                    output['text'] = output['text'].split('---')[1].strip()
-                    
-                file.write(f'{output["text"]}\n\n')
+                if icon:
+                    file.write(f'## {{{{< iconify {icon} >}}}} {pretty_name}\n\n')
+                else:
+                    file.write(f'## {pretty_name}\n\n')
+
+                if isinstance(output["response"]["output"], dict) and "content" in output["response"]["output"]:
+                    file.write(f'{output["response"]["output"]["content"]}\n\n')
+                else:
+                    file.write(f'{output["response"]["output"]}\n\n')
 
             file.write(':::\n\n')
 
 if __name__ == '__main__':
-    json_file = 'eval-2024-05-15T18_35_37-table.json'
-    output_file = 'promptfoo-output-test.qmd'
-    generate_quarto_doc(json_file, output_file)
+    parser = argparse.ArgumentParser(description='Generate Quarto document from JSON and CSV files')
+    parser.add_argument('json_file', help='Input JSON file')
+    parser.add_argument('output_file', help='Output QMD file')
+    parser.add_argument('model_csv', help='CSV file containing model information')
+    args = parser.parse_args()
+
+    generate_quarto_doc(args.json_file, args.output_file, args.model_csv)

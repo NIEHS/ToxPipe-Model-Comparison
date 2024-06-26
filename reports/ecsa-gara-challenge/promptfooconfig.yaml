@@ -1,34 +1,43 @@
-# This configuration compares LLM output of 2 prompts x 2 GPT models across 3 test cases.
 # Learn more: https://promptfoo.dev/docs/configuration/guide
 description: 'ECSA GARA Challenge'
 
 providers: 
-  - id: openai:chat:azure-gpt-4-turbo-20240409
+  - id: openai:chat:azure-gpt-4o
     config:
       temperature: 0
-      # max_tokens: 200
   - id: openai:chat:azure-gpt-4
     config:
       temperature: 0
-      # max_tokens: 200
+  - id: openai:chat:azure-gpt-4-turbo-20240409
+    config:
+      temperature: 0
+  - id: openai:chat:claude-3-5-sonnet
+    config:
+      temperature: 0
   - id: openai:chat:claude-3-opus
     config:
       temperature: 0
-      # max_tokens: 200
+  - id: openai:chat:ai21-jurassic-2-ultra
+    config:
+      temperature: 0
+  - id: openai:chat:amazon-titan-text-premier
+    config:
+      temperature: 0
+  - id: openai:chat:cohere-command-r-plus
+    config:
+      temperature: 0
   - id: openai:chat:gemini-1.5-pro
     config:
       temperature: 0
-      # max_tokens: 200
   - id: openai:chat:mistral-large
     config:
       temperature: 0
-      # max_tokens: 200
 
 prompts:
-  - 'What is the toxicodynamic activity and potential systemic availability of {{chem_name}} or its synonyms with CAS number {{casrn}}? Please classify both as either high, medium, or low for mammals. Follow a read-across approach if only limited scientific information is available. Please give me the sources you take your information from.'
+  - 'What is the toxicodynamic activity and potential systemic availability of {{chemname}} or its synonyms with CAS number {{casrn}}? Please classify both as either high, medium, or low for mammals. Follow a read-across approach if only limited scientific information is available. Please give me the sources you take your information from.'
 
 tests:
-  - ecsa_gara_challenege_chems.csv
+  - pfas.csv
 
 defaultTest:
   options:
@@ -40,3 +49,8 @@ defaultTest:
 sharing:
   apiBaseUrl: https://evals.toxpipe.niehs.nih.gov
   appBaseUrl: https://evals.toxpipe.niehs.nih.gov 
+
+outputPath:
+  - ecsa_gara_challenge.csv
+  - ecsa_gara_challenge.html
+  - ecsa_gara_challenge.json
