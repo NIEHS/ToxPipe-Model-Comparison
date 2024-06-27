@@ -3825,7 +3825,7 @@ Sources:
 
 ## {{< iconify logos google-icon >}} Gemini 1.5 Pro
 
-## Toxicodynamic activity and potential systemic availability of Perfluorononanoic acid (PFNA) - CAS 375-95-1:
+### Toxicodynamic activity and potential systemic availability of Perfluorononanoic acid (PFNA) - CAS 375-95-1:
 
 **Toxicodynamic Activity (in mammals): High**
 
