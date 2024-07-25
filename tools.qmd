@@ -15,10 +15,6 @@ This page will document various tools that could help with this process.
 - ![](https://raw.githubusercontent.com/dair-ai/Prompt-Engineering-Guide/main/public/144-favicon.svg){height=1em} [PromptingGuide.ai | Dair.ai](https://www.promptingguide.ai/tools)
 - {{< iconify logos github-icon >}} [OpenAGI](https://github.com/agiresearch/OpenAGI)
 (https://github.com/NCBI-Codeathons/mlxai-2024-team-saddler)
-- <https://github.com/Azure/azure-quickstart-templates>
 - <https://aztfmod.github.io/documentation/>
 - <https://github.com/microsoft/JARVIS>
-- <https://github.com/Azure/Azurite>
-- <https://github.com/mlflow/mlflow>
-- <https://github.com/microsoft/DeepSpeed>
 - <https://codeql.github.com/>
