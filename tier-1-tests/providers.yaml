@@ -1,0 +1,90 @@
+# OpenAI Models
+
+- id: openai:chat:azure-gpt-4o
+  label: GPT-4o
+  config:
+    temperature: 0
+
+- id: openai:chat:azure-gpt-4
+  label: GPT-4 
+  config:
+    temperature: 0
+
+- id: openai:chat:azure-gpt-4-turbo-20240409
+  label: GPT-4 Turbo (2024-04-09)
+  config:
+    temperature: 0
+
+# Anthropic Claude Models
+
+- id: openai:chat:claude-3-5-sonnet
+  label: Claude 3.5 Sonnet
+  config:
+    temperature: 0
+
+- id: openai:chat:claude-3-opus
+  label: Claude 3 Opus
+  config:
+    temperature: 0
+
+# AI21 Models
+
+- id: openai:chat:ai21-jurassic-2-ultra
+  label: Jurassic 2 Ultra
+  config:
+    temperature: 0
+
+- id: openai:chat:ai21-jamba-instruct
+  label: Jamba-Instruct
+  config:
+    temperature: 0
+
+# Amazon Models
+
+- id: openai:chat:amazon-titan-text-premier
+  label: Titan Text Premier
+  config:
+    temperature: 0
+
+# Cohere Models
+
+- id: openai:chat:cohere-command-r-plus
+  label: Command R+
+  config:
+    temperature: 0
+
+# Google Models
+
+- id: openai:chat:gemini-1.5-pro
+  label: Gemini 1.5 Pro
+  config:
+    temperature: 0
+
+# Mistral Models
+
+- id: openai:chat:mistral-large-2
+  label: Mistral Large 2
+  config:
+    temperature: 0
+
+- id: openai:chat:mistral-large
+  label: Mistral Large
+  config:
+    temperature: 0
+
+# Meta Models
+
+- id: openai:chat:llama3-1-405b
+  label: Llama 3.1 405B
+  config:
+    temperature: 0
+
+- id: openai:chat:llama3-1-70b
+  label: Llama 3.1 70B
+  config:
+    temperature: 0
+
+- id: openai:chat:llama3-70b
+  label: Llama 3 70B
+  config:
+    temperature: 0
