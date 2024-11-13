@@ -1,0 +1,9 @@
+.env
+.venv
+.tool-versions
+
+*.pyc
+
+data/*.*
+
+results/*/
