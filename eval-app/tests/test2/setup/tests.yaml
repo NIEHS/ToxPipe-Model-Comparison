@@ -1,9 +1,0 @@
-- assert:
-    - expected_phrases:
-        - Gastrointestinal bleeding
-      type: python
-      value: file://scripts/tests.py
-  vars:
-    casrn: 50-78-2
-    chemname: Aspirin
-    effect_type: Sub acute toxicity
