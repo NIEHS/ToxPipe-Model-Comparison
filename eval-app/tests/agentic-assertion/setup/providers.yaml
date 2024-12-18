@@ -1,0 +1,56 @@
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [GPT-4o]
+  config:
+    model: 'azure-gpt-4o'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [Claude-3.5 Sonnet]
+  config:
+    model: 'claude-3-5-sonnet'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [Claude-3 Haiku]
+  config:
+    model: 'claude-3-haiku'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [Claude-3 Opus]
+  config:
+    model: 'claude-3-opus'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [Llama 3.1 405B]
+  config:
+    model: 'llama3-1-405b'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [Mistral Large]
+  config:
+    model: 'mistral-large'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [Mistral 7B Instruct]
+  config:
+    model: 'mistral-7b-instruct'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [Cohere Command R+]
+  config:
+    model: 'cohere-command-r-plus'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'

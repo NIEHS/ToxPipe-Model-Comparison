@@ -1,0 +1,12 @@
+- id: 'file://scripts/providers.py'
+  label: Toxipe (Agentic) [GPT-4o]
+  config:
+    model: 'azure-gpt-4o'
+    temp: 0
+    max_iterations: 10
+    summarize: 'false'
+- id: openai:chat:azure-gpt-4o
+  label: GPT-4o
+  config:
+    temperature: 0
+    # max_tokens: 200

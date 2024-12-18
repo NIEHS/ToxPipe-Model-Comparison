@@ -1,0 +1,53 @@
+defaultTest:
+  options:
+    provider:
+      embedding:
+        id: openai:embedding:text-embedding-ada-002
+description: zero-shot test
+prompts:
+  - Answer the following question with a list of string. List the {{effect_type}}
+    of {{chemname}} or its synonyms with CAS number {{casrn}} on human
+providers:
+  - config:
+      temperature: 0
+    id: openai:chat:azure-gpt-4o
+    label: GPT-4o
+  - config:
+      temperature: 0
+    id: openai:chat:claude-3-5-sonnet
+    label: Claude 3.5 Sonnet
+  - config:
+      temperature: 0
+    id: openai:chat:llama3-1-405b
+    label: Llama 3.1 405B
+  - config:
+      temperature: 0
+    id: openai:chat:gemini-1.5-pro
+    label: Gemini 1.5 Pro
+  - config:
+      temperature: 0
+    id: openai:chat:mistral-large-2
+    label: Mistral Large 2
+tests:
+  - assert:
+      - expected_phrases:
+          - Gastrointestinal bleeding
+        type: python
+        value: file://scripts/tests.py
+    description: Test similarity
+    vars:
+      casrn: 50-78-2
+      chemname: Aspirin
+      effect_type: Sub acute toxicity
+  - assert:
+      - expected_phrases:
+          - Hypothermia
+          - Acidosis
+          - Hepatocellular/liver injury
+        type: python
+        value: file://scripts/tests.py
+    description: Test similarity
+    vars:
+      casrn: 103-90-2
+      chemname: Paracetamol
+      effect_type: Sub acute toxicity

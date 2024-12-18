@@ -1,0 +1,76 @@
+.app-container {
+    width:90vw;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.prompt {
+    width:fit-content;
+    font-size: 1.2rem !important; 
+}
+
+.app-table {
+    color: #333;
+}
+
+.app-table .form-group {
+    margin: 0;
+}
+
+.app-table > * > * > th,
+.app-table > * > * > td {
+    padding: 1rem;
+}
+
+.app-table-header {
+    background-color: #eee;
+}
+
+.app-table-row-fail {
+    background-color: #ffe9e9;
+}
+
+.app-table-row-pass {
+    background-color: #ddf6db;
+}
+
+.app-table-row-no-assertion {
+    background-color: #f8f8f8;
+}
+
+.app-table-col {
+    border: 2px solid#fff;
+}
+
+.app-table-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height:500px;
+    overflow-y:auto;
+}
+
+.popover{
+    max-width: 600px;
+}
+
+span.passed {
+    color: #15970b;
+}
+
+span.failed {
+    color: #d41616;
+}
+
+.error {
+    color: #e53232;
+}
+
+div.cards-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.d-contents {
+    display:contents;
+}

@@ -1,0 +1,628 @@
+{
+  "evalId": "eval-jFP-2024-12-04T15:06:32",
+  "results": {
+    "version": 3,
+    "timestamp": "2024-12-04T15:06:32.696Z",
+    "prompts": [
+      {
+        "raw": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n",
+        "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n",
+        "id": "4ad8ae386d235464ac13a87cafc62fe53a877c41f4d5f42ea260b3fba1b31beb",
+        "provider": "GPT-4o",
+        "metrics": {
+          "score": 1,
+          "testPassCount": 1,
+          "testFailCount": 1,
+          "assertPassCount": 3,
+          "assertFailCount": 3,
+          "totalLatencyMs": 27,
+          "tokenUsage": {
+            "total": 448,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 448
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n",
+        "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n",
+        "id": "4ad8ae386d235464ac13a87cafc62fe53a877c41f4d5f42ea260b3fba1b31beb",
+        "provider": "Toxpipe",
+        "metrics": {
+          "score": 0,
+          "testPassCount": 0,
+          "testFailCount": 2,
+          "assertPassCount": 0,
+          "assertFailCount": 6,
+          "totalLatencyMs": 60590,
+          "tokenUsage": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "All assertions passed",
+              "componentResults": [
+                {
+                  "pass": true,
+                  "reason": "The PHRASE 'Gastrointestinal bleeding' is listed as one of the sub-acute toxicity effects of Aspirin in the ANSWER."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": true,
+              "reason": "The PHRASE 'Gastrointestinal bleeding' is listed as one of the sub-acute toxicity effects of Aspirin in the ANSWER.",
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "db08c163-45df-4a62-9b17-05fcd23e2f81",
+        "latencyMs": 13,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Sub acute toxicity of Aspirin or its synonyms with CAS number 50-78-2 on human\n",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n"
+        },
+        "promptId": "4ad8ae386d235464ac13a87cafc62fe53a877c41f4d5f42ea260b3fba1b31beb",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:azure-gpt-4o",
+          "label": "GPT-4o"
+        },
+        "response": {
+          "output": "Sure, here's a list of some sub-acute toxicity effects of Aspirin (also known by its CAS number 50-78-2) on humans:\n\n1. Gastrointestinal bleeding\n2. Gastric ulceration\n3. Nausea\n4. Vomiting\n5. Abdominal pain\n6. Hemorrhagic gastritis\n7. Platelet dysfunction\n8. Anemia\n9. Tinnitus\n10. Dizziness\n11. Chronic nephritis\n12. Hepatotoxicity\n13. Prolonged bleeding time\n14. Allergic reactions\n15. Bronchospasm (in asthmatic patients)\n\nPlease note that the severity and occurrence of these effects can vary depending on the individual and the dosage of aspirin taken. Always consult with a healthcare professional for medical advice.",
+          "tokenUsage": {
+            "cached": 205,
+            "total": 205
+          },
+          "cached": true
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Gastrointestinal bleeding"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Sub acute toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Sub acute toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The phrase 'Acidosis' is not semantically similar to any of the sub-acute toxicity effects listed in the answer."
+                },
+                {
+                  "pass": true,
+                  "reason": "The PHRASE 'Hepatocellular/liver injury' is semantically similar to 'Hepatotoxicity (Liver damage)' listed in the ANSWER, and it is relevant to the QUERY about the sub-acute toxicity of Paracetamol on humans."
+                },
+                {
+                  "pass": false,
+                  "reason": "The phrase 'Hypothermia' is not semantically similar to any of the sub-acute toxicity effects listed in the answer. Hypothermia refers to a condition where the body temperature drops below the normal range, which is not mentioned in the provided list of effects."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Acidosis",
+                  "Hepatocellular/liver injury",
+                  "Hypothermia"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The phrase 'Acidosis' is not semantically similar to any of the sub-acute toxicity effects listed in the answer.",
+              "assertion": {
+                "expected_phrases": [
+                  "Acidosis",
+                  "Hepatocellular/liver injury",
+                  "Hypothermia"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": true,
+              "reason": "The PHRASE 'Hepatocellular/liver injury' is semantically similar to 'Hepatotoxicity (Liver damage)' listed in the ANSWER, and it is relevant to the QUERY about the sub-acute toxicity of Paracetamol on humans.",
+              "assertion": {
+                "expected_phrases": [
+                  "Acidosis",
+                  "Hepatocellular/liver injury",
+                  "Hypothermia"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The phrase 'Hypothermia' is not semantically similar to any of the sub-acute toxicity effects listed in the answer. Hypothermia refers to a condition where the body temperature drops below the normal range, which is not mentioned in the provided list of effects.",
+              "assertion": {
+                "expected_phrases": [
+                  "Acidosis",
+                  "Hepatocellular/liver injury",
+                  "Hypothermia"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "051c457a-8684-444e-b029-bb681369fc05",
+        "latencyMs": 14,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Sub acute toxicity of Paracetamol or its synonyms with CAS number 103-90-2 on human\n",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n"
+        },
+        "promptId": "4ad8ae386d235464ac13a87cafc62fe53a877c41f4d5f42ea260b3fba1b31beb",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:azure-gpt-4o",
+          "label": "GPT-4o"
+        },
+        "response": {
+          "output": "Here is a list of the sub-acute toxicity effects of Paracetamol (also known as Acetaminophen), with CAS number 103-90-2, on humans:\n\n1. Hepatotoxicity (Liver damage)\n2. Nephrotoxicity (Kidney damage)\n3. Hematological effects (Aplastic anemia, Leukopenia, and Thrombocytopenia)\n4. Gastrointestinal disturbances (Nausea, Vomiting, and Abdominal pain)\n5. Allergic reactions (Rashes, Itchiness, and Swelling)\n6. Central Nervous System effects (Dizziness, Headaches, and Lethargy)\n7. Methemoglobinemia (increased levels of methemoglobin in blood)\n8. Electrolyte imbalances (Hypokalemia and Hypermagnesemia)\n9. Respiratory issues (Difficulty in breathing and Bronchospasm)\n10. Cardiovascular effects (Hypotension and Tachycardia)",
+          "tokenUsage": {
+            "cached": 243,
+            "total": 243
+          },
+          "cached": true
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Acidosis",
+                "Hepatocellular/liver injury",
+                "Hypothermia"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "vars": {
+            "casrn": "103-90-2",
+            "chemname": "Paracetamol",
+            "effect_type": "Sub acute toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "casrn": "103-90-2",
+          "chemname": "Paracetamol",
+          "effect_type": "Sub acute toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The phrase 'Gastrointestinal bleeding' is not semantically similar to any of the listed sub-acute toxic effects of Aspirin provided in the answer."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The phrase 'Gastrointestinal bleeding' is not semantically similar to any of the listed sub-acute toxic effects of Aspirin provided in the answer.",
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "02f8c2ed-8f81-4cc6-984e-0e68af346887",
+        "latencyMs": 19042,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Sub acute toxicity of Aspirin or its synonyms with CAS number 50-78-2 on human\n",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n"
+        },
+        "promptId": "4ad8ae386d235464ac13a87cafc62fe53a877c41f4d5f42ea260b3fba1b31beb",
+        "promptIdx": 1,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxpipe"
+        },
+        "response": {
+          "output": "The sub-acute toxicity of Aspirin (CAS number 50-78-2) on humans includes the following non-neoplastic (non-cancer) effects:\n\n1. Pathology gross intestine large (rabbit)\n2. Fetal developmental malformation trunk (rat)\n3. Fetal developmental malformation paw/digit (rat)\n4. Fetal developmental malformation ureter (rat)\n5. Reproductive performance postimplantation loss (rat)\n6. Fetal developmental malformation kidney (rat)\n7. Fetal developmental malformation general (rat)\n8. Pathology gross stomach (rabbit)\n9. Mortality (rabbit)\n10. Clinical signs (rabbit)\n11. Fetal developmental malformation adrenal gland (rat)\n12. Fetal developmental malformation great vessels (rat)\n13. Fetal developmental malformation eye (rat)\n14. Reproductive performance resorptions (rat)\n15. Clinical signs (rat)\n16. Reproductive performance aborted (rabbit)\n17. Fetal developmental malformation ductus arteriosus (rat)\n18. Fetal developmental malformation bone (rat)\n19. Fetal developmental malformation diaphragm (rat)\n20. Fetal developmental malformation testes (rat)\n21. Fetal developmental malformation limb (rat)\n22. Fetal developmental malformation pulmonary artery (rat)\n23. Fetal developmental malformation heart (rat)\n24. Fetal developmental malformation innominate artery (rat)\n25. Fetal developmental malformation mouth/jaw (rat)\n26. Offspring survival early dead fetuses (rat)\n\nSource: ToxRefDB in ChemBioTox."
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Gastrointestinal bleeding"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Sub acute toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Sub acute toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The ANSWER does not provide any information about the sub-acute toxicity of Paracetamol or its synonyms, and therefore cannot be compared to the PHRASE 'Acidosis'."
+                },
+                {
+                  "pass": false,
+                  "reason": "The provided answer does not contain any information about sub-acute toxicity of Paracetamol or its synonyms, and therefore cannot be assessed for similarity or relevance to the phrase 'Hepatocellular/liver injury'."
+                },
+                {
+                  "pass": false,
+                  "reason": "The ANSWER does not provide any specific information about the sub-acute toxicity of Paracetamol, and the PHRASE 'Hypothermia' is not semantically similar to the ANSWER. The ANSWER suggests consulting scientific literature or toxicology databases, which is not related to the PHRASE."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Acidosis",
+                  "Hepatocellular/liver injury",
+                  "Hypothermia"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The ANSWER does not provide any information about the sub-acute toxicity of Paracetamol or its synonyms, and therefore cannot be compared to the PHRASE 'Acidosis'.",
+              "assertion": {
+                "expected_phrases": [
+                  "Acidosis",
+                  "Hepatocellular/liver injury",
+                  "Hypothermia"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The provided answer does not contain any information about sub-acute toxicity of Paracetamol or its synonyms, and therefore cannot be assessed for similarity or relevance to the phrase 'Hepatocellular/liver injury'.",
+              "assertion": {
+                "expected_phrases": [
+                  "Acidosis",
+                  "Hepatocellular/liver injury",
+                  "Hypothermia"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The ANSWER does not provide any specific information about the sub-acute toxicity of Paracetamol, and the PHRASE 'Hypothermia' is not semantically similar to the ANSWER. The ANSWER suggests consulting scientific literature or toxicology databases, which is not related to the PHRASE.",
+              "assertion": {
+                "expected_phrases": [
+                  "Acidosis",
+                  "Hepatocellular/liver injury",
+                  "Hypothermia"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "31344190-464e-4608-976a-cb64c0c8418f",
+        "latencyMs": 41548,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Sub acute toxicity of Paracetamol or its synonyms with CAS number 103-90-2 on human\n",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n"
+        },
+        "promptId": "4ad8ae386d235464ac13a87cafc62fe53a877c41f4d5f42ea260b3fba1b31beb",
+        "promptIdx": 1,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxpipe"
+        },
+        "response": {
+          "output": "I was unable to find the sub-acute toxicity information for Paracetamol on humans using the available tools. I recommend consulting scientific literature or toxicology databases for detailed information."
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Acidosis",
+                "Hepatocellular/liver injury",
+                "Hypothermia"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "vars": {
+            "casrn": "103-90-2",
+            "chemname": "Paracetamol",
+            "effect_type": "Sub acute toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "casrn": "103-90-2",
+          "chemname": "Paracetamol",
+          "effect_type": "Sub acute toxicity"
+        },
+        "metadata": {}
+      }
+    ],
+    "stats": {
+      "successes": 1,
+      "failures": 3,
+      "tokenUsage": {
+        "cached": 448,
+        "completion": 0,
+        "prompt": 0,
+        "total": 448
+      }
+    }
+  },
+  "config": {
+    "tags": {},
+    "description": "test1",
+    "prompts": [
+      "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on human\n"
+    ],
+    "providers": [
+      {
+        "config": {
+          "temperature": 0
+        },
+        "id": "openai:chat:azure-gpt-4o",
+        "label": "GPT-4o"
+      },
+      {
+        "config": {
+          "max_iterations": 10,
+          "model": "azure-gpt-4o",
+          "n_agents": 10,
+          "summarize": "false",
+          "temp": 0
+        },
+        "id": "file://scripts/providers.py",
+        "label": "Toxpipe"
+      }
+    ],
+    "tests": [
+      {
+        "assert": [
+          {
+            "expected_phrases": [
+              "Gastrointestinal bleeding"
+            ],
+            "type": "python",
+            "value": "file://scripts/tests.py"
+          }
+        ],
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Sub acute toxicity"
+        }
+      },
+      {
+        "assert": [
+          {
+            "expected_phrases": [
+              "Acidosis",
+              "Hepatocellular/liver injury",
+              "Hypothermia"
+            ],
+            "type": "python",
+            "value": "file://scripts/tests.py"
+          }
+        ],
+        "vars": {
+          "casrn": "103-90-2",
+          "chemname": "Paracetamol",
+          "effect_type": "Sub acute toxicity"
+        }
+      }
+    ],
+    "scenarios": [],
+    "env": {},
+    "sharing": true,
+    "defaultTest": {
+      "options": {
+        "provider": {
+          "embedding": {
+            "id": "openai:embedding:text-embedding-ada-002"
+          }
+        }
+      },
+      "vars": {},
+      "assert": [],
+      "metadata": {}
+    },
+    "outputPath": [
+      "tests/test1/output/output.json"
+    ],
+    "extensions": [],
+    "metadata": {}
+  },
+  "shareableUrl": null
+}

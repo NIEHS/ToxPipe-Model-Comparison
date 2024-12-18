@@ -1,0 +1,5 @@
+defaultTest: defaulttest.yaml
+description: test2
+prompts: prompts.yaml
+providers: providers.yaml
+tests: tests.yaml

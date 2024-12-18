@@ -1,0 +1,12 @@
+- config:
+    temperature: 0
+  id: openai:chat:azure-gpt-4o
+  label: GPT-4o
+- config:
+    max_iterations: 10
+    model: azure-gpt-4o
+    n_agents: 10
+    summarize: 'false'
+    temp: 0
+  id: file://scripts/providers.py
+  label: Toxpipe

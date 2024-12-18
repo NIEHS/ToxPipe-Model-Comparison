@@ -1,0 +1,20 @@
+- assert:
+    - expected_phrases:
+        - Gastrointestinal bleeding
+      type: python
+      value: file://scripts/tests.py
+  vars:
+    casrn: 50-78-2
+    chemname: Aspirin
+    effect_type: Sub acute toxicity
+- assert:
+    - expected_phrases:
+        - Acidosis
+        - Hepatocellular/liver injury
+        - Hypothermia
+      type: python
+      value: file://scripts/tests.py
+  vars:
+    casrn: 103-90-2
+    chemname: Paracetamol
+    effect_type: Sub acute toxicity
