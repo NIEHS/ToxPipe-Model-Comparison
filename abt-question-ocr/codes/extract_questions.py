@@ -31,8 +31,8 @@ def getOpenAIModel(model_name: str, temperature: int = 0, is_litellm_available: 
 
     return ChatOpenAI(
         model=model_name,
-        base_url=Config.env_config['LITELLM_URL'],
-        api_key=Config.env_config['LITELLM_API_KEY'],
+        base_url=Config.env_config['OPENAI_BASE_URL'],
+        api_key=Config.env_config['OPENAI_API_KEY'],
         temperature=temperature,
         max_tokens=None,
         timeout=None,
