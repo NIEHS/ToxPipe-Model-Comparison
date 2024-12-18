@@ -22,4 +22,7 @@ node_modules/*
 !node_modules/*.*
 node_modules/.*
 
-docs
+docs/~*
+
+.posit
+__pycache__
