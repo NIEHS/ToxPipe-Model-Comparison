@@ -6,8 +6,9 @@ from pathlib import Path
 
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-from pydantic import BaseModel
 from langchain_core.output_parsers import JsonOutputParser
+
+from pydantic import BaseModel
 import pandas as pd
 import json
 

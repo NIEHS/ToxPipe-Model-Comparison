@@ -1,6 +1,6 @@
 from shiny import reactive
 from shiny.express import ui, module
-from shinywidgets import render_plotly
+from shinywidgets import render_widget
 import plotly.express as px
 from utils import Config, processResults
 import pandas as pd
@@ -34,13 +34,13 @@ def mod_ui(input, output, session):
     with ui.div(class_='row'):
         with ui.div(class_='col'):
             with ui.card(fill=True):
-                @render_plotly
+                @render_widget
                 def showPassFailStatPlot():
                     return plotPassFailStat()
                 
         with ui.div(class_='col'):
             with ui.card(fill=True):
-                @render_plotly
+                @render_widget
                 def showPassFailStatByVarPlot():
                     return plotPassFailStatByTest()
         

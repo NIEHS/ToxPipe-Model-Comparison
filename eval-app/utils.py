@@ -5,8 +5,9 @@ import pandas as pd
 from pathlib import Path
 
 class Config:
-    DIR_TESTS = Path(__file__).parent /'tests'
-    DIR_CODES = Path(__file__).parent /'codes'
+    DIR_HOME = Path(__file__).parent
+    DIR_TESTS = DIR_HOME /'tests'
+    DIR_CODES = DIR_HOME /'codes'
     RANDOM_STATE = 1000
     CONFIG_PLOT = dict(
                         template = 'simple_white',
@@ -72,4 +73,7 @@ def processResults(dir_output):
             print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
             raise SilentException()
 
-    return pd.DataFrame(results)
+    results = pd.DataFrame(results)
+    results['eval_id'] = data['evalId']
+
+    return results

@@ -1,3 +1,4 @@
+defaultTest: ''
 description: zero-shot test
 prompts:
   - What are the primary mechanisms of toxicity for {{chemname}} or its synonyms with

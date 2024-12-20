@@ -12,6 +12,9 @@ from umap import UMAP
 import plotly.express as px
 from utils import Config, processResults
 
+import importlib
+db = importlib.import_module(".db", package="app-modules")
+
 ico_check = """<span class='passed'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
 </svg></span>"""
@@ -44,6 +47,57 @@ def prettyTableUI(df, col_widths, style_dict={}):
             class_=f'row' + (' ' + style_dict[f'row_{i}'] if f'row_{i}' in style_dict else '')
         ) for i, row in df.iterrows()],
         class_="app-table"
+    )
+
+@module
+def mod_feedback(input, output, session, feedback):
+
+    def getFeedbackIcon():
+        ico_type = 'regular' if 'passed' not in feedback else 'solid'
+        return fa.icon_svg("comment", ico_type, width="50px")
+
+    @reactive.effect
+    @reactive.event(input.btn_submit)
+    def submit():
+
+        feedback['passed'] = (input.rad_pass() == 'Yes')
+        feedback['comments'] = input.txt_reason()
+
+        try:
+            db.saveRating(feedback)
+            ui.update_action_link(id='btn_feedback', label='', icon=getFeedbackIcon())
+            ui.notification_show(core_ui.div("Rating saved", class_="app-notification"), duration=3, type="message")
+        except Exception as err:
+            print(str(err))
+            ui.notification_show(core_ui.div("Rating was not saved", class_="app-notification"), duration=3, type="error")
+
+        ui.update_popover("popover_feedback", show=False)
+
+    @reactive.effect
+    @reactive.event(input.btn_close)
+    def close():
+        ui.update_popover("popover_feedback", show=False)
+
+    return core_ui.popover(
+                core_ui.input_action_link(id="btn_feedback", label='', icon=getFeedbackIcon(), class_='app-ico'),
+                ui.div(
+                    ui.div(
+                        ui.input_radio_buttons(id='rad_pass', 
+                                               label='Passed', choices=['Yes', 'No'], 
+                                               selected= 'Yes' if 'passed' not in feedback else 'Yes' if feedback['passed'] else 'No', 
+                                               inline=True),
+                        ui.input_action_link(id='btn_close', label='', icon = fa.icon_svg("circle-xmark", "regular", width="25px"), class_='app-ico'),
+                        class_='d-flex justify-content-between'
+                    ),
+                    ui.input_text_area(id='txt_reason', label='Reason', value=feedback['comments'] if 'comments' in feedback else ''),
+                    ui.div(
+                        ui.input_action_button(id='btn_submit', label='Submit'), 
+                        class_='d-flex justify-content-center'
+                    )
+                ),
+                placement="top",
+                id=f"popover_feedback",
+
     )
 
 @module
@@ -104,11 +158,14 @@ def mod_ui(input, output, session):
                                 id=f"popover_result_reason_{x.name}",
                                 options={"trigger": "hover focus"}
                     )
-                data = loadResultsByPrompts()
+                data = loadResultsByPrompts().copy()
                 
                 if data.empty: return
 
-                style_dict={'Model': 'justify-content-center', 'Result': 'justify-content-center'}
+                def test(x):
+                    return core_ui.div(core_ui.markdown(x), class_='app-table-content')
+
+                style_dict={'Model': 'justify-content-center', 'Result': 'justify-content-center', 'Feedback': 'justify-content-center'}
                 if not data.empty:
                     for i, row in data.iterrows():
                         match row['Result']:
@@ -118,17 +175,27 @@ def mod_ui(input, output, session):
                                 style_dict[f'row_{i}'] = 'app-table-row-fail'
                             case _:
                                 style_dict[f'row_{i}'] = 'app-table-row-no-assertion'
-
-                    data['Response'] = data['Response'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
-                
+                    
+                    data['Response'] = data['Response'].apply(lambda x: test(x))
+                    
                 if data['Result'].unique()[0] == 'No assertion':
                     data = data.drop(columns=['Result', 'Reason'])
                     return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
                 
                 data['Result'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)   
                 data = data.drop(columns='Reason')
+
+                eval_id = data['eval_id'].unique()[0]
+                eval_name = input.select_eval()
+
+                d_feedback = loadFeedbacks()
+                data['Feedback'] = data.apply(lambda x: mod_feedback(f'{x.name}', d_feedback[x['Id']] if x['Id'] in d_feedback else {'eval_id': eval_id, 
+                                                                                                                                     'eval_name': eval_name, 
+                                                                                                                                     'test_id': x['Id']}), axis=1)
+
+                data = data.drop(columns=['Id', 'eval_id'])
                 
-                return prettyTableUI(data, col_widths=[1, 10, 1], style_dict=style_dict)
+                return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
 
         with ui.nav_panel(title='Similarity of responses', value="sim"):
 
@@ -173,7 +240,22 @@ def mod_ui(input, output, session):
         if (dir_output / 'response_embeddings.json').exists():
             with open(dir_output / 'response_embeddings.json') as f:
                 embeddings = json.load(f)
+
         return output, embeddings
+    
+    @reactive.calc
+    def loadFeedbacks():
+        output, _ = loadResults()
+        eval_id = output['eval_id'].unique()[0]
+        feedback = db.getRating(eval_id=eval_id)
+        feedback['id'] = feedback['test_id']
+        return feedback.set_index('id').to_dict(orient='index')
+    
+    # @reactive.effect
+    # @reactive.event(db_changed)
+    # def reloadFeedbacks():
+    #     d_feedbacks = loadFeedbacks()
+    #     breakpoint()
 
     @reactive.effect
     @reactive.event(input.select_eval)
@@ -200,9 +282,9 @@ def mod_ui(input, output, session):
         if data.empty: return
         prompt, model = input.select_prompt(), input.select_model()
         if not model or 'Any' in model:
-            res = data.query('Prompt == @prompt')[["Model", "Response", "Result", "Reason"]].reset_index(drop=True).sort_values('Model')
+            res = data.query('Prompt == @prompt')[["Id", "eval_id", "Model", "Response", "Result", "Reason"]].reset_index(drop=True).sort_values('Model')
         else:
-            res = data.query('(Prompt == @prompt) and (Model in @model)')[["Model", "Response", "Result", "Reason"]].reset_index(drop=True)
+            res = data.query('(Prompt == @prompt) and (Model in @model)')[["Id", "eval_id", "Model", "Response", "Result", "Reason"]].reset_index(drop=True)
 
         return res
 
