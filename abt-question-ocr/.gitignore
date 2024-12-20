@@ -1,6 +1,5 @@
 .env
 .venv
-.tool-versions
 
 *.pyc
 

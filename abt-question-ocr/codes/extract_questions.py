@@ -1,12 +1,15 @@
 from utils import Config
 from tqdm import tqdm
 import re
-from langchain_openai import ChatOpenAI
-from langchain.prompts import ChatPromptTemplate
 from pydantic import BaseModel
-from langchain_core.output_parsers import JsonOutputParser
 import json
 import pandas as pd
+import boto3
+
+from langchain_openai import ChatOpenAI
+from langchain.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import JsonOutputParser
+from langchain_community.document_loaders import AmazonTextractPDFLoader
 
 # --------------------------------------------------------------------------------------------
 def getOpenAIModel(model_name: str, temperature: int = 0, is_litellm_available: bool = False) -> ChatOpenAI:
@@ -150,9 +153,6 @@ output_parser_answers_table = CustomOutputParser(SchemaForAnswersFromTable)
 
 # --------------------------------------------------------------------------------------------
 def useAmazonTextract():
-
-    import boto3
-    from langchain_community.document_loaders import AmazonTextractPDFLoader
 
     bucket = 'toxpipe-eval-qa-s3-bucket'
     prefix = 'pdf_qa/'  
