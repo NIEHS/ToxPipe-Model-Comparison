@@ -53,8 +53,15 @@ def prettyTableUI(df, col_widths, style_dict={}):
 def mod_feedback(input, output, session, feedback):
 
     def getFeedbackIcon():
+        if 'passed' not in feedback:
+            cls = 'app-ico'
+        elif feedback['passed'] == True:
+            cls = 'app-ico-passed'
+        else:
+            cls = 'app-ico-failed'
+
         ico_type = 'regular' if 'passed' not in feedback else 'solid'
-        return fa.icon_svg("comment", ico_type, width="30px")
+        return ui.span(fa.icon_svg("comment", ico_type, width="30px"), class_=cls)
 
     @reactive.effect
     @reactive.event(input.btn_submit)
@@ -79,7 +86,7 @@ def mod_feedback(input, output, session, feedback):
         ui.update_popover("popover_feedback", show=False)
 
     return core_ui.popover(
-                core_ui.input_action_link(id="btn_feedback", label='', icon=getFeedbackIcon(), class_='app-ico'),
+                core_ui.input_action_link(id="btn_feedback", label='', icon=getFeedbackIcon()),
                 ui.div(
                     ui.div(
                         ui.input_radio_buttons(id='rad_pass', 

@@ -78,3 +78,11 @@ div.cards-container {
 .app-ico {
     color: #000;
 }
+
+.app-ico-passed {
+    color: #15970b;
+}
+
+.app-ico-failed {
+    color: #d41616;
+}
