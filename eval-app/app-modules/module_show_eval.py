@@ -54,7 +54,7 @@ def mod_feedback(input, output, session, feedback):
 
     def getFeedbackIcon():
         ico_type = 'regular' if 'passed' not in feedback else 'solid'
-        return fa.icon_svg("comment", ico_type, width="50px")
+        return fa.icon_svg("comment", ico_type, width="30px")
 
     @reactive.effect
     @reactive.event(input.btn_submit)
@@ -152,7 +152,7 @@ def mod_ui(input, output, session):
             def showReults():
                 def addReason(x):
                     return core_ui.popover(
-                                core_ui.div(fa.icon_svg("square-check" if x['Result'] == 'Pass' else "square-xmark", "solid", width="50px")),
+                                core_ui.div(fa.icon_svg("square-check" if x['Result'] == 'Pass' else "square-xmark", "solid", width="40px")),
                                 core_ui.HTML(getExplanationHTML(x['Reason'])),
                                 placement="right",
                                 id=f"popover_result_reason_{x.name}",
