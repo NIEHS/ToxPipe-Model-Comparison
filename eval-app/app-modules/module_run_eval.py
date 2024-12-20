@@ -128,8 +128,8 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     def loadEvals():
-        dir_output = Config.DIR_TESTS
-        ui.update_select(id='select_eval', choices=[test.name for test in dir_output.iterdir() if test.is_dir() and (test / 'promptfooconfig.yaml').exists()])
+        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'promptfooconfig.yaml').exists()])
+        ui.update_select(id='select_eval', choices=tests)
 
     @reactive.calc
     @reactive.event(input.select_eval)
