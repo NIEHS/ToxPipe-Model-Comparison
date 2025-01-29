@@ -64,12 +64,12 @@ def mod_feedback(input, output, session, feedback):
         return ui.span(fa.icon_svg("comment", ico_type, width="30px"), class_=cls)
 
     @reactive.effect
-    @reactive.event(input.btn_submit)
+    @reactive.event(input.btn_submit, ignore_init=True)
     def submit():
 
         feedback['passed'] = (input.rad_pass() == 'Yes')
         feedback['comments'] = input.txt_reason()
-
+    
         try:
             db.saveRating(feedback)
             ui.update_action_link(id='btn_feedback', label='', icon=getFeedbackIcon())
@@ -186,7 +186,7 @@ def mod_ui(input, output, session):
                     data['Response'] = data['Response'].apply(lambda x: test(x))
                     
                 if data['Result'].unique()[0] == 'No assertion':
-                    data = data.drop(columns=['Result', 'Reason'])
+                    data = data.drop(columns=['Id', 'eval_id', 'Result', 'Reason'])
                     return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
                 
                 data['Result'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)   
