@@ -1,4 +1,0 @@
-options:
-  provider:
-    embedding:
-      id: openai:embedding:text-embedding-ada-002
