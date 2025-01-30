@@ -287,7 +287,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.select_eval, input.select_prompt, input.select_model)
     def loadResultsByPrompts():
         data, _ = loadResults()
-        if data.empty: return
+        if data.empty: return pd.DataFrame()
         prompt, model = input.select_prompt(), input.select_model()
         if not model or 'Any' in model:
             res = data.query('Prompt == @prompt')[["Id", "eval_id", "Model", "Response", "Result", "Reason"]].reset_index(drop=True).sort_values('Model')

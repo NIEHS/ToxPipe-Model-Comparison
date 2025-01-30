@@ -1,0 +1,351 @@
+{
+  "evalId": "eval-86E-2025-01-30T18:05:30",
+  "results": {
+    "version": 3,
+    "timestamp": "2025-01-30T18:05:30.087Z",
+    "prompts": [
+      {
+        "raw": "how you you?",
+        "label": "how you you?",
+        "id": "ea2321744fbaf9577fcdd594f799fc467b51b5c63e54ea4896de3233a62ba69d",
+        "provider": "GPT-4o",
+        "metrics": {
+          "score": 1,
+          "testPassCount": 1,
+          "testFailCount": 0,
+          "assertPassCount": 3,
+          "assertFailCount": 0,
+          "totalLatencyMs": 1379,
+          "tokenUsage": {
+            "total": 25,
+            "prompt": 11,
+            "completion": 14,
+            "cached": 0
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "how you you?",
+        "label": "how you you?",
+        "id": "ea2321744fbaf9577fcdd594f799fc467b51b5c63e54ea4896de3233a62ba69d",
+        "provider": "Claude 3.5 Sonnet",
+        "metrics": {
+          "score": 1,
+          "testPassCount": 1,
+          "testFailCount": 0,
+          "assertPassCount": 3,
+          "assertFailCount": 0,
+          "totalLatencyMs": 2471,
+          "tokenUsage": {
+            "total": 77,
+            "prompt": 11,
+            "completion": 66,
+            "cached": 0
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "All assertions passed",
+              "componentResults": [
+                {
+                  "pass": true,
+                  "reason": "The ANSWER 'I'm doing well, thank you!' is semantically similar to the PHRASE 'fine' and relevant to the QUERY 'how you you?'."
+                },
+                {
+                  "pass": true,
+                  "reason": "The ANSWER 'I'm doing well, thank you!' is semantically similar to the PHRASE 'good' and relevant to the QUERY 'how you you?'."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "fine",
+                  "good"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": true,
+              "reason": "The ANSWER 'I'm doing well, thank you!' is semantically similar to the PHRASE 'fine' and relevant to the QUERY 'how you you?'.",
+              "assertion": {
+                "expected_phrases": [
+                  "fine",
+                  "good"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": true,
+              "reason": "The ANSWER 'I'm doing well, thank you!' is semantically similar to the PHRASE 'good' and relevant to the QUERY 'how you you?'.",
+              "assertion": {
+                "expected_phrases": [
+                  "fine",
+                  "good"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "45dc767e-78c3-4d95-911c-94a7f6e05d92",
+        "latencyMs": 1379,
+        "namedScores": {},
+        "prompt": {
+          "raw": "how you you?",
+          "label": "how you you?"
+        },
+        "promptId": "ea2321744fbaf9577fcdd594f799fc467b51b5c63e54ea4896de3233a62ba69d",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:azure-gpt-4o",
+          "label": "GPT-4o"
+        },
+        "response": {
+          "output": "I'm doing well, thank you! How can I assist you today?",
+          "tokenUsage": {
+            "total": 25,
+            "prompt": 11,
+            "completion": 14
+          },
+          "cached": false
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "fine",
+                "good"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "vars": {},
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {},
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "All assertions passed",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": true,
+              "score": 1,
+              "reason": "All assertions passed",
+              "componentResults": [
+                {
+                  "pass": true,
+                  "reason": "The ANSWER indicates that the responder is functioning well, which is semantically similar to the PHRASE 'fine'."
+                },
+                {
+                  "pass": true,
+                  "reason": "The ANSWER indicates that the responder is functioning well, which is semantically similar to the PHRASE 'good'."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "fine",
+                  "good"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": true,
+              "reason": "The ANSWER indicates that the responder is functioning well, which is semantically similar to the PHRASE 'fine'.",
+              "assertion": {
+                "expected_phrases": [
+                  "fine",
+                  "good"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": true,
+              "reason": "The ANSWER indicates that the responder is functioning well, which is semantically similar to the PHRASE 'good'.",
+              "assertion": {
+                "expected_phrases": [
+                  "fine",
+                  "good"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "d47353e6-cf93-4319-bda3-a0b465f7df6c",
+        "latencyMs": 2471,
+        "namedScores": {},
+        "prompt": {
+          "raw": "how you you?",
+          "label": "how you you?"
+        },
+        "promptId": "ea2321744fbaf9577fcdd594f799fc467b51b5c63e54ea4896de3233a62ba69d",
+        "promptIdx": 1,
+        "provider": {
+          "id": "openai:chat:claude-3-5-sonnet",
+          "label": "Claude 3.5 Sonnet"
+        },
+        "response": {
+          "output": "I think you may have meant to ask \"How are you?\" If that's the case, I'm functioning well and ready to assist you! How can I help you today?\n\nIf you meant to ask something else, please feel free to rephrase your question and I'll do my best to answer.",
+          "tokenUsage": {
+            "total": 77,
+            "prompt": 11,
+            "completion": 66
+          },
+          "cached": false
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "fine",
+                "good"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "vars": {},
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {},
+        "metadata": {}
+      }
+    ],
+    "stats": {
+      "successes": 2,
+      "failures": 0,
+      "tokenUsage": {
+        "cached": 0,
+        "completion": 80,
+        "prompt": 22,
+        "total": 102
+      }
+    }
+  },
+  "config": {
+    "tags": {},
+    "description": "tests",
+    "prompts": [
+      "how you you?"
+    ],
+    "providers": [
+      {
+        "config": {
+          "temperature": 0
+        },
+        "id": "openai:chat:azure-gpt-4o",
+        "label": "GPT-4o"
+      },
+      {
+        "config": {
+          "temperature": 0
+        },
+        "id": "openai:chat:claude-3-5-sonnet",
+        "label": "Claude 3.5 Sonnet"
+      }
+    ],
+    "tests": [
+      {
+        "assert": [
+          {
+            "expected_phrases": [
+              "fine",
+              "good"
+            ],
+            "type": "python",
+            "value": "file://scripts/tests.py"
+          }
+        ]
+      }
+    ],
+    "scenarios": [],
+    "env": {},
+    "sharing": true,
+    "defaultTest": {
+      "options": {
+        "provider": {
+          "embedding": {
+            "id": "openai:embedding:text-embedding-ada-002"
+          }
+        }
+      },
+      "vars": {},
+      "assert": [],
+      "metadata": {}
+    },
+    "outputPath": [
+      "/Users/talukdera2/Desktop/projects/ods/ToxPipe-Model-Comparison/eval-app/tests/test2/output/output.json"
+    ],
+    "extensions": [],
+    "metadata": {}
+  },
+  "shareableUrl": null
+}

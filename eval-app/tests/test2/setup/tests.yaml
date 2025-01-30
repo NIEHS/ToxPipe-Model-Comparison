@@ -1,0 +1,6 @@
+- assert:
+    - expected_phrases:
+        - fine
+        - good
+      type: python
+      value: file://scripts/tests.py
