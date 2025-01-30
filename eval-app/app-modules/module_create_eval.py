@@ -1,6 +1,8 @@
 
 from shiny import reactive, ui as core_ui
 from shiny.express import ui, render, module
+from shiny.types import SilentException
+import traceback
 import json
 import faicons as fa
 import yaml
@@ -8,6 +10,18 @@ import regex
 import shutil
 from codes.create_promptfoo_config import createTest, MyDumper
 from utils import Config
+
+def logexp(func):
+    def wrapper(*args, **kargs):
+        try:
+            ret = func(*args, **kargs)
+        except Exception as exp:
+            print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
+        except SilentException as exp:
+            print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
+        return ret
+    return wrapper
+
 
 @module
 def mod_ui(input, output, session):
@@ -256,14 +270,15 @@ def mod_ui(input, output, session):
         if len(model_list) == 0: errors.append('At least one model must be selected')
         for model_id in model_list:
             model_config = model_options[int(model_id)]['config']
-            input_fields = [k for k in input.__dict__['_map'].keys() if k.startswith(f'create-select_model_config_{model_id}') or k.startswith(f'create-txt_model_config_{model_id}')]
 
+            input_fields = [k for k in input.__dict__['_map'].keys() if k.startswith(f'set-create-select_model_config_{model_id}') or k.startswith(f'set-create-txt_model_config_{model_id}')]
+            
             for in_field in input_fields:
                 field_name = '_'.join(in_field.split('_')[4:])
-                field_value = str(input[in_field.split('-')[1]]()).strip()
+                field_value = str(input[in_field.split('-')[-1]]()).strip()
 
                 if model_config[field_name]['type'] == 'int' and not bool(p.fullmatch(field_value)): errors.append(f'{field_name} can only contain numeric values')
-                    
+        
         val = input.txt_prompt()
         if len(val.strip()) == 0:
             errors.append('Prompt cannot be empty')
@@ -303,7 +318,7 @@ def mod_ui(input, output, session):
         
         if len(test_vars.get()) == 0: expected_phrases.set({})
         
-        field_names = [x.split('-')[1] for x in sorted(input.__dict__['_map'].keys()) if x.startswith('create-txt_var_')]
+        field_names = [x.split('-')[1] for x in sorted(input.__dict__['_map'].keys()) if x.startswith('set-create-txt_var_')]
         
         val = []
         for x in field_names:
@@ -324,13 +339,13 @@ def mod_ui(input, output, session):
         if id_ not in expected_phrases.get():
             expected_phrases.set({**expected_phrases.get(), **{id_: set()}})
         
-
+    @logexp
     @reactive.effect
     @reactive.event(input.btn_create_eval)
     def createEval():
         def getFieldValue(in_field, model_config):
             field_name = '_'.join(in_field.split('_')[4:])
-            field_value = input[in_field.split('-')[1]]()
+            field_value = input[in_field.split('-')[-1]]()
             try:
                 if model_config[field_name]['type'] == 'int':
                     field_value = int(field_value)
@@ -352,7 +367,7 @@ def mod_ui(input, output, session):
         has_toxpipe = False
         for model_id in model_list:
             model_config = model_options[int(model_id)]
-            input_fields = [k for k in input.__dict__['_map'].keys() if k.startswith(f'create-select_model_config_{model_id}') or k.startswith(f'create-txt_model_config_{model_id}')]
+            input_fields = [k for k in input.__dict__['_map'].keys() if k.startswith(f'set-create-select_model_config_{model_id}') or k.startswith(f'set-create-txt_model_config_{model_id}')]
             providers.append(
                 {
                     'id': model_config['id'],
@@ -361,7 +376,7 @@ def mod_ui(input, output, session):
                 }
             )
             if model_config['id'] == "file://scripts/providers.py": has_toxpipe = True
-
+    
         prompt = input.txt_prompt()
 
         defaulttest = {
@@ -400,31 +415,37 @@ def mod_ui(input, output, session):
 
             'user': [f'''{prompt}''']
         }
-
+        
         if not variables:
-            tests = [ 
-                {
-                    'assert': [ 
-                        {
-                            'expected_phrases': list(expected_phrases.get().get(0, [])),
-                            'type': 'python',
-                            'value': 'file://scripts/tests.py'
-                        }
-                    ]
-                }
-            ]
+            if len(expected_phrases.get()) == 0:
+                tests = []
+            else:
+                tests = [ 
+                    {
+                        'assert': [ 
+                            {
+                                'expected_phrases': list(expected_phrases.get().get(0, [])),
+                                'type': 'python',
+                                'value': 'file://scripts/tests.py'
+                            }
+                        ]
+                    }
+                ]
         else:
             tests = []
             for i, var in variables.items():
-                d_dict = {
-                            'assert': [ 
-                                {
-                                    'expected_phrases': list(expected_phrases.get().get(i, [])),
-                                    'type': 'python',
-                                    'value': 'file://scripts/tests.py'
-                                }
-                            ]
-                }
+                if len(expected_phrases.get()) == 0:
+                    d_dict = {}
+                else:
+                    d_dict = {
+                                'assert': [ 
+                                    {
+                                        'expected_phrases': list(expected_phrases.get().get(i, [])),
+                                        'type': 'python',
+                                        'value': 'file://scripts/tests.py'
+                                    }
+                                ]
+                    }
                 d_dict['vars'] = {k: v for k, v in var}
                 tests.append(d_dict)
 

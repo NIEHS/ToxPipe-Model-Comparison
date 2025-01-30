@@ -55,7 +55,7 @@ def processResults(dir_output):
     results = []
     with open(dir_output / 'output.json') as f:
         data = json.load(f)
-
+    
     for item in data['results']['results']:
         try:
             results.append(

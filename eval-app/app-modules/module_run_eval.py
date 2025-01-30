@@ -141,8 +141,8 @@ def mod_ui(input, output, session):
     @reactive.event(input.select_eval)
     def loadLastRunTimestamp():
         dir_eval_output = Config.DIR_TESTS / input.select_eval() / 'output'
-        timestamp_test = "Not created"
-        timestamp_sim = "Not created"
+        timestamp_test = "Not run yet"
+        timestamp_sim = "Not run yet"
 
         if (dir_eval_output / 'output.json').exists():
             timestamp_test = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'output.json'))
