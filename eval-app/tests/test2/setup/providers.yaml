@@ -1,0 +1,8 @@
+- config:
+    temperature: 0
+  id: openai:chat:azure-gpt-4o
+  label: GPT-4o
+- config:
+    temperature: 0
+  id: openai:chat:claude-3-5-sonnet
+  label: Claude 3.5 Sonnet

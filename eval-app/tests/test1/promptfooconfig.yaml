@@ -1,0 +1,20 @@
+defaultTest:
+  options:
+    provider:
+      embedding:
+        id: openai:embedding:text-embedding-ada-002
+description: tests
+prompts:
+  - how are you?
+providers:
+  - config:
+      temperature: 0
+    id: openai:chat:azure-gpt-4o
+    label: GPT-4o
+  - config:
+      temperature: 0
+    id: openai:chat:claude-3-5-sonnet
+    label: Claude 3.5 Sonnet
+tests:
+  - vars:
+      dummy: dummy

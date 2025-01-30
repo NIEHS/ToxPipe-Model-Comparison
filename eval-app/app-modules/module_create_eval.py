@@ -418,7 +418,9 @@ def mod_ui(input, output, session):
         
         if not variables:
             if len(expected_phrases.get()) == 0:
-                tests = []
+                tests = [
+                    {'vars': {'dummy': 'dummy'}}
+                ]
             else:
                 tests = [ 
                     {

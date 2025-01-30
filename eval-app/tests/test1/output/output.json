@@ -1,0 +1,232 @@
+{
+  "evalId": "eval-8iV-2025-01-30T18:34:38",
+  "results": {
+    "version": 3,
+    "timestamp": "2025-01-30T18:34:38.844Z",
+    "prompts": [
+      {
+        "raw": "how are you?",
+        "label": "how are you?",
+        "id": "f0b380c58db9fc81026fadc1877e1ef163e6ee63ddad60fe4acf54f45ab37318",
+        "provider": "GPT-4o",
+        "metrics": {
+          "score": 1,
+          "testPassCount": 1,
+          "testFailCount": 0,
+          "assertPassCount": 0,
+          "assertFailCount": 0,
+          "totalLatencyMs": 25,
+          "tokenUsage": {
+            "total": 39,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 39
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "how are you?",
+        "label": "how are you?",
+        "id": "f0b380c58db9fc81026fadc1877e1ef163e6ee63ddad60fe4acf54f45ab37318",
+        "provider": "Claude 3.5 Sonnet",
+        "metrics": {
+          "score": 1,
+          "testPassCount": 1,
+          "testFailCount": 0,
+          "assertPassCount": 0,
+          "assertFailCount": 0,
+          "totalLatencyMs": 4,
+          "tokenUsage": {
+            "total": 54,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 54
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "No assertions",
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "assertion": null
+        },
+        "id": "cad47b70-3c5f-4b21-9add-a436c0de4153",
+        "latencyMs": 4,
+        "namedScores": {},
+        "prompt": {
+          "raw": "how are you?",
+          "label": "how are you?"
+        },
+        "promptId": "f0b380c58db9fc81026fadc1877e1ef163e6ee63ddad60fe4acf54f45ab37318",
+        "promptIdx": 1,
+        "provider": {
+          "id": "openai:chat:claude-3-5-sonnet",
+          "label": "Claude 3.5 Sonnet"
+        },
+        "response": {
+          "output": "As an AI language model, I don't have feelings or personal experiences, but I'm functioning well and ready to assist you with any questions or information you need. How can I help you today?",
+          "tokenUsage": {
+            "cached": 54,
+            "total": 54
+          },
+          "cached": true
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "dummy": "dummy"
+          },
+          "assert": [],
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "dummy": "dummy"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "gradingResult": {
+          "pass": true,
+          "score": 1,
+          "reason": "No assertions",
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "assertion": null
+        },
+        "id": "06ff07f2-adae-4f6f-9cf3-344d7ce052e3",
+        "latencyMs": 25,
+        "namedScores": {},
+        "prompt": {
+          "raw": "how are you?",
+          "label": "how are you?"
+        },
+        "promptId": "f0b380c58db9fc81026fadc1877e1ef163e6ee63ddad60fe4acf54f45ab37318",
+        "promptIdx": 0,
+        "provider": {
+          "id": "openai:chat:azure-gpt-4o",
+          "label": "GPT-4o"
+        },
+        "response": {
+          "output": "I'm just a computer program, so I don't have feelings, but I'm here and ready to help you. How can I assist you today?",
+          "tokenUsage": {
+            "cached": 39,
+            "total": 39
+          },
+          "cached": true
+        },
+        "score": 1,
+        "success": true,
+        "testCase": {
+          "vars": {
+            "dummy": "dummy"
+          },
+          "assert": [],
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "dummy": "dummy"
+        },
+        "metadata": {}
+      }
+    ],
+    "stats": {
+      "successes": 2,
+      "failures": 0,
+      "tokenUsage": {
+        "cached": 93,
+        "completion": 0,
+        "prompt": 0,
+        "total": 93
+      }
+    }
+  },
+  "config": {
+    "tags": {},
+    "description": "tests",
+    "prompts": [
+      "how are you?"
+    ],
+    "providers": [
+      {
+        "config": {
+          "temperature": 0
+        },
+        "id": "openai:chat:azure-gpt-4o",
+        "label": "GPT-4o"
+      },
+      {
+        "config": {
+          "temperature": 0
+        },
+        "id": "openai:chat:claude-3-5-sonnet",
+        "label": "Claude 3.5 Sonnet"
+      }
+    ],
+    "tests": [
+      {
+        "vars": {
+          "dummy": "dummy"
+        }
+      }
+    ],
+    "scenarios": [],
+    "env": {},
+    "sharing": true,
+    "defaultTest": {
+      "options": {
+        "provider": {
+          "embedding": {
+            "id": "openai:embedding:text-embedding-ada-002"
+          }
+        }
+      },
+      "vars": {},
+      "assert": [],
+      "metadata": {}
+    },
+    "outputPath": [
+      "/Users/talukdera2/Desktop/projects/ods/ToxPipe-Model-Comparison/eval-app/tests/test1/output/output.json"
+    ],
+    "extensions": [],
+    "metadata": {}
+  },
+  "shareableUrl": null
+}

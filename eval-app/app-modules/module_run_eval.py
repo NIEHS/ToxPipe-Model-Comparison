@@ -60,6 +60,7 @@ def mod_ui(input, output, session):
                     def getTestInfo(test_list):
                         ui_elements = []
                         for test in test_list:
+                            if 'vars' in test and 'dummy' in test['vars']: continue
                             html = f'''<ul>
                                         {''.join([f'<li>{showKeyVal(k, v)}</li>' for k, v in test['vars'].items()]) if 'vars' in test else ''}
                                         {f'<li>{showKeyVal('Response key phrases', ', '.join(test['assert'][0]['expected_phrases']))}</li>' if 'assert' in test else ''}
