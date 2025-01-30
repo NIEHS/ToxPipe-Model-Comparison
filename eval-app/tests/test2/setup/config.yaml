@@ -1,5 +1,0 @@
-defaultTest: defaulttest.yaml
-description: tests
-prompts: prompts.yaml
-providers: providers.yaml
-tests: tests.yaml
