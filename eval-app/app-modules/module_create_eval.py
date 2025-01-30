@@ -261,8 +261,8 @@ def mod_ui(input, output, session):
         elif val and (Config.DIR_TESTS / val).exists(): errors.append('Name already exists')
 
         val = input.txt_desc()
-        p = regex.compile(r'[A-Za-z0-9 \-\_\,\;]+')
-        if not bool(p.fullmatch(val)): errors.append('Description can only contain alphanumeric characters, space, "-", "_", "," and ";"')
+        p = regex.compile(r'[A-Za-z0-9 \-\_\,\;\(\)]+')
+        if not bool(p.fullmatch(val)): errors.append('Description can only contain alphanumeric characters, space, "-", "_", ",", ";" and "()"')
 
         p = regex.compile(r'\d*')
         model_options = loadModelSettings()
@@ -318,7 +318,7 @@ def mod_ui(input, output, session):
         
         if len(test_vars.get()) == 0: expected_phrases.set({})
         
-        field_names = [x.split('-')[1] for x in sorted(input.__dict__['_map'].keys()) if x.startswith('set-create-txt_var_')]
+        field_names = [x.split('-')[-1] for x in sorted(input.__dict__['_map'].keys()) if x.startswith('set-create-txt_var_')]
         
         val = []
         for x in field_names:

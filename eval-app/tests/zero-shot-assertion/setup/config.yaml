@@ -1,7 +1,0 @@
-description: zero-shot with assertion 
-prompts: prompts.yaml
-providers: providers.yaml
-tests: tests.yaml
-langfuse: true
-env: .env
-defaultTest: defaulttest.yaml
