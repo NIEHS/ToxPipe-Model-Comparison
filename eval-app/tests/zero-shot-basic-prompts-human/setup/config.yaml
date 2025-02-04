@@ -1,0 +1,6 @@
+description: Tests on zero-shot framework with basic prompts for human
+prompts: prompts.yaml
+providers: providers.yaml
+tests: tests.yaml
+langfuse: true
+env: .env

@@ -3,6 +3,7 @@ import traceback
 from shiny.types import SilentException
 import pandas as pd
 from pathlib import Path
+import plotly.express as px
 
 class Config:
     DIR_HOME = Path(__file__).parent
@@ -52,6 +53,7 @@ def processResults(dir_output):
                           'reason': result['reason'],
             }]
         return d_results
+    
     results = []
     with open(dir_output / 'output.json') as f:
         data = json.load(f)
@@ -70,10 +72,24 @@ def processResults(dir_output):
                 }
             )
         except Exception as exp:
+            print(f'Error reading output from {dir_output}')
             print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
-            raise SilentException()
+            return pd.DataFrame()
 
     results = pd.DataFrame(results)
     results['eval_id'] = data['evalId']
 
     return results
+
+def getNoDataPlot(title):
+        
+    fig = px.scatter(x=[0.5], y=[0.5], text=['No data found<br />or<br />Error in data extraction'], size=[0]) 
+    fig.update_layout(
+        title=title,
+        **Config.CONFIG_PLOT
+    )
+
+    fig.update_xaxes(visible=False)
+    fig.update_yaxes(visible=False)
+                        
+    return fig

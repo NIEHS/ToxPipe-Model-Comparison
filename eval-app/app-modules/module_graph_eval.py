@@ -1,14 +1,16 @@
-from shiny import reactive
-from shiny.express import ui, module
-from shinywidgets import render_widget
+from shiny import reactive, ui as core_ui
+from shiny.express import ui, module, render
+from shinywidgets import render_widget, output_widget
 import plotly.express as px
-from utils import Config, processResults
+from utils import Config, processResults, getNoDataPlot
 import pandas as pd
+import traceback
 
 @module
 def mod_ui(input, output, session):
 
     with ui.div(class_="d-flex gap-5"):
+        ui.input_select("select_level", "Levels", choices={'any': 'Any', 'zero-shot': 'Zero-shot', 'rag': 'RAG', 'agentic': 'Agentic'})
         ui.input_select("select_eval", "Evals", choices=[])
         ui.input_select("select_var", "Variables", choices=[])
 
@@ -36,27 +38,38 @@ def mod_ui(input, output, session):
             with ui.card(fill=True):
                 @render_widget
                 def showPassFailStatPlot():
-                    return plotPassFailStat()
+                    return plotPassFailStatByTest()
                 
         with ui.div(class_='col'):
             with ui.card(fill=True):
                 @render_widget
-                def showPassFailStatByVarPlot():
-                    return plotPassFailStatByTest()
-        
+                def showAssertionStatPlot():
+                    return plotAssertionStatByTest()
 
     @reactive.effect
+    @reactive.event(input.select_level)
     def loadEvals():
-        ui.update_select(id='select_eval', choices=[test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'promptfooconfig.yaml').exists()])
+        def sortKey(x):
+            ai_frameworks = ['zero-shot', 'rag', 'agentic']
+            prompts = ['tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
+            species = ['human', 'rat']
+            evals = [f'{f}-{p}-{s}' for f in ai_frameworks for p in prompts for s in species]
+            eval_dict = {v: len(evals)-i for i, v in enumerate(evals)}
+            if x not in eval_dict: return 0
+            return eval_dict[x]
+        level = input.select_level()
+        evals = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'output' / 'output.json').exists() and (level == 'any' or test.name.startswith(level)) and ('assertion' in test.name)], key=sortKey, reverse=True)
+        ui.update_select(id='select_eval', choices=evals)
 
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadResults():
-        dir_output = Config.DIR_TESTS / input.select_eval() / 'output'
-        output = None
+        eval_name = input.select_eval()
+        dir_output = Config.DIR_TESTS / eval_name / 'output'
+        data = pd.DataFrame()
         if (dir_output / 'output.json').exists():
-            output = processResults(dir_output)
-        return output
+            data = processResults(dir_output)
+        return data
 
     @reactive.effect
     @reactive.event(input.select_eval)
@@ -80,14 +93,32 @@ def mod_ui(input, output, session):
             
     @reactive.calc
     @reactive.event(input.select_eval, input.select_var)
-    def plotPassFailStat():
+    def plotPassFailStatByTest():
         data = loadResults()
         
         var = input.select_var()
         if var == 'Any':
-            df_plot = data.copy()
+            data = data.copy()
         else:
-            df_plot = data.query('Variable == @var')
+            data = data.query('Variable == @var')
+
+        return getPassFailStatPlot(data)
+    
+    @reactive.calc
+    @reactive.event(input.select_eval, input.select_var)
+    def plotAssertionStatByTest():
+        data = loadResults()
+        var = input.select_var()
+        if var == 'Any':
+            data = data.copy()
+        else:
+            data = data.query('Variable == @var')
+
+        return getAssertionStatPlot(data)
+
+    def getPassFailStatPlot(data: pd.DataFrame):
+
+        if data.empty: return getNoDataPlot(title='Correct Responses')
 
         df_plot = data.groupby('Model')['Result'].value_counts().reset_index()
 
@@ -116,16 +147,10 @@ def mod_ui(input, output, session):
 
         return fig
     
-    @reactive.calc
-    @reactive.event(input.select_eval, input.select_var)
-    def plotPassFailStatByTest():
-        data = loadResults()
-        var = input.select_var()
-        if var == 'Any':
-            df_plot = data.copy()
-        else:
-            df_plot = data.query('Variable == @var')
+    def getAssertionStatPlot(data: pd.DataFrame):
 
+        if data.empty: return getNoDataPlot(title='Correct Assertions in Responses')
+            
         def getAssertionPassCount(reason):
             if not isinstance(reason, list): return (0, 'Pass', 1)
             if 'components' not in reason[0]: return (int(reason[0]['pass']), 'Pass', 1)
@@ -134,10 +159,10 @@ def mod_ui(input, output, session):
                 s += y['pass']
             return (s, 'Pass', len(reason[0]['components']))
         
-        df_plot_pass = (df_plot.apply(lambda x: getAssertionPassCount(x['Reason']), axis=1, result_type='expand')
+        df_plot_pass = (data.apply(lambda x: getAssertionPassCount(x['Reason']), axis=1, result_type='expand')
                                 .rename(columns={0: 'Count', 1: 'Result', 2: 'Total assertions'})
         )
-        df_plot_pass['Model'] = df_plot['Model']
+        df_plot_pass['Model'] = data['Model']
         df_plot_fail = pd.DataFrame({'Model': df_plot_pass['Model'], 
                                      'Result': 'Fail', 
                                      'Count': df_plot_pass['Total assertions'] - df_plot_pass['Count']})

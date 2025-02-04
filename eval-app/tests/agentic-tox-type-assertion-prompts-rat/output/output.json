@@ -1,0 +1,919 @@
+{
+  "evalId": "eval-8T7-2025-02-03T21:12:36",
+  "results": {
+    "version": 3,
+    "timestamp": "2025-02-03T21:12:36.349Z",
+    "prompts": [
+      {
+        "raw": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat",
+        "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat",
+        "id": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "provider": "Toxipe (Agentic) [GPT-4o]",
+        "metrics": {
+          "score": 0,
+          "testPassCount": 0,
+          "testFailCount": 2,
+          "assertPassCount": 0,
+          "assertFailCount": 4,
+          "totalLatencyMs": 23,
+          "tokenUsage": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat",
+        "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat",
+        "id": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "provider": "Toxipe (Agentic) [Claude-3.5 Sonnet]",
+        "metrics": {
+          "score": 0,
+          "testPassCount": 0,
+          "testFailCount": 2,
+          "assertPassCount": 0,
+          "assertFailCount": 4,
+          "totalLatencyMs": 17,
+          "tokenUsage": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat",
+        "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat",
+        "id": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "provider": "Toxipe (Agentic) [Gemini 1.5 Pro]",
+        "metrics": {
+          "score": 0,
+          "testPassCount": 0,
+          "testFailCount": 2,
+          "assertPassCount": 0,
+          "assertFailCount": 0,
+          "totalLatencyMs": 12862,
+          "tokenUsage": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      },
+      {
+        "raw": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat",
+        "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat",
+        "id": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "provider": "Toxipe (Agentic) [Mistral Large]",
+        "metrics": {
+          "score": 0,
+          "testPassCount": 0,
+          "testFailCount": 2,
+          "assertPassCount": 0,
+          "assertFailCount": 4,
+          "totalLatencyMs": 21,
+          "tokenUsage": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "namedScores": {},
+          "namedScoresCount": {},
+          "cost": 0
+        }
+      }
+    ],
+    "results": [
+      {
+        "cost": 0,
+        "error": "Internal Server Error",
+        "gradingResult": null,
+        "id": "1f2a2563-dfd9-4e62-9a12-df4f643d5d92",
+        "latencyMs": 8197,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Sub acute toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rat",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+        },
+        "promptId": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "promptIdx": 2,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxipe (Agentic) [Gemini 1.5 Pro]"
+        },
+        "response": {
+          "output": "",
+          "error": "Internal Server Error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Gastrointestinal bleeding"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "description": "Test similarity",
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Sub acute toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Sub acute toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The provided answer does not address the query about the sub-acute toxicity of Aspirin on rats. The phrase 'Gastrointestinal bleeding' is a potential sub-acute toxicity effect, but the answer does not provide any relevant information."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The provided answer does not address the query about the sub-acute toxicity of Aspirin on rats. The phrase 'Gastrointestinal bleeding' is a potential sub-acute toxicity effect, but the answer does not provide any relevant information.",
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "247056db-3d11-48fb-8152-235d1f1a5b5f",
+        "latencyMs": 14,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Sub acute toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rat",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+        },
+        "promptId": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "promptIdx": 1,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxipe (Agentic) [Claude-3.5 Sonnet]"
+        },
+        "response": {
+          "output": "Sorry, need more steps to process this request."
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Gastrointestinal bleeding"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "description": "Test similarity",
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Sub acute toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Sub acute toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The provided ANSWER does not contain any specific information about the sub-acute toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rats. Therefore, it is not possible to determine if the PHRASE 'Gastrointestinal bleeding' is semantically similar to the ANSWER."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The provided ANSWER does not contain any specific information about the sub-acute toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rats. Therefore, it is not possible to determine if the PHRASE 'Gastrointestinal bleeding' is semantically similar to the ANSWER.",
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "9e602613-b613-462d-9952-ca257162d8e8",
+        "latencyMs": 19,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Sub acute toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rat",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+        },
+        "promptId": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "promptIdx": 3,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxipe (Agentic) [Mistral Large]"
+        },
+        "response": {
+          "output": "According to the following references:\nCitation:10.2174/1381612828666220412093734 \n Path: ./papers/35914211-41ba-42e2-9614-1daa91e1201f//10.2174_1381612828666220412093734.pdf \n\nCitation:10.18632/oncotarget.6934 \n Path: ./papers/35914211-41ba-42e2-9614-1daa91e1201f//10.18632_oncotarget.6934.pdf \n\nSummary:"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Gastrointestinal bleeding"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "description": "Test similarity",
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Sub acute toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Sub acute toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The PHRASE 'Gastrointestinal bleeding' is not semantically similar to any of the listed sub-acute toxic effects of Aspirin on rats provided in the ANSWER. The QUERY specifically asks for sub-acute toxicity effects on rats, and gastrointestinal bleeding is not mentioned in the ANSWER."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The PHRASE 'Gastrointestinal bleeding' is not semantically similar to any of the listed sub-acute toxic effects of Aspirin on rats provided in the ANSWER. The QUERY specifically asks for sub-acute toxicity effects on rats, and gastrointestinal bleeding is not mentioned in the ANSWER.",
+              "assertion": {
+                "expected_phrases": [
+                  "Gastrointestinal bleeding"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "de1c7ec5-f6bc-4176-ac35-ae50240bdf00",
+        "latencyMs": 20,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Sub acute toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rat",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+        },
+        "promptId": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "promptIdx": 0,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxipe (Agentic) [GPT-4o]"
+        },
+        "response": {
+          "output": "The sub-acute toxicity of Aspirin (CAS number 50-78-2) on rats includes the following non-neoplastic (non-cancer) effects:\n\n1. Fetal developmental malformation (general)\n2. Fetal developmental malformation (innominate artery)\n3. Fetal developmental malformation (paw/digit)\n4. Fetal developmental malformation (pulmonary artery)\n5. Fetal developmental malformation (eye)\n6. Fetal developmental malformation (trunk)\n7. Offspring survival early (dead fetuses)\n8. Fetal developmental malformation (testes)\n9. Fetal developmental malformation (heart)\n10. Reproductive performance (resorptions)\n11. Fetal developmental malformation (kidney)\n12. Fetal developmental malformation (bone)\n13. Reproductive performance (postimplantation loss)\n14. Fetal developmental malformation (diaphragm)\n15. Fetal developmental malformation (ureter)\n16. Fetal developmental malformation (great vessels)\n17. Fetal developmental malformation (mouth/jaw)\n18. In life observation (clinical signs)\n19. Fetal developmental malformation (limb)\n20. Fetal developmental malformation (adrenal gland)\n21. Fetal developmental malformation (ductus arteriosus)\n\nSource: ToxRefDB, DTXSID5020108"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Gastrointestinal bleeding"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "description": "Test similarity",
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Sub acute toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 0,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Sub acute toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "Internal Server Error",
+        "gradingResult": null,
+        "id": "7116668d-ce41-4b0e-be9d-9cedf6326e06",
+        "latencyMs": 4665,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Chronic toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rat",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+        },
+        "promptId": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "promptIdx": 2,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxipe (Agentic) [Gemini 1.5 Pro]"
+        },
+        "response": {
+          "output": "",
+          "error": "Internal Server Error"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Angiosarcoma of the liver"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "description": "Test similarity",
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Chronic toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Chronic toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The ANSWER indicates that there is no specific information available on the chronic toxicity of Aspirin on rats. The PHRASE 'Angiosarcoma of the liver' is not semantically similar to the ANSWER and is not relevant to the QUERY."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Angiosarcoma of the liver"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The ANSWER indicates that there is no specific information available on the chronic toxicity of Aspirin on rats. The PHRASE 'Angiosarcoma of the liver' is not semantically similar to the ANSWER and is not relevant to the QUERY.",
+              "assertion": {
+                "expected_phrases": [
+                  "Angiosarcoma of the liver"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "1a87326a-c878-407d-b3b8-d94fd7e743a5",
+        "latencyMs": 3,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Chronic toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rat",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+        },
+        "promptId": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "promptIdx": 0,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxipe (Agentic) [GPT-4o]"
+        },
+        "response": {
+          "output": "I was unable to find specific information on the chronic toxicity of Aspirin (CAS number 50-78-2) on rats using the available tools."
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Angiosarcoma of the liver"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "description": "Test similarity",
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Chronic toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Chronic toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The provided answer consists of a list of references and citations without any specific information on the chronic toxicity of Aspirin on rats. The phrase 'Angiosarcoma of the liver' is a specific type of cancer and does not semantically match or relate to the provided answer."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Angiosarcoma of the liver"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The provided answer consists of a list of references and citations without any specific information on the chronic toxicity of Aspirin on rats. The phrase 'Angiosarcoma of the liver' is a specific type of cancer and does not semantically match or relate to the provided answer.",
+              "assertion": {
+                "expected_phrases": [
+                  "Angiosarcoma of the liver"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "091832ff-2a47-4643-8cea-ffe4c826aad5",
+        "latencyMs": 2,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Chronic toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rat",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+        },
+        "promptId": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "promptIdx": 3,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxipe (Agentic) [Mistral Large]"
+        },
+        "response": {
+          "output": "According to the following references:\nCitation:10.1007/s11912-024-01605-7 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s11912-024-01605-7.pdf \n\nCitation:10.1007/s10557-024-07624-7 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s10557-024-07624-7.pdf \n\nCitation:10.24976/Discov.Med.202436188.165 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.24976_Discov.Med.202436188.165.pdf \n\nCitation:10.3389/fcvm.2024.1342832 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.3389_fcvm.2024.1342832.pdf \n\nCitation:10.3390/ijms242316749 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.3390_ijms242316749.pdf \n\nCitation:10.3389/fphar.2023.1229960 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.3389_fphar.2023.1229960.pdf \n\nCitation:10.1007/s13205-023-03632-w \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s13205-023-03632-w.pdf \n\nCitation:10.1007/s10646-023-02624-z \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s10646-023-02624-z.pdf \n\nCitation:10.31557/APJCP.2022.23.11.3801 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.31557_APJCP.2022.23.11.3801.pdf \n\nCitation:10.2147/DDDT.S368836 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.2147_DDDT.S368836.pdf \n\nCitation:10.3389/fphar.2022.838079 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.3389_fphar.2022.838079.pdf \n\nCitation:10.1007/s13181-021-00865-0 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s13181-021-00865-0.pdf \n\nCitation:10.3390/pharmaceutics13111827 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.3390_pharmaceutics13111827.pdf \n\nCitation:10.3390/molecules26216538 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.3390_molecules26216538.pdf \n\nCitation:10.3390/ijms222111689 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.3390_ijms222111689.pdf \n\nCitation:10.3389/fphar.2021.684162 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.3389_fphar.2021.684162.pdf \n\nCitation:10.1371/journal.pone.0249276 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1371_journal.pone.0249276.pdf \n\nCitation:10.1186/s12974-020-01997-w \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1186_s12974-020-01997-w.pdf \n\nCitation:10.1007/s11356-019-05151-9 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s11356-019-05151-9.pdf \n\nCitation:10.1007/s11356-019-04880-1 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s11356-019-04880-1.pdf \n\nCitation:10.1007/s12640-017-9847-1 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s12640-017-9847-1.pdf \n\nCitation:10.2174/1872211311666170911160914 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.2174_1872211311666170911160914.pdf \n\nCitation:10.1186/s12868-016-0326-z \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1186_s12868-016-0326-z.pdf \n\nCitation:10.1186/s12974-016-0676-6 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1186_s12974-016-0676-6.pdf \n\nCitation:10.1007/s40264-016-0421-1 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s40264-016-0421-1.pdf \n\nCitation:10.2174/187220830902160308195034 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.2174_187220830902160308195034.pdf \n\nCitation:10.18632/oncotarget.6934 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.18632_oncotarget.6934.pdf \n\nCitation:10.1007/978-3-0348-0927-6_4 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_978-3-0348-0927-6_4.pdf \n\nCitation:10.1007/s11684-015-0398-7 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s11684-015-0398-7.pdf \n\nCitation:10.2147/JPR.S75160 \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.2147_JPR.S75160.pdf \n\nCitation:10.1007/s00535-014-1028-x \n Path: ./papers/ddf85366-321e-4c91-8d91-7707b422d021//10.1007_s00535-014-1028-x.pdf \n\nSummary:"
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Angiosarcoma of the liver"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "description": "Test similarity",
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Chronic toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Chronic toxicity"
+        },
+        "metadata": {}
+      },
+      {
+        "cost": 0,
+        "error": "All assertions did not pass",
+        "gradingResult": {
+          "pass": false,
+          "score": 0,
+          "reason": "All assertions did not pass",
+          "namedScores": {},
+          "tokensUsed": {
+            "total": 0,
+            "prompt": 0,
+            "completion": 0,
+            "cached": 0
+          },
+          "componentResults": [
+            {
+              "pass": false,
+              "score": 0,
+              "reason": "All assertions did not pass",
+              "componentResults": [
+                {
+                  "pass": false,
+                  "reason": "The provided answer lists developmental malformations and effects related to developmental toxicity in rats, while the phrase 'Angiosarcoma of the liver' refers to a specific type of cancer. The phrase is not semantically similar to the answer and is not relevant to the query about chronic toxicity of Aspirin on rats."
+                }
+              ],
+              "assertion": {
+                "expected_phrases": [
+                  "Angiosarcoma of the liver"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            },
+            {
+              "pass": false,
+              "reason": "The provided answer lists developmental malformations and effects related to developmental toxicity in rats, while the phrase 'Angiosarcoma of the liver' refers to a specific type of cancer. The phrase is not semantically similar to the answer and is not relevant to the query about chronic toxicity of Aspirin on rats.",
+              "assertion": {
+                "expected_phrases": [
+                  "Angiosarcoma of the liver"
+                ],
+                "type": "python",
+                "value": "file://scripts/tests.py"
+              }
+            }
+          ],
+          "assertion": null
+        },
+        "id": "35240864-8c9c-4d25-8662-ecb8d6bf4637",
+        "latencyMs": 3,
+        "namedScores": {},
+        "prompt": {
+          "raw": "Answer the following question with a list of string. List the Chronic toxicity of Aspirin or its synonyms with CAS number 50-78-2 on rat",
+          "label": "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+        },
+        "promptId": "cbfa86e7fc6fd72521f9482bdf01c002e1e483516b1ee96680112916bc71018d",
+        "promptIdx": 1,
+        "provider": {
+          "id": "file://scripts/providers.py",
+          "label": "Toxipe (Agentic) [Claude-3.5 Sonnet]"
+        },
+        "response": {
+          "output": "I apologize for the lack of results from the literature search. Given the limited information we have obtained, I'll provide a final answer based on the available data from the ToxRefDB, while noting the limitations of our findings.\n\nBased on the information available from the ToxRefDB, we can provide a list of effects associated with Aspirin (CAS number 50-78-2) on rats, which may be relevant to chronic toxicity. However, it's important to note that these effects are primarily related to developmental toxicity rather than specific chronic toxicity studies. Here's a list of the reported effects on rats:\n\n1. Developmental malformations (general)\n2. Developmental malformations of the innominate artery\n3. Developmental malformations of the paw / digit\n4. Developmental malformations of the pulmonary artery\n5. Developmental malformations of the eye\n6. Developmental malformations of the trunk\n7. Reduced offspring survival (dead fetuses)\n8. Developmental malformations of the testes\n9. Developmental malformations of the heart\n10. Increased resorptions during pregnancy\n11. Developmental malformations of the kidney\n12. Developmental malformations of the bone\n13. Increased postimplantation loss\n14. Developmental malformations of the diaphragm\n15. Developmental malformations of the ureter\n16. Developmental malformations of the great vessels\n17. Developmental malformations of the mouth / jaw\n18. Clinical signs in adult rats\n19. Developmental malformations of the limb\n20. Developmental malformations of the adrenal gland\n21. Developmental malformations of the ductus arteriosus\n\nSource: ToxRefDB (Toxicity Reference Database) as queried through the ChemBioTox Database.\n\nIt's important to note that this list primarily focuses on developmental toxicity effects rather than chronic toxicity specifically. The available data does not provide detailed information about long-term, repeated exposure effects in adult rats. To obtain more specific information about chronic toxicity of Aspirin on rats, further research or experimental studies may be necessary."
+        },
+        "score": 0,
+        "success": false,
+        "testCase": {
+          "assert": [
+            {
+              "expected_phrases": [
+                "Angiosarcoma of the liver"
+              ],
+              "type": "python",
+              "value": "file://scripts/tests.py"
+            }
+          ],
+          "description": "Test similarity",
+          "vars": {
+            "casrn": "50-78-2",
+            "chemname": "Aspirin",
+            "effect_type": "Chronic toxicity"
+          },
+          "options": {
+            "provider": {
+              "embedding": {
+                "id": "openai:embedding:text-embedding-ada-002"
+              }
+            }
+          },
+          "metadata": {}
+        },
+        "testIdx": 1,
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Chronic toxicity"
+        },
+        "metadata": {}
+      }
+    ],
+    "stats": {
+      "successes": 0,
+      "failures": 8,
+      "tokenUsage": {
+        "cached": 0,
+        "completion": 0,
+        "prompt": 0,
+        "total": 0
+      }
+    }
+  },
+  "config": {
+    "tags": {},
+    "description": "Tests on agentic framework with toxicity type prompts for rat",
+    "prompts": [
+      "Answer the following question with a list of string. List the {{effect_type}} of {{chemname}} or its synonyms with CAS number {{casrn}} on rat"
+    ],
+    "providers": [
+      {
+        "config": {
+          "max_iterations": 10,
+          "model": "azure-gpt-4o",
+          "summarize": "false",
+          "temp": 0
+        },
+        "id": "file://scripts/providers.py",
+        "label": "Toxipe (Agentic) [GPT-4o]"
+      },
+      {
+        "config": {
+          "max_iterations": 10,
+          "model": "claude-3-5-sonnet",
+          "summarize": "false",
+          "temp": 0
+        },
+        "id": "file://scripts/providers.py",
+        "label": "Toxipe (Agentic) [Claude-3.5 Sonnet]"
+      },
+      {
+        "config": {
+          "max_iterations": 10,
+          "model": "gemini-1.5-pro",
+          "summarize": "false",
+          "temp": 0
+        },
+        "id": "file://scripts/providers.py",
+        "label": "Toxipe (Agentic) [Gemini 1.5 Pro]"
+      },
+      {
+        "config": {
+          "max_iterations": 10,
+          "model": "mistral-large",
+          "summarize": "false",
+          "temp": 0
+        },
+        "id": "file://scripts/providers.py",
+        "label": "Toxipe (Agentic) [Mistral Large]"
+      }
+    ],
+    "tests": [
+      {
+        "assert": [
+          {
+            "expected_phrases": [
+              "Gastrointestinal bleeding"
+            ],
+            "type": "python",
+            "value": "file://scripts/tests.py"
+          }
+        ],
+        "description": "Test similarity",
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Sub acute toxicity"
+        }
+      },
+      {
+        "assert": [
+          {
+            "expected_phrases": [
+              "Angiosarcoma of the liver"
+            ],
+            "type": "python",
+            "value": "file://scripts/tests.py"
+          }
+        ],
+        "description": "Test similarity",
+        "vars": {
+          "casrn": "50-78-2",
+          "chemname": "Aspirin",
+          "effect_type": "Chronic toxicity"
+        }
+      }
+    ],
+    "scenarios": [],
+    "env": {},
+    "sharing": true,
+    "defaultTest": {
+      "options": {
+        "provider": {
+          "embedding": {
+            "id": "openai:embedding:text-embedding-ada-002"
+          }
+        }
+      },
+      "vars": {},
+      "assert": [],
+      "metadata": {}
+    },
+    "outputPath": [
+      "/Users/talukdera2/Desktop/projects/ods/ToxPipe-Model-Comparison/eval-app/tests/agentic-tox-type-assertion-prompts-rat/output/output.json"
+    ],
+    "extensions": [],
+    "metadata": {}
+  },
+  "shareableUrl": null
+}

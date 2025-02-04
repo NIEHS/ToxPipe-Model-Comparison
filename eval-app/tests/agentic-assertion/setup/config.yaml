@@ -1,5 +1,0 @@
-description: Agentic with assertion 
-prompts: prompts.yaml
-providers: providers.yaml
-tests: tests.yaml
-defaultTest: defaulttest.yaml

@@ -1,0 +1,20 @@
+- assert:
+  - expected_phrases:
+    - Gastrointestinal bleeding
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+  vars:
+    casrn: 50-78-2
+    chemname: Aspirin
+    effect_type: Sub acute toxicity
+- assert:
+  - expected_phrases:
+    - Angiosarcoma of the liver
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+  vars:
+    casrn: 50-78-2
+    chemname: Aspirin
+    effect_type: Chronic toxicity

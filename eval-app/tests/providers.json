@@ -73,7 +73,6 @@
                 "type": [
                     "azure-gpt-4o",
                     "claude-3-5-sonnet",
-                    "llama3-1-405b",
                     "gemini-1.5-pro",
                     "mistral-large"
                 ],

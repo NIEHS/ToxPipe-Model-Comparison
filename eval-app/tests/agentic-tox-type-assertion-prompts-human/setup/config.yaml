@@ -1,0 +1,5 @@
+description: Tests on agentic framework with toxicity type prompts for human
+prompts: prompts.yaml
+providers: providers.yaml
+tests: tests.yaml
+defaultTest: defaulttest.yaml

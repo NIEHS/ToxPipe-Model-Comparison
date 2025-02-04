@@ -1,4 +1,4 @@
-description: zero-shot test
+description: Tests on zero-shot framework with advanced prompts for human
 prompts: prompts.yaml
 providers: providers.yaml
 tests: tests.yaml

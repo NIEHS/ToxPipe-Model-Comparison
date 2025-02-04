@@ -127,10 +127,10 @@ def mod_ui(input, output, session):
             if not has_component:
                 for result in results:
                     text += f"<li>{result['reason']} {resultStr(result['pass'])}</li>"
-
+                    
             return text
 
-        if not result: return "No reason found"
+        if not isinstance(result, list): return "No reason found"
         return getComponentExplanation(result)
 
     with ui.div(class_="d-flex gap-5"):
@@ -169,9 +169,6 @@ def mod_ui(input, output, session):
                 
                 if data.empty: return
 
-                def test(x):
-                    return core_ui.div(core_ui.markdown(x), class_='app-table-content')
-
                 style_dict={'Model': 'justify-content-center', 'Result': 'justify-content-center', 'Feedback': 'justify-content-center'}
                 if not data.empty:
                     for i, row in data.iterrows():
@@ -183,7 +180,7 @@ def mod_ui(input, output, session):
                             case _:
                                 style_dict[f'row_{i}'] = 'app-table-row-no-assertion'
                     
-                    data['Response'] = data['Response'].apply(lambda x: test(x))
+                    data['Response'] = data['Response'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
                     
                 if data['Result'].unique()[0] == 'No assertion':
                     data = data.drop(columns=['Id', 'eval_id', 'Result', 'Reason'])
@@ -199,7 +196,6 @@ def mod_ui(input, output, session):
                 data['Feedback'] = data.apply(lambda x: mod_feedback(f'{x.name}', d_feedback[x['Id']] if x['Id'] in d_feedback else {'eval_id': eval_id, 
                                                                                                                                      'eval_name': eval_name, 
                                                                                                                                      'test_id': x['Id']}), axis=1)
-
                 data = data.drop(columns=['Id', 'eval_id'])
                 
                 return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
