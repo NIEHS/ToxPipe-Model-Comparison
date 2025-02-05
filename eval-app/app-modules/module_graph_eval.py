@@ -1,70 +1,36 @@
-from shiny import reactive, ui as core_ui
+from shiny import reactive
 from shiny.express import ui, module, render
-from shinywidgets import render_widget, output_widget
+from shinywidgets import render_widget
 import plotly.express as px
 from utils import Config, processResults, getNoDataPlot
 import pandas as pd
-import traceback
 
 @module
-def mod_ui(input, output, session):
+def module_graph(input, output, session, eval_name):
 
-    with ui.div(class_="d-flex gap-5"):
-        ui.input_select("select_level", "Levels", choices={'any': 'Any', 'zero-shot': 'Zero-shot', 'rag': 'RAG', 'agentic': 'Agentic'})
-        ui.input_select("select_eval", "Evals", choices=[])
-        ui.input_select("select_var", "Variables", choices=[])
+    with ui.div(class_='row border round mt-3 p-3'):
+        with ui.div(class_='row'):
+            with ui.div(class_='col'):
+                ui.strong(eval_name)
+            with ui.div(class_='col'):
+                ui.input_select("select_var", "Variables", choices=[])
 
-        # @module
-        # def vars_ui(input, output, session, var_info, data, fn):
+        with ui.div(class_='row'):
 
-        #     @reactive.calc
-        #     @reactive.event(input.select_eval, [input[f'select_var_{var_name}'] for var_name in var_info.keys])
-        #     def loadPassFailStatPlot():
-        #         fn(data)
-
-        #     return [ui.input_select(f"select_var_{var_name}", var_name, choices=['Any'] + sorted(var_choices)) for var_name, var_choices in var_info.items()]
-        
-        # @render.ui
-        # def showVars():
-        #     var_info = loadVars()
-        #     if not var_info: return
-        #     data = loadResults()
-        #     return [vars_ui(var_name, var_name=var_name, var_choices=var_choices, data=data, fn=plotPassFailStat) for var_name, var_choices in var_info.items()]
-        #     #var_names = list(var_info.keys())
-        #     #return [ui.input_select(f"select_var_{var_name}", var_name, choices=['Any'] + sorted(var_choices)) for var_name, var_choices in var_info.items()]
-
-    with ui.div(class_='row'):
-        with ui.div(class_='col'):
-            with ui.card(fill=True):
-                @render_widget
-                def showPassFailStatPlot():
-                    return plotPassFailStatByTest()
+            with ui.div(class_='col'):
+                with ui.card(fill=True):
+                    @render_widget
+                    def showPassFailStatPlot():
+                        return plotPassFailStatByTest()
+                    
+            with ui.div(class_='col'):
+                with ui.card(fill=True):
+                    @render_widget
+                    def showAssertionStatPlot():
+                        return plotAssertionStatByTest()
                 
-        with ui.div(class_='col'):
-            with ui.card(fill=True):
-                @render_widget
-                def showAssertionStatPlot():
-                    return plotAssertionStatByTest()
-
-    @reactive.effect
-    @reactive.event(input.select_level)
-    def loadEvals():
-        def sortKey(x):
-            ai_frameworks = ['zero-shot', 'rag', 'agentic']
-            prompts = ['tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
-            species = ['human', 'rat']
-            evals = [f'{f}-{p}-{s}' for f in ai_frameworks for p in prompts for s in species]
-            eval_dict = {v: len(evals)-i for i, v in enumerate(evals)}
-            if x not in eval_dict: return 0
-            return eval_dict[x]
-        level = input.select_level()
-        evals = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'output' / 'output.json').exists() and (level == 'any' or test.name.startswith(level)) and ('assertion' in test.name)], key=sortKey, reverse=True)
-        ui.update_select(id='select_eval', choices=evals)
-
     @reactive.calc
-    @reactive.event(input.select_eval)
     def loadResults():
-        eval_name = input.select_eval()
         dir_output = Config.DIR_TESTS / eval_name / 'output'
         data = pd.DataFrame()
         if (dir_output / 'output.json').exists():
@@ -72,7 +38,6 @@ def mod_ui(input, output, session):
         return data
 
     @reactive.effect
-    @reactive.event(input.select_eval)
     def loadVars():
         data = loadResults()
         if data.empty: return
@@ -92,7 +57,7 @@ def mod_ui(input, output, session):
     #     return d_var
             
     @reactive.calc
-    @reactive.event(input.select_eval, input.select_var)
+    @reactive.event(input.select_var)
     def plotPassFailStatByTest():
         data = loadResults()
         
@@ -105,7 +70,7 @@ def mod_ui(input, output, session):
         return getPassFailStatPlot(data)
     
     @reactive.calc
-    @reactive.event(input.select_eval, input.select_var)
+    @reactive.event(input.select_var)
     def plotAssertionStatByTest():
         data = loadResults()
         var = input.select_var()
@@ -187,3 +152,74 @@ def mod_ui(input, output, session):
         fig.update_xaxes(visible=False)
 
         return fig
+
+@module
+def mod_ui(input, output, session):
+
+    with ui.div(class_="d-flex gap-5"):
+        ui.input_select("select_level", "Levels", choices={'any': 'Any', 'zero-shot': 'Zero-shot', 'rag': 'RAG', 'agentic': 'Agentic'})
+        ui.input_select("select_prompt", "Prompts", choices={'any': 'Any', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
+        ui.input_select("select_species", "Species", choices={'any': 'Any', 'human': 'Human', 'rat': 'Rat'})
+        ui.input_select("select_eval", "Evals", choices=[])
+
+        # @module
+        # def vars_ui(input, output, session, var_info, data, fn):
+
+        #     @reactive.calc
+        #     @reactive.event(input.select_eval, [input[f'select_var_{var_name}'] for var_name in var_info.keys])
+        #     def loadPassFailStatPlot():
+        #         fn(data)
+
+        #     return [ui.input_select(f"select_var_{var_name}", var_name, choices=['Any'] + sorted(var_choices)) for var_name, var_choices in var_info.items()]
+        
+        # @render.ui
+        # def showVars():
+        #     var_info = loadVars()
+        #     if not var_info: return
+        #     data = loadResults()
+        #     return [vars_ui(var_name, var_name=var_name, var_choices=var_choices, data=data, fn=plotPassFailStat) for var_name, var_choices in var_info.items()]
+        #     #var_names = list(var_info.keys())
+        #     #return [ui.input_select(f"select_var_{var_name}", var_name, choices=['Any'] + sorted(var_choices)) for var_name, var_choices in var_info.items()]
+            
+    @render.express
+    def showPlots():
+        loadResults()
+
+    @reactive.calc
+    @reactive.event(input.select_level, input.select_prompt, input.select_species)
+    def getEvals():
+        def sortKey(x):
+            ai_frameworks = ['zero-shot', 'rag', 'agentic']
+            prompts = ['tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
+            species = ['human', 'rat']
+            evals = [f'{f}-{p}-{s}' for f in ai_frameworks for p in prompts for s in species]
+            eval_dict = {v: len(evals)-i for i, v in enumerate(evals)}
+            if x not in eval_dict: return 0
+            return eval_dict[x]
+        level, prompt, species = input.select_level(), input.select_prompt(), input.select_species()
+
+        evals = []
+        for test in Config.DIR_TESTS.iterdir():
+            if test.is_dir() and (test / 'output' / 'output.json').exists():
+                if level != 'any' and not test.name.startswith(level): continue
+                if prompt != 'any' and prompt not in test.name: continue
+                if species != 'any' and not test.name.endswith(level): continue
+                evals.append(test.name)
+
+        return sorted(evals, key=sortKey, reverse=True)
+
+    @reactive.effect
+    @reactive.event(input.select_level, input.select_prompt, input.select_species)
+    def loadEvalMenu():
+        evals = getEvals()
+        ui.update_select(id='select_eval', choices=['Any'] + evals)
+
+    @reactive.calc
+    @reactive.event(input.select_level, input.select_prompt, input.select_species, input.select_eval)
+    def loadResults():
+        eval_name = input.select_eval()
+        if eval_name == 'Any':
+            evals = getEvals()
+            return [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals)]
+        return module_graph('eval_0', eval_name)
+    

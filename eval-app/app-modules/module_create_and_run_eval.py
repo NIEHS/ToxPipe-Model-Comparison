@@ -1,7 +1,5 @@
 from shiny.express import ui, module
-import importlib
-module_create_eval = importlib.import_module(".module_create_eval", package="app-modules")
-module_run_eval = importlib.import_module(".module_run_eval", package="app-modules")
+from . import module_create_eval, module_run_eval
 
 @module
 def mod_ui(input, output, session):
