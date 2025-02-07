@@ -9,7 +9,7 @@ module_graph_eval = importlib.import_module("app-modules.module_graph_eval")
 ui.include_css(Path(__file__).parent / "css" / "bootstrap.css", method='link_files')
 ui.include_css(Path(__file__).parent / "css" / "custom.css", method='link_files')
 
-ui.page_opts(title="Promptfoo visualization", fillable=True)
+ui.page_opts(title="Toxpipe Evaluation", fillable=True)
 
 with ui.navset_pill(id="nav_id", selected='show'):
     with ui.nav_panel('Set Eval', value='set'):

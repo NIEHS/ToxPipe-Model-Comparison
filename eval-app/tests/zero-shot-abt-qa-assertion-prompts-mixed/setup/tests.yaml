@@ -1,0 +1,2934 @@
+- assert:
+  - expected_phrases:
+    - (C) 226 Ra and 90 Sr
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) atropine only
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) inhibiting acetylcholine release from the axon terminal
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) nettles
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) urine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) sugar cane dust
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) alveolus
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) decreased PR interval and decreased QRS interval on ECG
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) riboflavin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) lead
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) aluminum
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) oxidizing the iron in hemoglobin from Fe2+ to Fe
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) aminoglycosides
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) methylene chloride
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) fluoride
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) covalent bonds
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) ricin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) diethyl phthalate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) a spider bite
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) the relapses occurring in persons recovering from acute CO poisoning are
+      most likely due to CO storage in myoglobin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) is equivalent to 10 ml ethanol per hour
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) bloody diarrhea
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) a relatively low acute systemic toxicity compared to other organic solvents
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) brown recluse spider (Loxosceles reclusa)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) 2,5-hexanedione
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) nickel carbonyl
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) atropine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) ionization of a weak organic base
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) capacity to intercalate with DNA
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) the FDA normally applies a 100-fold safety factor to the NOAEL obtained
+      in appropriate animal toxicity tests
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) is an anaphylactoid reaction
+    - (2) is effectively treated with antihistamines
+    - (3) is commonly caused by ingesting spoiled tuna
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) has been found as a contaminant in 2,4,5-T
+    - (2) is extremely toxic to some animal species
+    - (3) is teratogenic and carcinogenic
+    - (4) induces microsomal enzymes
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (2) tetrodotoxin
+    - (4) saxitoxin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (2) sodium bicarbonate
+    - (4) ethanol
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) ozone
+    - (3) peroxyacetyl nitrate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) lead
+    - (3) nickel
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) A and C
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) a glutathione conjugate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) iodochlorhydroxyquin - lit.
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) valproic acid
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) methoxyflurane
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) benzene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) fructose
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) increase the incidence of tumors
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) all of the above
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) may occur when two or more antigens share similar groups
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) rubratoxin B
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) aspirin plus phenacetin - collecting duct
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) night blindness
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) tracheobronchial
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) thallium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) ethanol
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) 0.02 mg/m
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) a hapten penetrates the dermis and forms a union with proteins
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) there was a translocation in the maternal genome
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) DNA double strand breaks
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) type II cells
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) cytotoxicity
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) cross-sectional study
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) 27 mg/kg/day
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) 5
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) decomposing to metallic nickel in the periphery of the lung
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) incidence rate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) would be reached in 30 min and would be 200 ng/mL
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) there is extensive systemic metabolism in the animal
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) nitroreduction
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) northern blot analysis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) benzo(a)pyrene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) the proportional excess risk of disease that is associated with exposure
+      to a risk factor
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) the ratio of incidence rate of disease in the exposed group to incidence
+      rate in the unexposed group
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) reproductive system
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) head and scrotum
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) beta-naphthylamine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) absorption of infrared radiation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) sodium hypochlorite (bleach)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) nitrogen mustards
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) 95% upper confidence limit on risk per unit dose
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) scientist or other professional of appropriate education
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) dimethylformamide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) 70%
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) changes in the formulation of mixtures if no significant effects are expected
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) tetrachloroethylene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) 1
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) a comparative acute nephrotoxicity study on the two cephalosporins in the
+      rabbit may not be valid for extrapolation to the human
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) dimercaprol (BAL)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) propylene glycol
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) respiratory depression
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) gasoline aspiration from siphoning
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) fungi Fusarium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) lecithinase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) toxin produced by Clostridium tetani
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) renal failure due to oxalate binding with calcium to produce insoluble crystals
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) fungi Fusarium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) containing a high concentration of selenium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) is effectively treated with calcium disodium EDTA
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) hexane
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) tetraethyl lead
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) carbon disulfide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) all of the above
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) CNS depression
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) may die from hematopoietic syndrome in 5-8 weeks without intensive medical
+      support
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) nephrotoxicity
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) red squill
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) sodium fluoroacetate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) relieve the muscarinic symptoms
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) alpha-naphthylthiourea
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) crocidolite
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) the tissue hypoxia is more severe in (a) than (b)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) H2O
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) osteosarcoma
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) and D
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) in part an inhibition of androgen binding
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) ingestion of ciguatoxin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) oxaluria
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) pesticides
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) all of the above
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) uncoupling of cellular oxidative phosphorylation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) all of the above
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) increasing the blood level of acetaldehyde
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) contain extra DNA sequences in their somatic cells
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) histopathology and hematology
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) associated with intratubular accumulation of alpha-microglobin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) leukemia
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) benzene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) human
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) a direct effect on thymic epithelium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) decreases response of B lymphocytes to a mitogenic stimulus
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) A and B
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) carcinoma in situ
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) lung tumors in Sprague-Dawley rats
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) alkylation of guanine bases in DNA at the O-6 position
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) C and G stand for specific genes in histidine operon modified through a
+      base-pair alteration or frame-shift mutation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) drug-induced decrease in glomerular filtration rate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) an endonuclease which nicks the DNA backbone in the vicinity of the damage
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - "(D) renal tubular cells absorb cadmium-m\xE9tallothionein complex"
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) primarily observed following exposure to saturated aliphatic compounds that
+      contain a ring in their structure
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) death of the embryo
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) siderotic lung disease (welder's lung) caused by exposure to acetylene gas
+      ironoxide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) all of the above
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) unknown etiology
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) aminoglycoside antibiotics
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) an experimental hepatotoxicant
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) peripheral nervous system
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) gross structural malformations
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) formation of a crust of necrotic tissue
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) absorption through the epidermis (stratum corneum)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) tetrodotoxin causes paralysis and cyclodienes cause excitation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) the intensity of the reaction is directly proportional to the dose applied
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) requires 2 electrons per cycle
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) perisinusoidal stellate cell (Ito cell)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) indomethacin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) 21-56 days of gestation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) the one best treatment for acid burns to the eye is rapid irrigation with
+      large volumes of water
+    - (3) although ocular burns associated with alkalies may appear mild at the time
+      of injury
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) aminotransferase
+    - (2) lactate dehydrogenase
+    - (3) sorbitol dehydrogenase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (2) the unusual susceptibility of the kidney can be related to the high renal
+      blood flow delivered to this organ
+    - (4) gentamicin and cephalosporins are drugs producing nephrotoxicity
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) compensatory renal hypertrophy
+    - (2) induction of heat shock proteins
+    - (3) induction of metallothionein
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) specific uptake and binding of toxic agents to apical surfaces of certain
+      cell types
+    - (2) cell-specific biotransformation capabilities
+    - (3) cell-specific transport mechanisms
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) reversible at both the level of gene expression and at the cellular level
+    - (2) dose response exhibits a measurable threshold
+    - (3) sensitive to age
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (2) abnormal hepatic excretory test (e.g.
+    - (4) histopathologic evidence of liver injury
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (1) frequently occurs in stored grains
+    - (2) is subject to metabolic activation by cytochrome P450
+    - (3) acts synergistically with hepatitis to cause cancer
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) N-nitrosodimethylamine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) on the basis of the symptomatology
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) A and C
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) expenditure of metabolic energy required for transport
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) does not readily penetrate the blood brain barrier
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) 3-methylcholanthrene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) may have a high affinity for tissue binding sites
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) 5
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) methemoglobinemia
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) Occupational Safety and Health Administration
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) strychnine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) cellular and nuclear swelling
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) prevalence rate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) male to female extrapolation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) the ratio of an estimated daily intake of a chemical to a reference dose
+      of that compound
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) relative risk
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) drug-induced vitamin B6 deficiency
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) silo-filler's disease - moldy hay NO2
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) vinyl chloride
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) the half-life for elimination of the chemical increases with increasing
+      dose
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) children poisoned by salicylate will have a sweet almond odor to their breath
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) 1.14 g/l
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) P-glycoprotein
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) metabolism to a quinoneimine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) bronchoconstriction
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) alpha-tocopherol (vitamin E)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) increase more slowly than at the beginning of the dosing regimen
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) respiratory dysfunction due to pulmonary fibrosis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) ion pair production
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) quartz dust
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) cyanide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) manganese in welding fumes
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) tri-o-cresylphosphate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) formic acid
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) converts the metal to a different chemical form
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) cadmium - damage in distal renal tubules
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) less than a gram
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) hypocalcemia and kidney damage
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) methylene chloride
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) is goitrogenic in laboratory animals and is the agent involved in the cranberry
+      crisis of 1959
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) metabolism to fluorocitrate and Kreb's cycle blockage
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) H2O
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) warfarin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) jimson weed (Datura stramonium)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) benthic dinoflagellate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) stimulates leukocyte production
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) A and C
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) DDT
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) benzene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) infertility in the male and abortion in the female
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) early onset of menopause
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) produce fewer sperm per gram of testis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) epididymal sperm numbers
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) proximal tubule
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) endothelial and glial cells
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) carbon dioxide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) cyclic AMP degradation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) A and C
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) all of the above
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) kerosene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) conversion to urobilinogen by the flora of the large intestine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) farmer's lung
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) the product of the exposure chamber gas concentration and time of exposure
+      required to produce a specific physiologic effect is equal to a constant
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) extrapolation to effects at low dose levels is highly uncertain since the
+      shape of the dose-response curve at these levels is generally unknown
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) ear vein
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) 8 ug / 100 ml
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) less toxic metabolite
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) carbon tetrachloride
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) synergism
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) the half-life does not tell us anything directly about the fat tissue time
+      constant
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) methylene chloride
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) complete elimination of a substance from a biological system takes two half-lives
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) expired air is close to being in equilibrium with pulmonary capillary blood
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) 200 mg
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) monkey and guinea pig
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) 1,2,7,8-tetrachlorodibenzo-p-dioxin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) measurement error in independent variable reduction of regression line slope
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) causes chloracne
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) 0.07%
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) carbon monoxide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) a postmortem diagnosis of botulism can be easily made since diagnostic lesions
+      are present in liver and brain
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) their means
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) involves individuals
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) a 100-fold uncertainty factor is often used to account for variability in
+      responses of individual humans
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) benefit-cost assessment
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) peroxisomes
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - '(E) gold : glomerulonephritis'
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) proximal tubule
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) represents the percent of copulations that result in pregnancies
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) arsenic
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) prothrombin time is used to monitor warfarin therapy
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) prominent hyperkeratosis of the follicular canal
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) short asbestos fibers (<2 um long) are thought to be predominately responsible
+      for the induction of mesotheliomas
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) a Type IV delayed hypersenitivity reaction
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) in combination syncarcinogenesis two carcinogens given one after another
+      are additive or synergistic in effect
+    - (D) promotion is a term broadly used to describe any situation yielding an increased
+      development of neoplasms through the action of a nongenotoxic agent
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) accumulation of formic acid
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) are interactions between T- and B-lymphocytes to clear antigens
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) in general
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) placental transport systems favor accumulation in the fetus
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) aspiration pneumonia
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) beryllium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) centrilobular or zone 3 of acinus
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) neuronopathy
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) axonal proteins are synthesized within the neuron cell body
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) rapid blood flow (heart rate) and increased tissue distribution of the chemical
+    - (E) immaturity of the immune system
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) clofibrate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) 6 months
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) CYP1A2
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) osteosclerosis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) inhalation of amyl nitrite
+    - (D) intravenous sodium nitrite and sodium thiosulfate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) 10 ml
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) ethanol
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) linkage between dose and response
+    - (D) dose range between desired biological effects and adverse health effects
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) cyclamate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) are microsomal enzymes
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) blocked by saxitoxin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) mitogenesis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) rotenone
+    - (B) succinate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) glomerular filtration
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) aconitase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) they induce hepatic CYP1A which is indicative of peroxisome proliferation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) all of the above
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) promulgated by the Occupational Safety and Health Administration and have
+      the force of law
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) cause right shift in agonist dose-response curve
+    - (C) Emax (maximum effect) cannot be achieved
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) tricarboxylic acid (Krebs) cycle
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) antimony
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) pyrethroids
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) via ingestion
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) identified as a cause of leukemia in humans
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) saxitoxin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) tetradotoxin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) the toxin is largely destroyed in the human gastrointestinal tract
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) ciguatoxin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) osmium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) stimulate prothrombin synthesis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) ethylene glycol-based antifreeze
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) soman
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) hemolysis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) carbon monoxide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) is hycholyzed by sediment bacteria
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) asthmatic syndrome has been reported in individuals exposed to platinum
+      dust
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) hair follicles and other gaps in the epidermis have a minor role in absorption
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) smaller particles can increase the actual dose per unit exposure delivered
+      by radon to bronchial tissue
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) unlike organophosphate poisoning
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) dermal
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) potassium iodide (KI)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) a recurrent flu-like syndrome that develops shortly after exposure to metal
+      oxide fumes
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) is an inducer of cytochrome P450
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) cobalt 60
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) binds to methemoglobin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) intravascular thrombosis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - '(D) cephalosporins: ototoxicity'
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) blockade of potassium hERG channels
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) rate of ingestion
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) one chemical - geometric standard deviation greater than 1.2
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) a greater response is produced at challenge than at initial contact
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) amount of damage correlates with accumulation of drug in the inner ear
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) 4
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) decreased conversion of T4 to T3 by inhibition of a 5' monoiodinase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) cannot be transmitted to progeny
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) chloramphenicol:thrombotic thrombocytopenic purpura
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) is genotoxic in rats
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) the absence of tumors in control animals
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) hemochorial
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) none of the above
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) are seen only in male rats and are due to a non-genotoxic (or epigenetic)
+      mechanism
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) cadmium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) cadmium chloride
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) inhibited growth and development of pluripotent bone marrow stem cells
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) interception
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) expiratory reserve volume
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) leads to hyperphosphorylation of cytoskeletal elements leading to collapse
+      of the microtubular actin scaffold
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) serum ALT activity decreases with alterations in hepatocyte permeability
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) diffusion
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) 2-PAM (pralidoxime) must never be given in conjunction with this compound
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) talipes equinus = kidneys fused medially in the shape of a horseshoe
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) increased numbers of reticulocytes in the circulating blood
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) originate from marrow progenitors and subsequently migrate to sites of exposure
+      to foreign antigens
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) are true type I hypersensitivity reactions
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) the gonad itself is not required for altering FSH or LH synthesis at the
+      onset of puberty
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) dose-dependent hepatotoxicity
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) dose dependent cellular injury results only from substances which are directly
+      hepatotoxic
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) beryllium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) contains multidrug resistant proteins that transport some chemicals into
+      the blood
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) relative food consumption of the animal model compared to humans
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) body surface area
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) induced by phenytoin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) facilitated diffusion
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) blood-brain barrier consists of endothelium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - '(D) bioavailability (F) following an oral exposure can be determined as: the
+      area under the oral plasma concentration versus time curve (AUC0) divided by
+      the oral dose (Dosepo)'
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) workers in an isopropanol bottling plant developed hepatotoxicity upon exposure
+      to a normally non-hepatotoxic concentration because isopropanol is metabolized
+      to acetone
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) glucuronide conjugation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) atropine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) epidemiological data are required
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) dental fluorosis following postnatal fluoride ingestion
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) recombination repair
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) specifies that information for all toxic chemicals present at >1% be included
+      in MSDS
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) binding to plasma proteins
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) acetylation N-acetyl transferase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) a gas used to fumigate grains
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) the Student's t-test is particularly useful for testing paired observations
+      and ranked data
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) the number of deaths observed in the study population to the number of deaths
+      expected in the study population if it had the same rate structure as the standard
+      population
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) organotin compounds in beer caused renal are correct failure are correct
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) carcinogenicity studies and developmental toxicity testing are routinely
+      required prior to initiating Phase 1 clinical trials
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) 12
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) description of byproducts resulting from use
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) MFF is characterized by a delay of several hours in the appearance of symptoms
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) blind staggers associated with excessive magnesium intake
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) albumin
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) cadmium exposure in Japanese women
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) liver and heart
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) inhibit alcohol dehydrogenase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) ethylene glycol
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) nickel
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) methanol
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) methylene chloride
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) hypoglycemia
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) poisoning from DDT-like compounds and chlorinated cyclodienes involves both
+      sensory and motor components of the central nervous system
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) urinary acrylonitrile and thiocyanate are proposed parameters for biological
+      monitoring of exposed workers
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) chickens are immune to organophosphate poisoning and do not display OPIDN
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) chloracne
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) identifies children as a subpopulation sensitive to pesticides
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) is more toxic than its metabolite paraoxon
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) its toxicity is reduced by decreasing the partial pressure of oxygen
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) the concentration of test compound in the air
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) inhibition of cytochrome oxidase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) it produces widespread toxic effects in the liver
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) are as metabolically competent as type II cells
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) the physical half-life is always longer than the effective half-life
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) urban areas tend to have relatively low radon
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) radium (224,226,228RR)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) headache
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) can cause cutaneous
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) mediated by the immune system
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) atropine
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) cutaneous reactions and anaphylaxis are the most common symptoms
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) may progress to pulmonary fibrosis and malignant mesothelioma
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) fava beans
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) liver carcinogens in certain species only
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) inner ear and kidney
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) clofibrate
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) rhabdomyolysis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) immune system
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) the response is dependent on size and surface area
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) inhibition of 5-alpha-reductase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) particle size
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) increased cell volume
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) malformations at a dose level that has no adverse effect in the maternal
+      animal
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) benzo[a]pyrene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) DEN-induced tumors do not develop in this 8 week bioassay
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) arsenic
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) GSTs require the co-factor
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) bronchitis - mucous layer thickening
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) the stage of development at which the embryo is exposed
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) renal function
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) it is the main excitatory neurotransmitter of the brain
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) valproic acid - phocomelia
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) macrophages
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) T-lymphocyte
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) chromium
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) dinitrobenzene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) allows entry of toxic compounds that mimic substrates of active transport
+      systems
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) the p53 gene is a tumor suppressor gene and using mice with a defective
+      allele will make them more susceptible to carcinogenesis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) assessment of the antibody response to a T cell-dependent antigen
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) tetrachlorosalicylanilide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) is the same as primary skin irritation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) flow rate and chamber volume
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) depigmentation
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) ocular hypertension and open angle glaucoma
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) increased urinary concentrating ability in response to dehydration
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) increased serum alanine aminotransferase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) oxidative alteration of low-density lipoproteins leading to formation of
+      atherosclerotic plaques
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) synthesize collagen during hepatic fibrosis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) induction of hepatic microsomal enzymes with resultant increased biliary
+      excretion of T4 and a subsequent compensatory increased output of TSH
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) endothelial cells
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) chronic excessive consumption of nonsteroidal anti-inflammatory agents (NSAIDs)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) excretion of protein bound materials
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) alkaline phosphatase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) liver
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) electron flow is maintained but no ATP is produced
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) increase in intestinal motility leading to a decrease in absorption of nutrients
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) displacement of the compound from protein binding sites by another agent
+      can alter the systemic exposure
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) the time required for the concentration of the compound in blood or plasma
+      to decrease by one-half
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) they are not metabolized and not cleared from the body in humans
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) a characteristic feature is airway hyporesponsiveness to stimuli in the
+      occupational setting
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) forms a reactive metabolite that subsequently binds to the active site with
+      higher affinity than the parent xenobiotic
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) intestines
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) 2 hour
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) metabolism by monoamine oxide in astrocytes
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) skin epidermis
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) flavin-dependent monooxygenase 3 (FMO3)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) human kidney tumors in exposed individuals are associated with mutations
+      in the von Hippel-Lindau tumor suppressor gene
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) conjugation with glutathione
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) a beneficial or stimulatory effect at low doses and toxicity at high doses
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) intravenous
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) inhibition of the rapidly-activating delayed rectifier current
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) TCDD (2,3,7,8-tetrachlorodibenzodioxin)
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) CYP4A
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) prevalence studies
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) preclinical testing
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) most workers may be exposed safely to this concentration
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) to identify potential toxicities for monitoring in humans
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) an estimate of the concentration that is likely to be without appreciable
+      risk to the exposed population after continuous lifetime exposure
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) provide an oversight role for laboratory management
+    - (B) differ depending on the test article and the regulatory agency
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) cancer
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) ethanol infusion
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) ethanol induces cytochrome P450 2E1 which converts acetaminophen to a toxic
+      metabolite
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (D) microorganisms are the primary converters of complex organic chemicals to
+      inorganic substances
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) carbon monoxide
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (E) statistical association between study groups
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (A) whether comparable peak plasma concentrations are achieved in humans and
+      rodents
+    - (E) if the chemical induces oxidative stress
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) creatine kinase
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (C) levels to which most people can be exposed for up to 15 minutes continuously
+      without adverse effects
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
+- assert:
+  - expected_phrases:
+    - (B) Legionellosis - Borrelia burgdorferi
+    type: python
+    value: file://scripts/tests.py
+  description: Test similarity
