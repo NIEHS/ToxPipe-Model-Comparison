@@ -78,7 +78,7 @@ def processResults(dir_output):
 
     results = pd.DataFrame(results)
     results['eval_id'] = data['evalId']
-
+    
     return results
 
 def getNoDataPlot(title):

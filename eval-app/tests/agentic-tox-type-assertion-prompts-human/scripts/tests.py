@@ -98,7 +98,7 @@ def getOpenAIModel(model_name: str, temperature: int = 0, is_litellm_available: 
             temperature=temperature,
             max_tokens=None,
             timeout=None,
-            max_retries=2,
+            max_retries=10,
             seed=1000
         )
 
@@ -109,7 +109,7 @@ def getOpenAIModel(model_name: str, temperature: int = 0, is_litellm_available: 
         temperature=temperature,
         max_tokens=None,
         timeout=None,
-        max_retries=2,
+        max_retries=10,
         seed=1000
     )
 

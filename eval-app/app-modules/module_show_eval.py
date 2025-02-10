@@ -3,6 +3,7 @@ from shiny.express import ui, render, module
 from shinywidgets import render_plotly
 import pandas as pd
 import json
+import markdown
 import faicons as fa
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
@@ -148,9 +149,11 @@ def mod_ui(input, output, session):
             "Prompt"
         with ui.div(class_='d-flex border rounded p-3 justify-content-center'):
             with ui.div(class_='prompt'):
-                @render.text
+                @render.ui
                 def showPrompt():
-                    return input.select_prompt.get()
+                    prompt = input.select_prompt.get()
+                    if prompt is None: prompt = ''
+                    return core_ui.markdown(prompt)
     
     with ui.navset_underline(id="tab", selected="res"):
         with ui.nav_panel(title='Responses', value="res"):
@@ -277,7 +280,7 @@ def mod_ui(input, output, session):
         data, _ = loadResults()
         if data.empty: return
         var = input.select_var()
-        ui.update_select(id="select_prompt", choices=sorted(data.query('Variable == @var')['Prompt'].unique()))
+        ui.update_select(id="select_prompt", choices={x: x for x in data.query('Variable == @var')['Prompt'].unique()})
         
     @reactive.calc
     @reactive.event(input.select_eval, input.select_prompt, input.select_model)
@@ -289,7 +292,6 @@ def mod_ui(input, output, session):
             res = data.query('Prompt == @prompt')[["Id", "eval_id", "Model", "Response", "Result", "Reason"]].reset_index(drop=True).sort_values('Model')
         else:
             res = data.query('(Prompt == @prompt) and (Model in @model)')[["Id", "eval_id", "Model", "Response", "Result", "Reason"]].reset_index(drop=True)
-
         return res
 
     @reactive.calc
