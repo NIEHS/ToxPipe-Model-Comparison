@@ -221,7 +221,7 @@ def loadLastOutput(output_path, resume):
 
     return output
 
-def runTest(config_path, resume=True):
+def runTest(config_path, resume=False):
 
     output_path = (config_path.parent / 'output' / 'output.json')
 
@@ -295,4 +295,7 @@ def convertOutput(output_path):
 env_config = dotenv.dotenv_values(Path(__file__).parent.parent / ".env")
 
 if __name__ == '__main__':
-    runTest(Config.DIR_TEST / sys.argv[1] / 'config.yaml')
+    if len(sys.argv) > 2 and sys.argv[2] == 'r':
+        runTest(Config.DIR_TEST / sys.argv[1] / 'config.yaml', resume=True)
+    else:
+        runTest(Config.DIR_TEST / sys.argv[1] / 'config.yaml', resume=False)
