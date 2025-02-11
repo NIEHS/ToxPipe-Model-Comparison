@@ -129,7 +129,7 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     def loadEvals():
-        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'promptfooconfig.yaml').exists()])
+        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'output' / 'output.json').exists()])
         ui.update_select(id='select_eval', choices=tests)
 
     @reactive.calc

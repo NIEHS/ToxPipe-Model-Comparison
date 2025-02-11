@@ -81,6 +81,68 @@ def processResults(dir_output):
     
     return results
 
+def processResults1(dir_output):
+        
+    def getExplanation(result):
+
+        def getComponentExplanation(results):
+            d_results = []
+            has_component = False
+            for result in results:
+                if 'componentResults' in result:
+                    d_results.append({
+                            'pass': result['pass'],
+                            'reason': result['reason'],
+                            'components': getComponentExplanation(result['componentResults'])
+                    })
+                    has_component = True
+
+            if not has_component:
+                for result in results:
+                    d_results.append({
+                            'pass': result['pass'],
+                            'reason': result['reason'],
+                    })
+
+            return d_results
+
+        if not result: return "No reason found"
+
+        if 'componentResults' in result:
+            d_results = getComponentExplanation(result['componentResults'])
+        else:
+            d_results = [{'pass': result['pass'],
+                          'reason': result['reason'],
+            }]
+        return d_results
+    
+    results = []
+    with open(dir_output / 'output.json') as f:
+        data = json.load(f)
+    
+    for item in data['tests']:
+        try:
+            results.append(
+                {
+                    'Id': f"{data['id']}|{item['provider']['label']}",
+                    'Prompt': item['prompt'], 
+                    'Model': item['provider']['label'], 
+                    'Response': item['response']['output'],
+                    'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] == 'true' else 'Fail',
+                    'Variable': ', '.join([f'{k}:{v}' for k, v in item['vars'].items()]), 
+                    'Reason': getExplanation(item['response']['results'])
+                }
+            )
+        except Exception as exp:
+            print(f'Error reading output from {dir_output}')
+            print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
+            return pd.DataFrame()
+
+    results = pd.DataFrame(results)
+    results['eval_id'] = data['id']
+    
+    return results
+
 def getNoDataPlot(title):
         
     fig = px.scatter(x=[0.5], y=[0.5], text=['No data found<br />or<br />Error in data extraction'], size=[0]) 

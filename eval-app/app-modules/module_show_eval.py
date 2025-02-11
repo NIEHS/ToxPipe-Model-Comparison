@@ -185,7 +185,7 @@ def mod_ui(input, output, session):
                     
                     data['Response'] = data['Response'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
                     
-                if data['Result'].unique()[0] == 'No assertion':
+                if (data['Result'] == 'No assertion').all():
                     data = data.drop(columns=['Id', 'eval_id', 'Result', 'Reason'])
                     return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
                 
@@ -234,7 +234,7 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     def loadEvals():
-        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'promptfooconfig.yaml').exists()])
+        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'output' / 'output.json').exists()])
         ui.update_select(id='select_eval', choices=tests)
 
     @reactive.calc
@@ -288,6 +288,7 @@ def mod_ui(input, output, session):
         data, _ = loadResults()
         if data.empty: return pd.DataFrame()
         prompt, model = input.select_prompt(), input.select_model()
+      
         if not model or 'Any' in model:
             res = data.query('Prompt == @prompt')[["Id", "eval_id", "Model", "Response", "Result", "Reason"]].reset_index(drop=True).sort_values('Model')
         else:
