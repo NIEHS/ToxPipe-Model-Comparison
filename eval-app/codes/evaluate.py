@@ -5,6 +5,7 @@ from pathlib import Path
 import yaml
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
+import multiprocessing
 import concurrent.futures
 import tqdm
 import traceback
@@ -16,6 +17,7 @@ import json
 from datetime import datetime
 from uuid import uuid4
 import sys
+import os
 
 class SchemaForSimilaritySearch(BaseModel):
     response: bool
@@ -121,9 +123,9 @@ def callAgenticToxpipe(prompt, model_config):
     if not response.ok: raise Exception(response.text)
     agentid = response.json()['agentid']
 
-    url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/'
-    response = requests.get(url=f"{url}?agentid={agentid}&q={prompt}")
-    if not response.ok: raise Exception(response.text)
+    url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
+    response = requests.get(url=url)
+    if not response.ok: raise Exception(f'API url: {url}, Response: {response.text}')
     return response.json()['response']
 
 def createOpenAIModel(model_name, temperature):
@@ -209,7 +211,7 @@ def runTest(config_path):
 
     output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
 
-    with concurrent.futures.ThreadPoolExecutor(2) as pool: 
+    with concurrent.futures.ThreadPoolExecutor(10) as pool: 
         results = pool.map(evaluate, *zip(*eval_sets))
         for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
             pbar.set_description(descs[i])

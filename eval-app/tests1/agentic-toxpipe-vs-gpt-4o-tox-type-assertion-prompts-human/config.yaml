@@ -28,8 +28,8 @@ system_prompt: >
 
     Adhere to ethical standards in toxicology and maintain scientific objectivity in your assessments.
 prompts:
-  - Answer the following question with a list of string. List the {{effect_type}}
-    of {{chemname}} or its synonyms with CAS number {{casrn}} on human
+  - Answer the following question with a list of string. List the {effect_type}
+    of {chemname} or its synonyms with CAS number {casrn} on human
 providers:
   - config:
       max_iterations: 10
