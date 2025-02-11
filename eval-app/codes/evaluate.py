@@ -86,8 +86,8 @@ class EvaluateResponse:
         ]
     )
 
-    def __init__(self, expected_phrases):
-        self.expected_phrases = expected_phrases
+    def __init__(self, assert_info):
+        self.assert_info = assert_info
 
     def getEvaluation(self, response: str, prompt: str) -> Union[bool, float, Dict[str, Any]]:
         
@@ -96,7 +96,7 @@ class EvaluateResponse:
 
         passed = True
         component_results = []
-        for res_exp in self.expected_phrases:
+        for res_exp in self.assert_info[0]['expected_phrases']:
             try:
                 res_ = (self.prompt_question | model | output_parser.parseResponse).invoke(input={'query': prompt, 'answer': response, 'phrase': res_exp})
             except Exception as exp:
@@ -175,13 +175,13 @@ def getModelResponse(model_info, prompt_info, vars_info):
     return {'output': output}
 
 #@traceable
-def evaluate(model_info, prompt_info, vars_info, expected_phrases):
+def evaluate(model_info, prompt_info, vars_info, assert_info):
     
     response = getModelResponse(model_info, prompt_info, vars_info)
     response['results'] = []
-    if len(expected_phrases) > 0:
+    if len(assert_info) > 0:
         prompt = prompt_info['user'].format(**vars_info)
-        response['results'] = EvaluateResponse(expected_phrases=expected_phrases).getEvaluation(response=response, prompt=prompt)
+        response['results'] = EvaluateResponse(assert_info=assert_info).getEvaluation(response=response, prompt=prompt)
 
     return response
 
@@ -194,32 +194,63 @@ def loadYML(file_path):
             print(exc)
     return data
 
-def runTest(config_path):
-    config = loadYML(config_path)
+def loadLastOutput(output_path, resume):
+
+    output = {}
+    
+    if not (resume and output_path.exists()): return output
     eval_sets, descs = [], []
-    for model_info in config['providers']:
-        for prompt in config['prompts']:
-            prompt_info = {'system': config['system_prompt'], 'user': prompt}
-            for test in config['tests']:
-                vars_info = test['vars']
-                expected_phrases = test['assert'][0]['expected_phrases'] if 'assert' in test and 'expected_phrases' in test['assert'][0] else []
+    with open(output_path) as f:
+        output = json.load(f)
+        if 'tests' not in output: return output
+        for t in output['tests']:
+            if 'error' in t['response']:
+                model_info = t['provider']
+                prompt = t['prompt']
+                prompt_info = {'system': output['system_prompt'], 'user': prompt}
+                vars_info = t['vars']
+                assert_info = t['assert']
                 descs.append(f"{model_info['label']} - {prompt[:30]}")
-                eval_sets.append([model_info, prompt_info, vars_info, expected_phrases])
+                eval_sets.append([model_info, prompt_info, vars_info, assert_info])
+        
+        with concurrent.futures.ThreadPoolExecutor(10) as pool: 
+            results = pool.map(evaluate, *zip(*eval_sets))
+            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+                pbar.set_description(descs[i])
+                output['tests'][i]['response'] = res
 
+    return output
 
-    eventid = datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
+def runTest(config_path, resume=True):
 
-    output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
+    output_path = (config_path.parent / 'output' / 'output.json')
 
-    with concurrent.futures.ThreadPoolExecutor(10) as pool: 
-        results = pool.map(evaluate, *zip(*eval_sets))
-        for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
-            pbar.set_description(descs[i])
-            output['tests'].append({'provider': eval_sets[i][0], 'prompt': eval_sets[i][1]['user'], 'vars': eval_sets[i][2], 'response': res})
+    output = loadLastOutput(output_path, resume)
+
+    if len(output) == 0:
+        config = loadYML(config_path)
+        eval_sets, descs = [], []
+        for model_info in config['providers']:
+            for prompt in config['prompts']:
+                prompt_info = {'system': config['system_prompt'], 'user': prompt}
+                for test in config['tests']:
+                    vars_info = test['vars']
+                    assert_info = test['assert'] if 'assert' in test else {}
+                    descs.append(f"{model_info['label']} - {prompt[:30]}")
+                    eval_sets.append([model_info, prompt_info, vars_info, assert_info])
+
+        eventid = datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
+
+        output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
+
+        with concurrent.futures.ThreadPoolExecutor(10) as pool: 
+            results = pool.map(evaluate, *zip(*eval_sets))
+            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+                pbar.set_description(descs[i])
+                output['tests'].append({'provider': eval_sets[i][0], 'prompt': eval_sets[i][1]['user'], 'vars': eval_sets[i][2], 'assert': eval_sets[i][3], 'response': res})
 
     (config_path.parent / 'output').mkdir(parents=False, exist_ok=True)
-
-    with open(config_path.parent / 'output' / 'output.json', 'w') as f:
+    with open(output_path, 'w') as f:
         json.dump(output, f)
 
 def convertOutput(output_path):
