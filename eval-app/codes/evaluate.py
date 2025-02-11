@@ -245,7 +245,7 @@ def runTest(config_path, resume=True):
 
         with concurrent.futures.ThreadPoolExecutor(10) as pool: 
             results = pool.map(evaluate, *zip(*eval_sets))
-            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<30.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
                 output['tests'].append({'provider': eval_sets[i][0], 'prompt': eval_sets[i][1]['user'], 'vars': eval_sets[i][2], 'assert': eval_sets[i][3], 'response': res})
 
