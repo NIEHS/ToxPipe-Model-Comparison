@@ -3,7 +3,6 @@ from shiny.express import ui, render, module
 from shinywidgets import render_plotly
 import pandas as pd
 import json
-import markdown
 import faicons as fa
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler

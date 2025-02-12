@@ -125,10 +125,10 @@ def processResults1(dir_output):
             results.append(
                 {
                     'Id': f"{data['id']}|{item['provider']['label']}",
-                    'Prompt': item['prompt'], 
+                    'Prompt': item['prompt'].format(**item['vars']), 
                     'Model': item['provider']['label'], 
                     'Response': item['response']['output'],
-                    'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] == 'true' else 'Fail',
+                    'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
                     'Variable': ', '.join([f'{k}:{v}' for k, v in item['vars'].items()]), 
                     'Reason': getExplanation(item['response']['results'])
                 }

@@ -97,11 +97,7 @@ class EvaluateResponse:
         passed = True
         component_results = []
         for res_exp in self.assert_info[0]['expected_phrases']:
-            try:
-                res_ = (self.prompt_question | model | output_parser.parseResponse).invoke(input={'query': prompt, 'answer': response, 'phrase': res_exp})
-            except Exception as exp:
-                print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
-                raise exp
+            res_ = (self.prompt_question | model | output_parser.parseResponse).invoke(input={'query': prompt, 'answer': response, 'phrase': res_exp})
             passed &= res_['pass']
             component_results.append(res_)
 
@@ -181,7 +177,11 @@ def evaluate(model_info, prompt_info, vars_info, assert_info):
     response['results'] = []
     if len(assert_info) > 0:
         prompt = prompt_info['user'].format(**vars_info)
-        response['results'] = EvaluateResponse(assert_info=assert_info).getEvaluation(response=response, prompt=prompt)
+        try:
+            response['results'] = EvaluateResponse(assert_info=assert_info).getEvaluation(response=response, prompt=prompt)
+        except Exception as exp:
+            print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
+            response['results'] = {'output': '', 'error': f'Error in evaluation: {exp}'}
 
     return response
 
@@ -243,7 +243,7 @@ def runTest(config_path, resume=False):
 
         output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
 
-        with concurrent.futures.ThreadPoolExecutor(10) as pool: 
+        with concurrent.futures.ThreadPoolExecutor(10) as pool:
             results = pool.map(evaluate, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<30.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])

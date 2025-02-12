@@ -4,6 +4,7 @@ from shinywidgets import render_widget
 import plotly.express as px
 from utils import Config, processResults, getNoDataPlot
 import pandas as pd
+import re
 
 @module
 def module_graph(input, output, session, eval_name):
@@ -139,6 +140,7 @@ def module_graph(input, output, session, eval_name):
 
         category_orders = {'Result':['Pass', 'Fail']}
         category_colors = ['#7c8fe6', '#eb8c60']
+        
         fig = px.bar(df_plot, x='Count', y='Model', color='Result', orientation='h',
                      category_orders=category_orders, 
                      color_discrete_sequence=category_colors)
