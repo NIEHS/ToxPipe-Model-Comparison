@@ -1,13 +1,11 @@
-import json
-import traceback
-from shiny.types import SilentException
-import pandas as pd
+
 from pathlib import Path
 import plotly.express as px
+import yaml
 
 class Config:
     DIR_HOME = Path(__file__).parent
-    DIR_TESTS = DIR_HOME /'tests'
+    DIR_TESTS = DIR_HOME /'tests1'
     DIR_CODES = DIR_HOME /'codes'
     RANDOM_STATE = 1000
     CONFIG_PLOT = dict(
@@ -19,129 +17,23 @@ class Config:
                                 )
     )
 
-def processResults(dir_output):
-        
-    def getExplanation(result):
-
-        def getComponentExplanation(results):
-            d_results = []
-            has_component = False
-            for result in results:
-                if 'componentResults' in result:
-                    d_results.append({
-                            'pass': result['pass'],
-                            'reason': result['reason'],
-                            'components': getComponentExplanation(result['componentResults'])
-                    })
-                    has_component = True
-
-            if not has_component:
-                for result in results:
-                    d_results.append({
-                            'pass': result['pass'],
-                            'reason': result['reason'],
-                    })
-
-            return d_results
-
-        if not result: return "No reason found"
-
-        if 'componentResults' in result:
-            d_results = getComponentExplanation(result['componentResults'])
-        else:
-            d_results = [{'pass': result['pass'],
-                          'reason': result['reason'],
-            }]
-        return d_results
-    
-    results = []
-    with open(dir_output / 'output.json') as f:
-        data = json.load(f)
-    
-    for item in data['results']['results']:
+def loadYML(file_path):
+    data = None
+    with open(file_path) as stream:
         try:
-            results.append(
-                {
-                    'Id': f"{item['testIdx']}|{item['provider']['label']}",
-                    'Prompt': item['prompt']['raw'], 
-                    'Model': item['provider']['label'], 
-                    'Response': item['response']['output'],
-                    'Result': 'No assertion' if not item['testCase']['assert'] else 'Pass' if item['success'] else 'Fail',
-                    'Variable': ', '.join([f'{k}:{v}' for k, v in item['testCase']['vars'].items()]), 
-                    'Reason': getExplanation(item['gradingResult'])
-                }
-            )
-        except Exception as exp:
-            print(f'Error reading output from {dir_output}')
-            print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
-            return pd.DataFrame()
+            data = yaml.safe_load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+    return data
 
-    results = pd.DataFrame(results)
-    results['eval_id'] = data['evalId']
+def saveYML(data, file_path):
     
-    return results
-
-def processResults1(dir_output):
+    class MyDumper(yaml.Dumper):
+        def increase_indent(self, flow=False, indentless=False):
+            return super(MyDumper, self).increase_indent(flow, False)
         
-    def getExplanation(result):
-
-        def getComponentExplanation(results):
-            d_results = []
-            has_component = False
-            for result in results:
-                if 'componentResults' in result:
-                    d_results.append({
-                            'pass': result['pass'],
-                            'reason': result['reason'],
-                            'components': getComponentExplanation(result['componentResults'])
-                    })
-                    has_component = True
-
-            if not has_component:
-                for result in results:
-                    d_results.append({
-                            'pass': result['pass'],
-                            'reason': result['reason'],
-                    })
-
-            return d_results
-
-        if not result: return "No reason found"
-
-        if 'componentResults' in result:
-            d_results = getComponentExplanation(result['componentResults'])
-        else:
-            d_results = [{'pass': result['pass'],
-                          'reason': result['reason'],
-            }]
-        return d_results
-    
-    results = []
-    with open(dir_output / 'output.json') as f:
-        data = json.load(f)
-    
-    for item in data['tests']:
-        try:
-            results.append(
-                {
-                    'Id': f"{data['id']}|{item['provider']['label']}",
-                    'Prompt': item['prompt'].format(**item['vars']), 
-                    'Model': item['provider']['label'], 
-                    'Response': item['response']['output'],
-                    'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
-                    'Variable': ', '.join([f'{k}:{v}' for k, v in item['vars'].items()]), 
-                    'Reason': getExplanation(item['response']['results'])
-                }
-            )
-        except Exception as exp:
-            print(f'Error reading output from {dir_output}')
-            print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
-            return pd.DataFrame()
-
-    results = pd.DataFrame(results)
-    results['eval_id'] = data['id']
-    
-    return results
+    with open(file_path, 'w') as outfile:
+        yaml.dump(data, outfile, Dumper=MyDumper, default_flow_style=False)
 
 def getNoDataPlot(title):
         

@@ -10,10 +10,11 @@ from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.metrics.pairwise import cosine_similarity
 from umap import UMAP
 import plotly.express as px
-from utils import Config, processResults
+from utils import Config
 
 import importlib
 db = importlib.import_module(".db", package="app-modules")
+utils = importlib.import_module(".utils", package="app-modules")
 
 ico_check = """<span class='passed'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
@@ -242,7 +243,7 @@ def mod_ui(input, output, session):
         dir_output = Config.DIR_TESTS / input.select_eval() / 'output'
         output, embeddings = None, None
         if (dir_output / 'output.json').exists():
-            output = processResults(dir_output)
+            output = utils.Evaluator.processResults(dir_output)
         if (dir_output / 'response_embeddings.json').exists():
             with open(dir_output / 'response_embeddings.json') as f:
                 embeddings = json.load(f)

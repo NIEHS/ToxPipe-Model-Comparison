@@ -50,7 +50,7 @@ def createTest(test_name):
                 f"TOXPIPE_API_HOST=\'{Config.env_config['TOXPIPE_API_HOST']}\'\n" + 
                 f"REPLICATE_SYSTEM_PROMPT=\'{prompts['system']}\'\n")
 
-    with open(dir_test / 'promptfooconfig.yaml', 'w') as outfile:
+    with open(dir_test / f'promptfooconfig.yaml', 'w') as outfile:
         data = {
             'description': description,
             'providers': providers,
@@ -61,5 +61,4 @@ def createTest(test_name):
         yaml.dump(data, outfile, Dumper=MyDumper, default_flow_style=False)
 
 if __name__ == '__main__':
-    
     createTest(sys.argv[1])

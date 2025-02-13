@@ -2,9 +2,10 @@ from shiny import reactive
 from shiny.express import ui, module, render
 from shinywidgets import render_widget
 import plotly.express as px
-from utils import Config, processResults, getNoDataPlot
+from utils import Config, getNoDataPlot
+import importlib
 import pandas as pd
-import re
+utils = importlib.import_module(".utils", package="app-modules")
 
 @module
 def module_graph(input, output, session, eval_name):
@@ -35,7 +36,7 @@ def module_graph(input, output, session, eval_name):
         dir_output = Config.DIR_TESTS / eval_name / 'output'
         data = pd.DataFrame()
         if (dir_output / 'output.json').exists():
-            data = processResults(dir_output)
+            data = utils.processResults(dir_output)
         return data
 
     @reactive.effect
@@ -96,8 +97,8 @@ def module_graph(input, output, session, eval_name):
         
         df_plot = pd.concat([df_plot, pd.DataFrame(df_missing)]).sort_values('Model')
 
-        category_orders = {'Result':['Pass', 'Fail']}
-        category_colors = ['#7c8fe6', '#eb8c60']
+        category_orders = {'Result':['Pass', 'Fail', 'No assertion']}
+        category_colors = ['#7c8fe6', '#eb8c60', '#dbd8d0']
 
         fig = px.bar(df_plot, x='count', y='Model', color='Result', orientation='h', 
                      category_orders=category_orders, 
@@ -117,29 +118,37 @@ def module_graph(input, output, session, eval_name):
 
         if data.empty: return getNoDataPlot(title='Correct Assertions in Responses')
             
-        def getAssertionPassCount(reason):
-            if not isinstance(reason, list): return (0, 'Pass', 1)
+        def getAssertionCount(reason, result):
+            if result == 'No assertion': return (1, result, 1)
+            if not isinstance(reason, list): return (0, result, 1)
             if 'components' not in reason[0]: return (int(reason[0]['pass']), 'Pass', 1)
             s = 0
             for y in reason[0]['components']:
                 s += y['pass']
             return (s, 'Pass', len(reason[0]['components']))
         
-        df_plot_pass = (data.apply(lambda x: getAssertionPassCount(x['Reason']), axis=1, result_type='expand')
+        df_assertion_count = (data.apply(lambda x: getAssertionCount(x['Reason'], x['Result']), axis=1, result_type='expand')
                                 .rename(columns={0: 'Count', 1: 'Result', 2: 'Total assertions'})
         )
-        df_plot_pass['Model'] = data['Model']
-        df_plot_fail = pd.DataFrame({'Model': df_plot_pass['Model'], 
+        df_assertion_count['Model'] = data['Model']
+
+        indices_no_assertion = (df_assertion_count['Result'] == 'No assertion')
+        
+        df_no_assertion = df_assertion_count[indices_no_assertion].reset_index(drop=True)
+        df_pass = df_assertion_count[~indices_no_assertion].reset_index(drop=True)
+        df_fail = pd.DataFrame({'Model': df_pass['Model'], 
                                      'Result': 'Fail', 
-                                     'Count': df_plot_pass['Total assertions'] - df_plot_pass['Count']})
+                                     'Count': df_pass['Total assertions'] - df_pass['Count']})
     
-        df_plot = pd.concat([df_plot_pass[['Model', 'Result', 'Count']], 
-                             df_plot_fail[['Model', 'Result', 'Count']]], axis=0)
+        df_plot = pd.concat([df_pass[['Model', 'Result', 'Count']], 
+                             df_fail[['Model', 'Result', 'Count']],
+                             df_no_assertion[['Model', 'Result', 'Count']]], axis=0)
+        
 
         df_plot = df_plot.groupby(['Model', 'Result'])['Count'].sum().reset_index().sort_values('Model')
 
-        category_orders = {'Result':['Pass', 'Fail']}
-        category_colors = ['#7c8fe6', '#eb8c60']
+        category_orders = {'Result':['Pass', 'Fail', 'No assertion']}
+        category_colors = ['#7c8fe6', '#eb8c60', '#dbd8d0']
         
         fig = px.bar(df_plot, x='Count', y='Model', color='Result', orientation='h',
                      category_orders=category_orders, 
@@ -190,14 +199,17 @@ def mod_ui(input, output, session):
     @reactive.calc
     @reactive.event(input.select_level, input.select_prompt, input.select_species)
     def getEvals():
+
+        levels_allowed = ['zero-shot', 'rag', 'agentic']
+        prompts_allowed = ['tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
+        species_allowed = ['human', 'rat', 'mixed']
+
         def sortKey(x):
-            ai_frameworks = ['zero-shot', 'rag', 'agentic']
-            prompts = ['tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
-            species = ['human', 'rat']
-            evals = [f'{f}-{p}-{s}' for f in ai_frameworks for p in prompts for s in species]
+            evals = [f'{f}-{p}-{s}' for f in levels_allowed for p in prompts_allowed for s in species_allowed]
             eval_dict = {v: len(evals)-i for i, v in enumerate(evals)}
             if x not in eval_dict: return 0
             return eval_dict[x]
+        
         level, prompt, species = input.select_level(), input.select_prompt(), input.select_species()
 
         evals = []
@@ -206,6 +218,25 @@ def mod_ui(input, output, session):
                 if level != 'any' and not test.name.startswith(level): continue
                 if prompt != 'any' and prompt not in test.name: continue
                 if species != 'any' and not test.name.endswith(level): continue
+                if level == 'any': 
+                    for l in levels_allowed:
+                        if test.name.startswith(l):
+                            break
+                    else:
+                        continue
+                if prompt == 'any': 
+                    for p in prompts_allowed:
+                        if p in test.name:
+                            break
+                    else:
+                        continue
+                if species == 'any': 
+                    for s in species_allowed:
+                        if test.name.endswith(s):
+                            break
+                    else:
+                        continue
+                    
                 evals.append(test.name)
 
         return sorted(evals, key=sortKey, reverse=True)

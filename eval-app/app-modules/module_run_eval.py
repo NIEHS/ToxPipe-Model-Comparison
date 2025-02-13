@@ -1,12 +1,12 @@
 from shiny import reactive, ui as core_ui
 from shiny.express import ui, render, module
-from codes.create_promptfoo_config import loadYML
 from codes.generate_response_embeddings import generateSimilarity
-import subprocess
 from utils import Config
 import traceback
 import datetime
 import os
+import importlib
+utils = importlib.import_module(".utils", package="app-modules")
 
 @module
 def mod_ui(input, output, session):
@@ -129,14 +129,14 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     def loadEvals():
-        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'output' / 'output.json').exists()])
+        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / utils.Evaluator.CONFIG_FILE_NAME).exists()])
         ui.update_select(id='select_eval', choices=tests)
 
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadEvalInfo():
         dir_eval = Config.DIR_TESTS / input.select_eval()
-        return loadYML(dir_eval / 'promptfooconfig.yaml')
+        return utils.Evaluator.processConfig(dir_eval)
     
     @reactive.calc
     @reactive.event(input.select_eval)
@@ -157,14 +157,11 @@ def mod_ui(input, output, session):
     def runEval():
         test_name = input.select_eval()
         dir_test = Config.DIR_TESTS / test_name
-        path_output = dir_test / 'output' / 'output.json'
         try:
-            status = subprocess.run(['promptfoo', 'eval', '-c', str(dir_test), '-o', str(path_output)])
-            if status.returncode == 1: 
+            if utils.Evaluator.runTest(dir_test): 
                 ui.notification_show(f'"{test_name}" did not run successfully', type="error")
             else:
                 ui.notification_show(f'"{test_name}" ran successfully', type="message")
-
         except Exception as exp:
             ui.notification_show(f'"{test_name}" did not run successfully', type="error")
 

@@ -5,11 +5,11 @@ from shiny.types import SilentException
 import traceback
 import json
 import faicons as fa
-import yaml
 import regex
-import shutil
-from codes.create_promptfoo_config import createTest, MyDumper
 from utils import Config
+
+import importlib
+utils = importlib.import_module(".utils", package="app-modules")
 
 def logexp(func):
     def wrapper(*args, **kargs):
@@ -309,7 +309,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.txt_prompt)
     def extractPromptVars():
         prompt = input.txt_prompt()
-        variables = regex.findall(r'\{\{(.*?)\}\}', prompt)
+        variables = regex.findall(rf'{utils.Evaluator.PROMPT_VAR_FORMAT}', prompt)
         return variables
 
     @reactive.effect
@@ -451,41 +451,18 @@ def mod_ui(input, output, session):
                 d_dict['vars'] = {k: v for k, v in var}
                 tests.append(d_dict)
 
-        dir_setup = Config.DIR_TESTS / test_name / 'setup'
-        dir_setup.mkdir(parents=True, exist_ok=True)
-
-        with open(dir_setup / 'defaulttest.yaml', 'w') as outfile:
-            yaml.dump(defaulttest, outfile, Dumper=MyDumper, default_flow_style=False)
-
-        with open(dir_setup / 'prompts.yaml', 'w') as outfile:
-            yaml.dump(prompts, outfile, Dumper=MyDumper, default_flow_style=False)
-
-        with open(dir_setup / 'providers.yaml', 'w') as outfile:
-            yaml.dump(providers, outfile, Dumper=MyDumper, default_flow_style=False)
-
-        with open(dir_setup / 'tests.yaml', 'w') as outfile:
-            yaml.dump(tests, outfile, Dumper=MyDumper, default_flow_style=False)
-
-        with open(dir_setup / 'config.yaml', 'w') as outfile:
-            config = {
-                'description': description,
-                'prompts': 'prompts.yaml',
-                'providers': 'providers.yaml',
-                'tests': 'tests.yaml',
-                'defaultTest': 'defaulttest.yaml'
-            }
-            yaml.dump(config, outfile, Dumper=MyDumper, default_flow_style=False)
-
-        createTest(test_name=test_name)
-
-        dir_scripts = Config.DIR_TESTS / test_name / 'scripts'
-        dir_scripts.mkdir(parents=True, exist_ok=True)
-
-        if has_toxpipe:
-            dir_src = Config.DIR_CODES / 'providers.py'
-            shutil.copy(dir_src, dir_scripts)
-
-        dir_src = Config.DIR_CODES / 'tests.py'
-        shutil.copy(dir_src, dir_scripts)
-
-        ui.notification_show(f'"{test_name}" was created successfully')
+        
+        if utils.Evaluator.createTest(
+                        Config.DIR_TESTS / test_name,
+                        {
+                            'test_name': test_name, 
+                            'description': description, 
+                            'defaulttest': defaulttest, 
+                            'prompts': prompts, 
+                            'providers': providers, 
+                            'tests': tests
+                        }, has_toxpipe
+        ):
+            ui.notification_show(f'"{test_name}" was created successfully')
+        else:
+            ui.notification_show(f'"{test_name}" was not created successfully')
