@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
-import multiprocessing
+import threading
 import concurrent.futures
 import tqdm
 import traceback
@@ -111,18 +111,18 @@ class EvaluateResponse:
         return response
 
 def callAgenticToxpipe(prompt, model_config):
-    
-    model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
+    with threading.Lock():
+        model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
 
-    url = f'{env_config['TOXPIPE_API_HOST']}/agent/create/'
-    response = requests.get(url=f"{url}?{model_params}")
-    if not response.ok: raise Exception(response.text)
-    agentid = response.json()['agentid']
+        url = f'{env_config['TOXPIPE_API_HOST']}/agent/create/'
+        response = requests.get(url=f"{url}?{model_params}")
+        if not response.ok: raise Exception(response.text)
+        agentid = response.json()['agentid']
 
-    url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
-    response = requests.get(url=url)
-    if not response.ok: raise Exception(f'API url: {url}, Response: {response.text}')
-    return response.json()['response']
+        url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
+        response = requests.get(url=url)
+        if not response.ok: raise Exception(f'API url: {url}, Response: {response.text}')
+        return response.json()['response']
 
 def createOpenAIModel(model_name, temperature):
 
@@ -213,7 +213,7 @@ def loadLastOutput(output_path, resume):
                 descs.append(f"{model_info['label']} - {prompt[:30]}")
                 eval_sets.append([model_info, prompt_info, vars_info, assert_info])
         
-        with concurrent.futures.ThreadPoolExecutor(10) as pool: 
+        with concurrent.futures.ProcessPoolExecutor() as pool: 
             results = pool.map(evaluate, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
