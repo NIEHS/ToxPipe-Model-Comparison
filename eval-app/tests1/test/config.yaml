@@ -6,8 +6,20 @@ defaultTest:
 description: test
 prompts:
   - What are the primary mechanisms of toxicity for {chemname} or its synonyms with
-    CAS number {casrn} in rat? Please describe the molecular and cellular processes
+    CAS number {casrn} in human? Please describe the molecular and cellular processes
     involved in its toxic effects.
+  - 'Evaluate the potential biological effects of {chemname} or its synonyms with
+    CAS number {casrn} on the following organ systems in human: integumentary, skeletal,
+    muscular, nervous, and endocrine. Provide specific impacts where known.'
+  - Assess the potential biological effects of {chemname} or its synonyms with CAS
+    number {casrn} on the cardiovascular, lymphatic, respiratory, digestive, and
+    urinary systems in human. Describe any known or predicted impacts.
+  - Analyze the potential biological effects of {chemname} or its synonyms with
+    CAS number {casrn} on the reproductive and immune systems in human. Include
+    any known or suspected impacts on fertility, fetal development, and immune function.
+  - Describe the absorption characteristics of {chemname} or its synonyms with CAS
+    number {casrn} in human. Include information on potential routes of exposure,
+    rate of absorption, and extent of absorption for each route.
 providers:
   - config:
       temperature: 0

@@ -158,10 +158,11 @@ def mod_ui(input, output, session):
         test_name = input.select_eval()
         dir_test = Config.DIR_TESTS / test_name
         try:
-            if utils.Evaluator.runTest(dir_test): 
-                ui.notification_show(f'"{test_name}" did not run successfully', type="error")
-            else:
+            if utils.Evaluator.runTest(dir_test):
                 ui.notification_show(f'"{test_name}" ran successfully', type="message")
+            else: 
+                ui.notification_show(f'"{test_name}" did not run successfully', type="error")
+                
         except Exception as exp:
             ui.notification_show(f'"{test_name}" did not run successfully', type="error")
 

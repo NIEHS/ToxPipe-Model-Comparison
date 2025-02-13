@@ -1,5 +1,5 @@
 import requests
-from typing import Optional, Dict, Any, Union, List
+from typing import Dict, Any, Union
 import dotenv
 from pathlib import Path
 import yaml
@@ -17,7 +17,6 @@ import json
 from datetime import datetime
 from uuid import uuid4
 import sys
-import os
 
 class SchemaForSimilaritySearch(BaseModel):
     response: bool

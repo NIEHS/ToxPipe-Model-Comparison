@@ -36,7 +36,7 @@ def module_graph(input, output, session, eval_name):
         dir_output = Config.DIR_TESTS / eval_name / 'output'
         data = pd.DataFrame()
         if (dir_output / 'output.json').exists():
-            data = utils.processResults(dir_output)
+            data = utils.Evaluator.processResults(dir_output)
         return data
 
     @reactive.effect
