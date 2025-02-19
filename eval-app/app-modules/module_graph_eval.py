@@ -1,4 +1,4 @@
-from shiny import reactive
+from shiny import reactive, ui as core_ui
 from shiny.express import ui, module, render
 from shinywidgets import render_widget
 import plotly.express as px
@@ -32,7 +32,7 @@ def module_graph(input, output, session, eval_name):
                         return plotAssertionStatByTest()
                 
     @reactive.calc
-    def loadResults():
+    def loadEvalResults():
         dir_output = Config.DIR_TESTS / eval_name / 'output'
         data = pd.DataFrame()
         if (dir_output / 'output.json').exists():
@@ -41,27 +41,14 @@ def module_graph(input, output, session, eval_name):
 
     @reactive.effect
     def loadVars():
-        data = loadResults()
+        data = loadEvalResults()
         if data.empty: return
         ui.update_select(id="select_var", choices=['Any'] + sorted(data['Variable'].unique()))
-
-    # @reactive.calc
-    # @reactive.event(input.select_eval)
-    # def loadVars():
-    #     data = loadResults()
-    #     if data.empty: return {}
-    #     d_var = {}
-    #     for val in data['Variable']:
-    #         vars_ = val.split(', ')
-    #         for v in vars_:
-    #             var_name, var_value = v.split(':')
-    #             d_var[var_name] = d_var.get(var_name, set()) | {var_value}
-    #     return d_var
             
     @reactive.calc
     @reactive.event(input.select_var)
     def plotPassFailStatByTest():
-        data = loadResults()
+        data = loadEvalResults()
         
         var = input.select_var()
         if var == 'Any':
@@ -74,7 +61,7 @@ def module_graph(input, output, session, eval_name):
     @reactive.calc
     @reactive.event(input.select_var)
     def plotAssertionStatByTest():
-        data = loadResults()
+        data = loadEvalResults()
         var = input.select_var()
         if var == 'Any':
             data = data.copy()
@@ -167,31 +154,50 @@ def module_graph(input, output, session, eval_name):
 @module
 def mod_ui(input, output, session):
 
-    with ui.div(class_="d-flex gap-5"):
-        ui.input_select("select_level", "Levels", choices={'any': 'Any', 'zero-shot': 'Zero-shot', 'rag': 'RAG', 'agentic': 'Agentic'})
-        ui.input_select("select_prompt", "Prompts", choices={'any': 'Any', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
-        ui.input_select("select_species", "Species", choices={'any': 'Any', 'human': 'Human', 'rat': 'Rat'})
-        ui.input_select("select_eval", "Evals", choices=[])
+    with ui.div(class_="row gap-5"):
+        with ui.div(class_="col d-flex justify-content-start align-items-center gap-2"):
+            ui.input_select("select_level", "Levels", choices={'any': 'Any', 'base-model': 'Base model', 'rag': 'RAG', 'agentic': 'Agentic'})
+            ui.input_select("select_prompt", "Prompts", choices={'any': 'Any', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
+            ui.input_select("select_species", "Species", choices={'any': 'Any', 'human': 'Human', 'rat': 'Rat'})
+            ui.input_select("select_eval", "Evals", choices=[])
+        with ui.div(class_="col d-flex pb-3 justify-content-end align-items-end"):
+            @render.download(
+                filename='eval_report.csv',
+                label = 'Download Report'
+            )
+            async def downloadReport():
 
-        # @module
-        # def vars_ui(input, output, session, var_info, data, fn):
+                d_eval_prompt = {'tox-type-assertion-prompts_human': 'Toxicity type prompts (Human)',
+                                 'tox-type-assertion-prompts_rat': 'Toxicity type prompts (Rat)', 
+                                'abt-qa-assertion-prompts_mixed': 'ABT Q/A prompts'}
 
-        #     @reactive.calc
-        #     @reactive.event(input.select_eval, [input[f'select_var_{var_name}'] for var_name in var_info.keys])
-        #     def loadPassFailStatPlot():
-        #         fn(data)
+                eval_name = input.select_eval()
+                if eval_name == 'Any':
+                    evals = getEvals()
+                else:
+                    evals = [eval_name]
 
-        #     return [ui.input_select(f"select_var_{var_name}", var_name, choices=['Any'] + sorted(var_choices)) for var_name, var_choices in var_info.items()]
-        
-        # @render.ui
-        # def showVars():
-        #     var_info = loadVars()
-        #     if not var_info: return
-        #     data = loadResults()
-        #     return [vars_ui(var_name, var_name=var_name, var_choices=var_choices, data=data, fn=plotPassFailStat) for var_name, var_choices in var_info.items()]
-        #     #var_names = list(var_info.keys())
-        #     #return [ui.input_select(f"select_var_{var_name}", var_name, choices=['Any'] + sorted(var_choices)) for var_name, var_choices in var_info.items()]
-            
+                df_report = pd.DataFrame()
+                for eval_name in evals:
+                    dir_output = Config.DIR_TESTS / eval_name / 'output'
+                    data = pd.DataFrame()
+                    if (dir_output / 'output.json').exists():
+                        data = utils.Evaluator.processResults(dir_output)
+                        total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
+                        data_pass_perc = (data
+                                            .query('Result == "Pass"')
+                                            .groupby('Model')['Result']
+                                            .value_counts()
+                                            .reset_index()
+                                            .drop(columns='Result')
+                                            .set_index('Model'))
+                        data_pass_perc['count'] *= (100/total_assertions)
+                        header = f'{d_eval_prompt['_'.join(eval_name.split('_')[1:])]} ({int(total_assertions.iloc[0])})'
+                        data_pass_perc = data_pass_perc.rename(columns={'count': header})
+                        df_report = pd.concat([df_report, data_pass_perc], axis=1)
+
+                yield df_report.to_csv()
+
     @render.express
     def showPlots():
         loadResults()
@@ -200,7 +206,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.select_level, input.select_prompt, input.select_species)
     def getEvals():
 
-        levels_allowed = ['zero-shot', 'rag', 'agentic']
+        levels_allowed = ['base-model', 'rag', 'agentic']
         prompts_allowed = ['tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
         species_allowed = ['human', 'rat', 'mixed']
 
@@ -254,5 +260,4 @@ def mod_ui(input, output, session):
         if eval_name == 'Any':
             evals = getEvals()
             return [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals)]
-        return module_graph('eval_0', eval_name)
-    
+        return module_graph('eval_0', eval_name)    

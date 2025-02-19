@@ -1,0 +1,24 @@
+Model,"ABT Q/A prompts (Model
+Claude 3.5 Sonnet    474
+GPT-4o               474
+Gemini 1.5 Pro       474
+Llama 3.1 405B       474
+Mistral Large 2      474
+Name: Result, dtype: int64)","Toxicity type prompts (Human) (Model
+Claude 3.5 Sonnet    57
+GPT-4o               57
+Gemini 1.5 Pro       57
+Llama 3.1 405B       57
+Mistral Large 2      57
+Name: Result, dtype: int64)","Toxicity type prompts (Rat) (Model
+Claude 3.5 Sonnet    2
+GPT-4o               2
+Gemini 1.5 Pro       2
+Llama 3.1 405B       2
+Mistral Large 2      2
+Name: Result, dtype: int64)"
+Claude 3.5 Sonnet,90.9282700421941,54.3859649122807,50.0
+GPT-4o,92.19409282700423,36.84210526315789,50.0
+Gemini 1.5 Pro,94.51476793248945,40.35087719298245,50.0
+Llama 3.1 405B,87.13080168776372,33.33333333333333,50.0
+Mistral Large 2,90.084388185654,43.859649122807014,50.0
