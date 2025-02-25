@@ -1,0 +1,264 @@
+---
+title: "Evaluation"
+author: "Amlan Talukder"
+date: "2025/02/19"
+---
+
+## Description
+
+ToxPipe is evaluated in multiple levels with different sets of queries. The response at each stage was evaluated based on semantic similarity with the expected keywords or phrases.
+
+## Evaluation Sets
+
+### Levels
+
+ToxPipe system is evaluated at three levels.
+
+*Base model*
+
+This level includes the following five foundational models,
+
+- GPT-4o
+- Claude 3.5 Sonnet
+- Llama 3.1 405b
+- Gemini 1.5 pro
+- Mistral large 2
+
+*RAG*
+
+In this level, the aforementioned five foundational models are used with an extra RAG (Retrieval Augmented Generation) step.
+
+*Agentic*
+
+In this level, the RAG level is used as a tool along with various other tools including ...
+
+### Query sets
+
+*Basic*
+
+This query set consists of 27 questions (or prompts) regarding the overall known or predicted functions and toxicological effects of a chemical on human and rat biology.
+
+*Toxicity types*  
+
+This query set contains 15 questions (or prompts) regarding the toxicity types (sub acute, chronic, developement) and toxicokinetic parameters of a chemical on human and rat.
+
+[*ABT Q/A*](abt-question-ocr.qmd)
+
+This query set contains the questions from American Board of Toxicology (ABT) certification from the year 2000-2007. These questions have multiple choices of answer. The questions, answer choices and correct answers were extracted from exam sheets of respective years. After filtering ambiguous and unknown answers, the total number of questions (or prompts) is 474. More information about the extraction process of ABT Q/A can be found [here](abt-question-ocr.qmd).
+
+### Chemicals
+
+The following 20 chemicals were tested with basic and toxicity types prompts.
+
+| Chemical | CASRN  |
+|---------|---------|
+| Aspirin | 50-78-2 |
+| Paracetamol | 103-90-2 |
+| Metformin | 657-24-9 |
+| Atorvastatin | 134523-00-5 |
+| Prednisone | 53-03-2 |
+| Dioxin | 1746-01-6 |
+| Benzene | 71-43-2 |
+| Arsenite | 15502-74-6 |
+| Methylmercury | 16056-34-1 |
+| Vinylchloride | 75-01-4 |
+| 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) | 2754428-18-5 |
+| Phenanthrene | 85-01-8 |
+| TPHP (triphenylphosphate) | 115-86-6 |
+| Lanthanum | 7439-91-0 |
+| Galaxolide | 1222-05-5 |	
+| 1,6-Dimethyl-3,4-dihydroisoquinoline | 91753-09-2 |
+| 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine | 74148-62-2 |
+| N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine | 59864-46-9 |
+| 4-Methyl-1,2-dihydrobenzo[f]isoquinoline | 29248-42-8 |
+| 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine | 62625-70-1 |
+
+
+### Number of queries
+
+The number of queries in an evaluation set is ```# base models x # prompts x # chemicals x # species```. For ABT Q/A, this ```# base models x # prompts```, as the prompts are not applicable for all chemicals or species.
+
+```{=html}
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 12%">
+<col style="width: 20%">
+<col style="width: 12%">
+<col style="width: 20%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="border-right: 1px solid"></th>
+<th colspan="2" style="text-align: center; border-right: 1px solid">Human</th>
+<th colspan="2" style="text-align: center; border-right: 1px solid">Rat</th>
+<th style="text-align: center;">Mixed</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="border-right: 1px solid"></td>
+<td style="text-align: center;">Basic</td>
+<td style="text-align: center; border-right: 1px solid">Toxicity types</td>
+<td style="text-align: center;">Basic</td>
+<td style="text-align: center; border-right: 1px solid">Toxicity types</td>
+<td style="text-align: center;">ABT QA</td>
+</tr>
+<tr class="even">
+<td style="border-right: 1px solid"># prompts</td>
+<td style="text-align: center;">27</td>
+<td style="text-align: center; border-right: 1px solid">15</td>
+<td style="text-align: center;">27</td>
+<td style="text-align: center; border-right: 1px solid">15</td>
+<td style="text-align: center;">474</td>
+</tr>
+<tr class="odd">
+<td style="border-right: 1px solid">Zero-shot</td>
+<td style="text-align: center;">2700</td>
+<td style="text-align: center; border-right: 1px solid">1500</td>
+<td style="text-align: center;">2700</td>
+<td style="text-align: center; border-right: 1px solid">1500</td>
+<td style="text-align: center;">2370</td>
+</tr>
+<tr class="even">
+<td style="border-right: 1px solid">RAG</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center; border-right: 1px solid"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center; border-right: 1px solid"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td style="border-right: 1px solid">Agentic</td>
+<td style="text-align: center;">2160</td>
+<td style="text-align: center; border-right: 1px solid">1200</td>
+<td style="text-align: center;">2160</td>
+<td style="text-align: center; border-right: 1px solid">1200</td>
+<td style="text-align: center;">1896</td>
+</tr>
+</tbody>
+</table>
+```
+
+## Evaluation criteria
+
+Not all queries have expected keywords or phrases (or assertions). A response is evaluated by a separate LLM based on semantic similarity with each of the assertions. A response is labeled as "Passed", only if it has semantic similarity with all the assertions.
+
+## Results
+
+Percentage of successful responses to queries in each evaluation sets by each ToxPipe level. For each evaluation the number of queries with assertion are mentioned in parenthesis.
+
+```{=html}
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 16%">
+<col style="width: 29%">
+<col style="width: 18%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Model</th>
+<th style="text-align: center">Toxicity type prompts (Human)<br />(57)</th>
+<th style="text-align: center">ABT Q/A prompts<br />(474)</th>
+<th style="text-align: center">Toxicity type prompts (Rat)<br />(2)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td rowspan="5" style="vertical-align: middle">Base model</td>
+<td>Claude 3.5 Sonnet</td>
+<td style="text-align: center">90.93</td>
+<td style="text-align: center">54.39</td>
+<td style="text-align: center">50</td>
+</tr>
+<tr class="even">
+<td>GPT-4o</td>
+<td style="text-align: center">92.19</td>
+<td style="text-align: center">36.84</td>
+<td style="text-align: center">50</td>
+</tr>
+<tr class="odd">
+<td>Gemini 1.5 Pro</td>
+<td style="text-align: center">94.51</td>
+<td style="text-align: center">40.35</td>
+<td style="text-align: center">50</td>
+</tr>
+<tr class="even">
+<td>Llama 3.1 405B</td>
+<td style="text-align: center">87.13</td>
+<td style="text-align: center">33.33</td>
+<td style="text-align: center">50</td>
+</tr>
+<tr class="odd">
+<td>Mistral Large 2</td>
+<td style="text-align: center">90.08</td>
+<td style="text-align: center">43.86</td>
+<td style="text-align: center">50</td>
+</tr>
+<tr class="even">
+<td rowspan="5" style="vertical-align: middle">RAG</td>
+<td>Claude 3.5 Sonnet</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+<tr class="odd">
+<td>GPT-4o</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+<tr class="even">
+<td>Gemini 1.5 Pro</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+<tr class="odd">
+<td>Llama 3.1 405B</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+<tr class="even">
+<td>Mistral Large 2</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+<tr class="odd">
+<td rowspan="4" style="vertical-align: middle">Agentic</td>
+<td>Claude 3.5 Sonnet</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+<tr class="even">
+<td>GPT-4o</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+<tr class="odd">
+<td>Gemini 1.5 Pro</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+<tr class="even">
+<td>Mistral Large 2</td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+<td style="text-align: center"></td>
+</tr>
+</tbody>
+</table>
+```
+				
+				
+				
+				

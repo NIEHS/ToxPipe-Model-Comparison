@@ -5,12 +5,13 @@ project:
     - "!toxpipe-model-comparison"
 
 website:
-  title: "ToxPipe LLM Model Testing"
+  back-to-top-navigation: true
+  title: "ToxPipe Evaluation"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - reports/index.qmd
+      - reports/eval.qmd
       - tools.qmd
       - about.qmd
 
@@ -21,5 +22,5 @@ format:
     css: ntpweb-shared.css
     toc: true
 
-execute: 
-  cache: true
+execute:
+  freeze: auto
