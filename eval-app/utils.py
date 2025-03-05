@@ -5,7 +5,7 @@ import yaml
 
 class Config:
     DIR_HOME = Path(__file__).parent
-    DIR_TESTS = DIR_HOME /'tests1'
+    DIR_TESTS = DIR_HOME /'tests'
     DIR_CODES = DIR_HOME /'codes'
     RANDOM_STATE = 1000
     CONFIG_PLOT = dict(
