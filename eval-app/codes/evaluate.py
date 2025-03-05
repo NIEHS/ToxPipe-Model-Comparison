@@ -109,18 +109,21 @@ class EvaluateResponse:
         
         return response
 
-def callAgenticToxpipe(prompt, model_config):
+def callAgenticToxpipe(type, prompt, model_config):
     with threading.Lock():
         model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
-
+        
         url = f'{env_config['TOXPIPE_API_HOST']}/agent/create/'
         response = requests.get(url=f"{url}?{model_params}")
         if not response.ok: raise Exception(response.text)
         agentid = response.json()['agentid']
-
-        url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
+        
+        if type == 'rag':
+            url = f'{env_config['TOXPIPE_API_HOST']}/agent/rag/?agentid={agentid}&q={prompt}'
+        else:
+            url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
         response = requests.get(url=url)
-        if not response.ok: raise Exception(f'API url: {url}, Response: {response.text}')
+        if not response.ok: raise Exception(f'API url: {url}, Response status code: {response.status_code}, Response: {response.text}')
         return response.json()['response']
 
 def createOpenAIModel(model_name, temperature):
@@ -139,14 +142,13 @@ def createOpenAIModel(model_name, temperature):
 def createRawModel(model_info):
     if model_info['id'].startswith('openai:chat'):
         return createOpenAIModel(model_info['id'].split(':')[-1], **model_info['config'])
-
     raise NotImplementedError(model_info['id'])
 
 def getModelResponse(model_info, prompt_info, vars_info):
 
-    if model_info['id'] == 'file://scripts/providers.py':
+    if model_info['id'] in ['agentic', 'rag']:
         try:
-            output = callAgenticToxpipe(model_config=model_info['config'], prompt=prompt_info['user'].format(**vars_info))
+            output = callAgenticToxpipe(type=model_info['id'], model_config=model_info['config'], prompt=prompt_info['user'].format(**vars_info))
         except yaml.YAMLError as exp:
             print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
             return {'output': '', 'error': str(exp)}
@@ -242,7 +244,7 @@ def runTest(config_path, resume=False):
 
         output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
 
-        with concurrent.futures.ThreadPoolExecutor(10) as pool:
+        with concurrent.futures.ThreadPoolExecutor(2) as pool:
             results = pool.map(evaluate, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<30.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])

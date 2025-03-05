@@ -108,11 +108,10 @@ def module_graph(input, output, session, eval_name):
         def getAssertionCount(reason, result):
             if result == 'No assertion': return (1, result, 1)
             if not isinstance(reason, list): return (0, result, 1)
-            if 'components' not in reason[0]: return (int(reason[0]['pass']), 'Pass', 1)
             s = 0
-            for y in reason[0]['components']:
+            for y in reason:
                 s += y['pass']
-            return (s, 'Pass', len(reason[0]['components']))
+            return (s, 'Pass', len(reason))
         
         df_assertion_count = (data.apply(lambda x: getAssertionCount(x['Reason'], x['Result']), axis=1, result_type='expand')
                                 .rename(columns={0: 'Count', 1: 'Result', 2: 'Total assertions'})
