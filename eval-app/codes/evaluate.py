@@ -146,25 +146,19 @@ def createRawModel(model_info):
 
 def getModelResponse(model_info, prompt_info, vars_info):
 
-    if model_info['id'] in ['agentic', 'rag']:
-        try:
-            output = callAgenticToxpipe(type=model_info['id'], model_config=model_info['config'], prompt=prompt_info['user'].format(**vars_info))
-        except yaml.YAMLError as exp:
-            print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
-            return {'output': '', 'error': str(exp)}
-        return {'output': output}
-
-    model = createRawModel(model_info=model_info)
-
-    prompt = ChatPromptTemplate.from_messages(
-                [
-                    ("system", prompt_info['system']),
-                    ("user", prompt_info['user'])
-                ]
-    )
-
     try:
-        output = (prompt | model).invoke(vars_info).content
+        if model_info['id'] in ['agentic', 'rag']:
+            output = callAgenticToxpipe(type=model_info['id'], model_config=model_info['config'], prompt=prompt_info['user'].format(**vars_info))
+        else:
+            model = createRawModel(model_info=model_info)
+            prompt = ChatPromptTemplate.from_messages(
+                        [
+                            ("system", prompt_info['system']),
+                            ("user", prompt_info['user'])
+                        ]
+            )
+            output = (prompt | model).invoke(vars_info).content
+        
     except Exception as exp:
         print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
         return {'output': '', 'error': str(exp)}
@@ -205,7 +199,7 @@ def loadLastOutput(output_path, resume):
         output = json.load(f)
         if 'tests' not in output: return output
         for t in output['tests']:
-            if 'error' in t['response']:
+            if 'error' in t['response'] or t['response']['output'].strip() == '':
                 model_info = t['provider']
                 prompt = t['prompt']
                 prompt_info = {'system': output['system_prompt'], 'user': prompt}
@@ -244,7 +238,7 @@ def runTest(config_path, resume=False):
 
         output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
 
-        with concurrent.futures.ThreadPoolExecutor(2) as pool:
+        with concurrent.futures.ThreadPoolExecutor(10) as pool:
             results = pool.map(evaluate, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<30.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
