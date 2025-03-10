@@ -189,16 +189,24 @@ def loadYML(file_path):
             print(exc)
     return data
 
-def loadLastOutput(output_path, resume):
+def writeJSON(output_path, data):
+    with open(output_path, 'w') as f:
+        json.dump(data, f)
 
-    output = {}
+def loadLastOutput(dir_output, resume):
     
-    if not (resume and output_path.exists()): return output
-    eval_sets, descs = [], []
-    with open(output_path) as f:
-        output = json.load(f)
-        if 'tests' not in output: return output
-        for t in output['tests']:
+    if not resume: return {}
+
+    for output_partial_path in dir_output.glob('output_*.json'):
+
+        output, eval_sets, descs, indices = {}, [], [], []
+
+        with open(output_partial_path) as f:
+            output = json.load(f)
+
+        if 'tests' not in output: return {}
+
+        for index, t in enumerate(output['tests']):
             if 'error' in t['response'] or t['response']['output'].strip() == '':
                 model_info = t['provider']
                 prompt = t['prompt']
@@ -207,22 +215,35 @@ def loadLastOutput(output_path, resume):
                 assert_info = t['assert']
                 descs.append(f"{model_info['label']} - {prompt[:30]}")
                 eval_sets.append([model_info, prompt_info, vars_info, assert_info])
+                indices.append(index)
         
+        if not len(eval_sets): continue
+
         with concurrent.futures.ProcessPoolExecutor() as pool: 
             results = pool.map(evaluate, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
-                output['tests'][i]['response'] = res
+                output['tests'][indices[i]]['response'] = res
+
+        writeJSON(output_path=output_partial_path, data=output)
 
     return output
 
+def evaluate1(*args):
+    return {'output': 'test'}
+
 def runTest(config_path, resume=False):
 
-    output_path = (config_path.parent / 'output' / 'output.json')
+    dir_output = config_path.parent / 'output'
+    dir_output.mkdir(parents=False, exist_ok=True)
 
-    output = loadLastOutput(output_path, resume)
+    output = loadLastOutput(dir_output, resume)
 
     if len(output) == 0:
+
+        for f in dir_output.glob('output_*.json'):
+            f.unlink()
+
         config = loadYML(config_path)
         eval_sets, descs = [], []
         for model_info in config['providers']:
@@ -236,17 +257,26 @@ def runTest(config_path, resume=False):
 
         eventid = datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
 
-        output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
+        if not len(eval_sets): return
 
         with concurrent.futures.ThreadPoolExecutor(10) as pool:
-            results = pool.map(evaluate, *zip(*eval_sets))
+
+            output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
+
+            results = pool.map(evaluate1, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<30.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
                 output['tests'].append({'provider': eval_sets[i][0], 'prompt': eval_sets[i][1]['user'], 'vars': eval_sets[i][2], 'assert': eval_sets[i][3], 'response': res})
+                if len(output['tests']) >= 11 or i == len(eval_sets)-1:
+                    writeJSON(output_path=dir_output / f'output_{i//11}.json', data=output)
+                    output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
 
-    (config_path.parent / 'output').mkdir(parents=False, exist_ok=True)
-    with open(output_path, 'w') as f:
-        json.dump(output, f)
+    # output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
+    # for output_partial_path in dir_output.glob('output_*.json'):
+    #     with open(output_partial_path) as f:
+    #         data = json.load(f)
+    #         output['tests'] += data['tests']
+    # writeJSON(output_path, output)
 
 env_config = dotenv.dotenv_values(Path(__file__).parent.parent / ".env")
 
