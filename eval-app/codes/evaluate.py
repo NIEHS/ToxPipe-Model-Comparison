@@ -229,9 +229,6 @@ def loadLastOutput(dir_output, resume):
 
     return output
 
-def evaluate1(*args):
-    return {'output': 'test'}
-
 def runTest(config_path, resume=False):
 
     dir_output = config_path.parent / 'output'
@@ -263,12 +260,12 @@ def runTest(config_path, resume=False):
 
             output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
 
-            results = pool.map(evaluate1, *zip(*eval_sets))
+            results = pool.map(evaluate, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<30.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
                 output['tests'].append({'provider': eval_sets[i][0], 'prompt': eval_sets[i][1]['user'], 'vars': eval_sets[i][2], 'assert': eval_sets[i][3], 'response': res})
-                if len(output['tests']) >= 11 or i == len(eval_sets)-1:
-                    writeJSON(output_path=dir_output / f'output_{i//11}.json', data=output)
+                if len(output['tests']) >= 50 or i == len(eval_sets)-1:
+                    writeJSON(output_path=dir_output / f'output_{i//50}.json', data=output)
                     output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
 
     # output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
