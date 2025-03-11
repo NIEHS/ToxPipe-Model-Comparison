@@ -205,7 +205,7 @@ def resumeLastRun(dir_output):
         if 'tests' not in output: return {}
 
         for index, t in enumerate(output['tests']):
-            if 'error' in t['response'] or t['response']['output'].strip() == '':
+            if 'error' in t['response'] or not isinstance(t['response']['output'], str) or t['response']['output'].strip() == '':
                 model_info = t['provider']
                 prompt = t['prompt']
                 prompt_info = {'system': output['system_prompt'], 'user': prompt}
