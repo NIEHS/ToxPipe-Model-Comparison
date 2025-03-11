@@ -193,9 +193,6 @@ def writeJSON(output_path, data):
     with open(output_path, 'w') as f:
         json.dump(data, f)
 
-def evaluate1(*args):
-    return {'output': 'test'}
-
 def loadLastOutput(dir_output, resume):
     
     if not resume: return {}
@@ -223,7 +220,7 @@ def loadLastOutput(dir_output, resume):
         if not len(eval_sets): continue
 
         with concurrent.futures.ProcessPoolExecutor() as pool: 
-            results = pool.map(evaluate1, *zip(*eval_sets))
+            results = pool.map(evaluate, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
                 output['tests'][indices[i]]['response'] = res
