@@ -10,7 +10,7 @@ import concurrent.futures
 import tqdm
 import traceback
 from langchain_core.output_parsers import JsonOutputParser
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 #from langsmith import traceable
 from utils import Config
 import json
@@ -18,28 +18,32 @@ from datetime import datetime
 from uuid import uuid4
 import sys
 
-class SchemaForSimilaritySearch(BaseModel):
-    response: bool
+class SchemaForSemanticSimilarityEvaluation(BaseModel):
+    '''
+    Represents the response and reason for semantic similarity
+    '''
+    pass_: bool = Field(description="A boolean value to indicate if semantic similarity was found")
+    reason: str = Field(description="Text to describe the reason for semantic similarity")
 
 class CustomOutputParser(JsonOutputParser):
 
-    def __init__(self, schema=SchemaForSimilaritySearch):
+    def __init__(self, schema=SchemaForSemanticSimilarityEvaluation):
         super().__init__(pydantic_object=schema)
 
     def parseResponse(self, data):
         
         try:
             response = self.parse(data.content)
-            if not isinstance(response['response'], bool):
-                response = {'response': False, 'reason': 'Error in data processing'}
+            if not isinstance(response['pass_'], bool):
+                response = {'pass_': False, 'reason': 'Error in data processing'}
         except:
             return {
-                'pass': False,
+                'pass_': False,
                 'reason': 'Error in data processing'
             }    
         
         return {
-                'pass': response['response'],
+                'pass_': response['pass_'],
                 'reason': response['reason']
         }
 
@@ -76,7 +80,7 @@ class EvaluateResponse:
 
             ```json
             {{
-                "response": false,
+                "pass_": false,
                 "reason": "An appropriate reason"
             }}
             ```
@@ -90,15 +94,14 @@ class EvaluateResponse:
 
     def getEvaluation(self, response: str, prompt: str) -> Union[bool, float, Dict[str, Any]]:
         
-        model = createRawModel({'id': 'openai:chat:azure-gpt-4o', 'config': {'temperature': 0}})
-        output_parser = CustomOutputParser()
+        model = createBaseModel({'id': 'openai:chat:azure-gpt-4o', 'config': {'temperature': 0}})
 
         passed = True
         component_results = []
         for res_exp in self.assert_info[0]['expected_phrases']:
-            res_ = (self.prompt_question | model | output_parser.parseResponse).invoke(input={'query': prompt, 'answer': response, 'phrase': res_exp})
-            passed &= res_['pass']
-            component_results.append(res_)
+            res_ = dict((self.prompt_question | model.with_structured_output(SchemaForSemanticSimilarityEvaluation)).invoke(input={'query': prompt, 'answer': response, 'phrase': res_exp}))
+            passed &= res_['pass_']
+            component_results.append({'pass': res_['pass_'], 'reason': res_['reason']})
 
         response = {
             'pass': passed,
@@ -108,23 +111,6 @@ class EvaluateResponse:
         }
         
         return response
-
-def callAgenticToxpipe(type, prompt, model_config):
-    with threading.Lock():
-        model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
-        
-        url = f'{env_config['TOXPIPE_API_HOST']}/agent/create/'
-        response = requests.get(url=f"{url}?{model_params}")
-        if not response.ok: raise Exception(response.text)
-        agentid = response.json()['agentid']
-        
-        if type == 'rag':
-            url = f'{env_config['TOXPIPE_API_HOST']}/agent/rag/?agentid={agentid}&q={prompt}'
-        else:
-            url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
-        response = requests.get(url=url)
-        if not response.ok: raise Exception(f'API url: {url}, Response status code: {response.status_code}, Response: {response.text}')
-        return response.json()['response']
 
 def createOpenAIModel(model_name, temperature):
 
@@ -139,31 +125,65 @@ def createOpenAIModel(model_name, temperature):
         seed=1000
     )
 
-def createRawModel(model_info):
+def createBaseModel(model_info):
     if model_info['id'].startswith('openai:chat'):
         return createOpenAIModel(model_info['id'].split(':')[-1], **model_info['config'])
     raise NotImplementedError(model_info['id'])
 
+class SchemaForQueryResponse(BaseModel):
+    '''
+    Represents the response of user query
+    '''
+    response: str = Field(description="Text to represent the response to user query")
+
+def queryBaseModel(model_info, prompt_info, vars_info):
+    model = createBaseModel(model_info=model_info)
+    prompt = ChatPromptTemplate.from_messages(
+                [
+                    ("system", prompt_info['system']),
+                    ("user", prompt_info['user'])
+                ]
+    )
+    response = dict((prompt | model.with_structured_output(SchemaForQueryResponse)).invoke(vars_info))['response']
+    return {'output': response}
+
+def queryToxpipe(type, prompt, model_config):
+    with threading.Lock():
+        model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
+        
+        url = f'{env_config['TOXPIPE_API_HOST']}/agent/create/'
+        response = requests.get(url=f"{url}?{model_params}")
+        if not response.ok: raise Exception(response.text)
+        agentid = response.json()['agentid']
+        
+        if type == 'rag':
+            url = f'{env_config['TOXPIPE_API_HOST']}/agent/rag/?agentid={agentid}&q={prompt}'
+        else:
+            url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
+
+        response = requests.get(url=url)
+        if not response.ok: raise Exception(f'API url: {url}, Response status code: {response.status_code}, Response: {response.text}')
+        res = response.json()
+        
+        if 'error' in res:
+            error = f'Error from Toxpipe: {res['error']}' + (f'\n\nsearched_keywords: {res['searched_keywords']}' if 'searched_keywords' in res else '')
+            return {'output': res['response'], 'error': error}
+        
+        return {'output': res['response']}
+
 def getModelResponse(model_info, prompt_info, vars_info):
 
     try:
-        if model_info['id'] in ['agentic', 'rag']:
-            output = callAgenticToxpipe(type=model_info['id'], model_config=model_info['config'], prompt=prompt_info['user'].format(**vars_info))
+        if model_info['id'] not in ['agentic', 'rag']:
+            response = queryBaseModel(model_info, prompt_info, vars_info)
         else:
-            model = createRawModel(model_info=model_info)
-            prompt = ChatPromptTemplate.from_messages(
-                        [
-                            ("system", prompt_info['system']),
-                            ("user", prompt_info['user'])
-                        ]
-            )
-            output = (prompt | model).invoke(vars_info).content
+            response = queryToxpipe(type=model_info['id'], model_config=model_info['config'], prompt=prompt_info['user'].format(**vars_info))
         
     except Exception as exp:
         print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
         return {'output': '', 'error': str(exp)}
     
-    return {'output': output}
+    return response
 
 #@traceable
 def evaluate(model_info, prompt_info, vars_info, assert_info):
@@ -205,7 +225,11 @@ def resumeLastRun(dir_output):
         if 'tests' not in output: return {}
 
         for index, t in enumerate(output['tests']):
-            if 'error' in t['response'] or not isinstance(t['response']['output'], str) or t['response']['output'].strip() == '':
+            if ('error' in t['response'] or 
+                (not isinstance(t['response']['output'], str)) or 
+                t['response']['output'].strip() == '' or 
+                t['response']['output'].lower().startswith('error')):
+
                 model_info = t['provider']
                 prompt = t['prompt']
                 prompt_info = {'system': output['system_prompt'], 'user': prompt}
