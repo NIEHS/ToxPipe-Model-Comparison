@@ -193,9 +193,7 @@ def writeJSON(output_path, data):
     with open(output_path, 'w') as f:
         json.dump(data, f)
 
-def loadLastOutput(dir_output, resume):
-    
-    if not resume: return {}
+def resumeLastRun(dir_output):
 
     for output_partial_path in dir_output.glob('output_*.json'):
 
@@ -227,16 +225,12 @@ def loadLastOutput(dir_output, resume):
 
         writeJSON(output_path=output_partial_path, data=output)
 
-    return output
-
 def runTest(config_path, resume=False):
 
     dir_output = config_path.parent / 'output'
     dir_output.mkdir(parents=False, exist_ok=True)
 
-    output = loadLastOutput(dir_output, resume)
-
-    if len(output) == 0:
+    if not resume:
 
         for f in dir_output.glob('output_*.json'):
             f.unlink()
@@ -264,7 +258,7 @@ def runTest(config_path, resume=False):
         if len(output['tests']):
             writeJSON(output_path=dir_output / f'output_{index}.json', data=output)
 
-        loadLastOutput(dir_output, True)
+    resumeLastRun(dir_output)
 
 env_config = dotenv.dotenv_values(Path(__file__).parent.parent / ".env")
 
