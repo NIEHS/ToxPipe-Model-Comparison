@@ -193,6 +193,9 @@ def writeJSON(output_path, data):
     with open(output_path, 'w') as f:
         json.dump(data, f)
 
+def evaluate1(*args):
+    return {'output': 'test'}
+
 def loadLastOutput(dir_output, resume):
     
     if not resume: return {}
@@ -220,7 +223,7 @@ def loadLastOutput(dir_output, resume):
         if not len(eval_sets): continue
 
         with concurrent.futures.ProcessPoolExecutor() as pool: 
-            results = pool.map(evaluate, *zip(*eval_sets))
+            results = pool.map(evaluate1, *zip(*eval_sets))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
                 output['tests'][indices[i]]['response'] = res
@@ -242,38 +245,29 @@ def runTest(config_path, resume=False):
             f.unlink()
 
         config = loadYML(config_path)
-        eval_sets, descs = [], []
+
+        index = 0
+        eventid = datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
+        output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
+
         for model_info in config['providers']:
             for prompt in config['prompts']:
                 prompt_info = {'system': config['system_prompt'], 'user': prompt}
                 for test in config['tests']:
                     vars_info = test['vars']
                     assert_info = test['assert'] if 'assert' in test else {}
-                    descs.append(f"{model_info['label']} - {prompt[:30]}")
-                    eval_sets.append([model_info, prompt_info, vars_info, assert_info])
 
-        eventid = datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
+                    output['tests'].append({'provider': model_info, 'prompt': prompt_info['user'], 'vars': vars_info, 'assert': assert_info, 'response': {'output': ''}})
 
-        if not len(eval_sets): return
+                    if len(output['tests']) >= 50:
+                        writeJSON(output_path=dir_output / f'output_{index}.json', data=output)
+                        output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
+                        index += 1
 
-        with concurrent.futures.ThreadPoolExecutor(10) as pool:
+        if len(output['tests']):
+            writeJSON(output_path=dir_output / f'output_{index}.json', data=output)
 
-            output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
-
-            results = pool.map(evaluate, *zip(*eval_sets))
-            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<30.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
-                pbar.set_description(descs[i])
-                output['tests'].append({'provider': eval_sets[i][0], 'prompt': eval_sets[i][1]['user'], 'vars': eval_sets[i][2], 'assert': eval_sets[i][3], 'response': res})
-                if len(output['tests']) >= 50 or i == len(eval_sets)-1:
-                    writeJSON(output_path=dir_output / f'output_{i//50}.json', data=output)
-                    output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
-
-    # output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
-    # for output_partial_path in dir_output.glob('output_*.json'):
-    #     with open(output_partial_path) as f:
-    #         data = json.load(f)
-    #         output['tests'] += data['tests']
-    # writeJSON(output_path, output)
+        loadLastOutput(dir_output, True)
 
 env_config = dotenv.dotenv_values(Path(__file__).parent.parent / ".env")
 
