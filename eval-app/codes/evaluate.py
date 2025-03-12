@@ -150,7 +150,6 @@ def queryBaseModel(model_info, prompt_info, vars_info):
 def queryToxpipe(type, prompt, model_config):
     with threading.Lock():
         model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
-        
         url = f'{env_config['TOXPIPE_API_HOST']}/agent/create/'
         response = requests.get(url=f"{url}?{model_params}")
         if not response.ok: raise Exception(response.text)
@@ -229,7 +228,7 @@ def resumeLastRun(dir_output):
                 (not isinstance(t['response']['output'], str)) or 
                 t['response']['output'].strip() == '' or 
                 t['response']['output'].lower().startswith('error')):
-
+                
                 model_info = t['provider']
                 prompt = t['prompt']
                 prompt_info = {'system': output['system_prompt'], 'user': prompt}

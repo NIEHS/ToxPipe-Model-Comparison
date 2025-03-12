@@ -11,7 +11,7 @@ class EvaluatorTemp:
     
     from codes.create_promptfoo_config import createTest
 
-    PROMPT_VAR_FORMAT = '\{\{(.*?)\}\}'
+    PROMPT_VAR_FORMAT = r'\{\{(.*?)\}\}'
     CONFIG_FILE_NAME = 'promptfooconfig.yaml'
 
     def processConfig(dir_config):
@@ -124,7 +124,7 @@ class EvaluatorTemp:
 # Custom evaluator
 class Evaluator:
 
-    PROMPT_VAR_FORMAT = '\{(.*?)\}'
+    PROMPT_VAR_FORMAT = r'\{(.*?)\}'
     CONFIG_FILE_NAME = 'config.yaml'
 
     def processConfig(dir_config):
@@ -166,29 +166,35 @@ class Evaluator:
             return d_results
         
         results = []
-        with open(dir_output / 'output.json') as f:
-            data = json.load(f)
-        
-        for item in data['tests']:
-            try:
-                results.append(
-                    {
-                        'Id': f"{data['id']}|{item['provider']['label']}",
-                        'Prompt': item['prompt'].format(**item['vars']), 
-                        'Model': item['provider']['label'], 
-                        'Response': item['response']['output'],
-                        'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
-                        'Variable': ', '.join([f'{k}:{v}' for k, v in item['vars'].items()]), 
-                        'Reason': getExplanation(item['response']['results'])
-                    }
-                )
-            except Exception as exp:
-                print(f'Error reading output from {dir_output}')
-                print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
-                return pd.DataFrame()
 
-        results = pd.DataFrame(results)
-        results['eval_id'] = data['id']
+        for file_path in dir_output.glob('output*.json'):
+
+            with open(file_path) as f:
+                data = json.load(f)
+            
+            results_chunk = []
+            for item in data['tests']:
+                try:
+                    results_chunk.append(
+                        {
+                            'Id': f"{data['id']}|{item['provider']['label']}",
+                            'eval_id': data['id'],
+                            'Prompt': item['prompt'].format(**item['vars']), 
+                            'Model': item['provider']['label'], 
+                            'Response': item['response']['output'],
+                            'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
+                            'Variable': ', '.join([f'{k}:{v}' for k, v in item['vars'].items()]), 
+                            'Reason': getExplanation(item['response']['results'])
+                        }
+                    )
+                except Exception as exp:
+                    print(f'Error reading output from {dir_output}')
+                    print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
+                    return pd.DataFrame()
+                
+            results += results_chunk
+
+        results = pd.DataFrame(results)    
         
         return results
     
