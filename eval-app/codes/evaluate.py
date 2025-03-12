@@ -214,7 +214,9 @@ def writeJSON(output_path, data):
 
 def resumeLastRun(dir_output):
 
-    for output_partial_path in dir_output.glob('output_*.json'):
+    list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.name.split('_')[-1]))
+
+    for output_partial_path in list_output_file_path:
 
         output, eval_sets, descs, indices = {}, [], [], []
 
@@ -239,6 +241,8 @@ def resumeLastRun(dir_output):
                 indices.append(index)
         
         if not len(eval_sets): continue
+
+        print(f'Processing {output_partial_path.name}')
 
         with concurrent.futures.ProcessPoolExecutor() as pool: 
             results = pool.map(evaluate, *zip(*eval_sets))
