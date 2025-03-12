@@ -214,7 +214,7 @@ def writeJSON(output_path, data):
 
 def resumeLastRun(dir_output):
 
-    list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.name.split('_')[-1]))
+    list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.stem.split('_')[-1]))
 
     for output_partial_path in list_output_file_path:
 

@@ -167,7 +167,7 @@ class Evaluator:
         
         results = []
 
-        list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.name.split('_')[-1]))
+        list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.stem.split('_')[-1]))
 
         for file_path in list_output_file_path:
 
