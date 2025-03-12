@@ -163,8 +163,8 @@ def queryToxpipe(type, prompt, model_config):
         response = requests.get(url=url)
         if not response.ok: raise Exception(f'API url: {url}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()
-        
-        if 'error' in res:
+
+        if 'error' in res and len(res['error'].strip()) > 0:
             error = f'Error from Toxpipe: {res['error']}' + (f'\n\nsearched_keywords: {res['searched_keywords']}' if 'searched_keywords' in res else '')
             return {'output': res['response'], 'error': error}
         
