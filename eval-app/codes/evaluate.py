@@ -165,10 +165,14 @@ def queryToxpipe(type, prompt, model_config):
         res = response.json()
 
         # From RAG: response is {'response': {'response': '', 'error': '', 'searched_keywords': ''}}
-        # From AGENTIC: response is {'response': ''}
-        if 'error' in res['response'] and len(res['response']['error'].strip()) > 0:
-            res['response']['error'] = f'Error from Toxpipe: {res['response']['error']}'
-        
+        if type == 'rag':
+            if len(res['response']['error'].strip()) > 0:
+                return {'output': res['response']['response'], 
+                        'error': f'Error from Toxpipe: {res['response']['error']}', 
+                        'searched_keywords': res['response']['searched_keywords']}
+            return {'output': res['response']['response'], 'searched_keywords': res['response']['searched_keywords']}
+
+        # From AGENTIC: response is {'response': ''}        
         return {'output': res['response']}
 
 def getModelResponse(model_info, prompt_info, vars_info):
