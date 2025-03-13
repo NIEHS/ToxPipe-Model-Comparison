@@ -164,9 +164,10 @@ def queryToxpipe(type, prompt, model_config):
         if not response.ok: raise Exception(f'API url: {url}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()
 
-        if 'error' in res and len(res['error'].strip()) > 0:
-            error = f'Error from Toxpipe: {res['error']}' + (f'\n\nsearched_keywords: {res['searched_keywords']}' if 'searched_keywords' in res else '')
-            return {'output': res['response'], 'error': error}
+        # From RAG: response is {'response': {'response': '', 'error': '', 'searched_keywords': ''}}
+        # From AGENTIC: response is {'response': ''}
+        if 'error' in res['response'] and len(res['response']['error'].strip()) > 0:
+            res['response']['error'] = f'Error from Toxpipe: {res['response']['error']}'
         
         return {'output': res['response']}
 
@@ -226,7 +227,7 @@ def resumeLastRun(dir_output):
         if 'tests' not in output: return {}
 
         for index, t in enumerate(output['tests']):
-            if ('error' in t['response'] or 
+            if (('error' in t['response'] and len(t['response']['error'].strip()) > 0) or 
                 (not isinstance(t['response']['output'], str)) or 
                 t['response']['output'].strip() == '' or 
                 t['response']['output'].lower().startswith('error')):
