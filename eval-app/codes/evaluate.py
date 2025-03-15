@@ -144,7 +144,12 @@ def queryBaseModel(model_info, prompt_info, vars_info):
                     ("user", prompt_info['user'])
                 ]
     )
-    response = dict((prompt | model.with_structured_output(SchemaForQueryResponse)).invoke(vars_info))['response']
+
+    # Langchain still does not have structured output facility for Mistral and LLama models, so rolling back to
+    # old code. Will use this later when Langchain adds the facilities. 
+    #response = dict((prompt | model.with_structured_output(SchemaForQueryResponse)).invoke(vars_info))['response']
+    response = (prompt | model).invoke(vars_info).content
+    
     return {'output': response}
 
 def queryToxpipe(type, prompt, model_config):
