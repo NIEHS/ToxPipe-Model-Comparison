@@ -194,18 +194,21 @@ def getModelResponse(model_info, prompt_info, vars_info):
     
     return response
 
+def getEvaluationResponse(assert_info, response, prompt):
+
+    try:
+        return EvaluateResponse(assert_info=assert_info).getEvaluation(response=response, prompt=prompt)
+    except Exception as exp:
+        print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
+        return {'output': '', 'error': f'Error in evaluation: {exp}'}
+
 #@traceable
-def evaluate(model_info, prompt_info, vars_info, assert_info):
-    
+def getResponseAndEvaluate(model_info, prompt_info, vars_info, assert_info):
+
     response = getModelResponse(model_info, prompt_info, vars_info)
-    response['results'] = {}
-    if len(assert_info) > 0:
-        prompt = prompt_info['user'].format(**vars_info)
-        try:
-            response['results'] = EvaluateResponse(assert_info=assert_info).getEvaluation(response=response, prompt=prompt)
-        except Exception as exp:
-            print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
-            response['results'] = {'output': '', 'error': f'Error in evaluation: {exp}'}
+    response['results'] = getEvaluationResponse(assert_info=assert_info, 
+                                                response=response, 
+                                                prompt=prompt_info['user']) if len(assert_info) > 0 else {}
 
     return response
 
@@ -228,7 +231,9 @@ def resumeLastRun(dir_output):
 
     for output_partial_path in list_output_file_path:
 
-        output, eval_sets, descs, indices = {}, [], [], []
+        output = {}
+        eval_sets, descs, indices = [], [], []
+        eval_sets_eval, descs_eval, indices_eval = [], [], []
 
         with open(output_partial_path) as f:
             output = json.load(f)
@@ -236,30 +241,44 @@ def resumeLastRun(dir_output):
         if 'tests' not in output: return {}
 
         for index, t in enumerate(output['tests']):
-            if (('error' in t['response'] and len(t['response']['error'].strip()) > 0) or 
-                (not isinstance(t['response']['output'], str)) or 
-                t['response']['output'].strip() == '' or 
-                t['response']['output'].lower().startswith('error') or
-                'error' in t['response']['results']):
+            is_response_error = (('error' in t['response'] and len(t['response']['error'].strip()) > 0) or 
+                                (not isinstance(t['response']['output'], str)) or 
+                                t['response']['output'].strip() == '' or 
+                                t['response']['output'].lower().startswith('error'))
+            is_eval_error = ('results' in t['response'] and 'error' in t['response']['results'])
+            
+            if is_response_error or is_eval_error:
                 
                 model_info = t['provider']
                 prompt = t['prompt']
                 prompt_info = {'system': output['system_prompt'], 'user': prompt}
                 vars_info = t['vars']
                 assert_info = t['assert']
-                descs.append(f"{model_info['label']} - {prompt[:30]}")
-                eval_sets.append([model_info, prompt_info, vars_info, assert_info])
-                indices.append(index)
+                
+                if is_response_error: 
+                    descs.append(f"{model_info['label']} - {prompt[:30]}")
+                    eval_sets.append([model_info, prompt_info, vars_info, assert_info])
+                    indices.append(index)      
+                elif is_eval_error:
+                    descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
+                    eval_sets_eval.append([assert_info, t['response']['output'], prompt_info['user']])
+                    indices_eval.append(index)
         
-        if not len(eval_sets): continue
+        if not (len(eval_sets) or len(eval_sets_eval)): continue
 
         print(f'Processing {output_partial_path.name}')
 
-        with concurrent.futures.ProcessPoolExecutor() as pool: 
-            results = pool.map(evaluate, *zip(*eval_sets))
-            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
-                pbar.set_description(descs[i])
-                output['tests'][indices[i]]['response'] = res
+        with concurrent.futures.ProcessPoolExecutor() as pool:
+            if eval_sets: 
+                results = pool.map(getResponseAndEvaluate, *zip(*eval_sets))
+                for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+                    pbar.set_description(descs[i])
+                    output['tests'][indices[i]]['response'] = res
+            if eval_sets_eval:
+                results = pool.map(getEvaluationResponse, *zip(*eval_sets_eval))
+                for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+                    pbar.set_description(descs_eval[i])
+                    output['tests'][indices_eval[i]]['response']['results'] = res
 
         writeJSON(output_path=output_partial_path, data=output)
 
