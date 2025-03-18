@@ -33,11 +33,7 @@ def module_graph(input, output, session, eval_name):
                 
     @reactive.calc
     def loadEvalResults():
-        dir_output = Config.DIR_TESTS / eval_name / 'output'
-        data = pd.DataFrame()
-        if (dir_output / 'output.json').exists():
-            data = utils.Evaluator.processResults(dir_output)
-        return data
+        return utils.Evaluator.processResults(eval_name)
 
     @reactive.effect
     def loadVars():
@@ -178,22 +174,20 @@ def mod_ui(input, output, session):
 
                 df_report = pd.DataFrame()
                 for eval_name in evals:
-                    dir_output = Config.DIR_TESTS / eval_name / 'output'
-                    data = pd.DataFrame()
-                    if (dir_output / 'output.json').exists():
-                        data = utils.Evaluator.processResults(dir_output)
-                        total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
-                        data_pass_perc = (data
-                                            .query('Result == "Pass"')
-                                            .groupby('Model')['Result']
-                                            .value_counts()
-                                            .reset_index()
-                                            .drop(columns='Result')
-                                            .set_index('Model'))
-                        data_pass_perc['count'] *= (100/total_assertions)
-                        header = f'{d_eval_prompt['_'.join(eval_name.split('_')[1:])]} ({int(total_assertions.iloc[0])})'
-                        data_pass_perc = data_pass_perc.rename(columns={'count': header})
-                        df_report = pd.concat([df_report, data_pass_perc], axis=1)
+                    data = utils.Evaluator.processResults(eval_name)
+                    if data.empty(): continue
+                    total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
+                    data_pass_perc = (data
+                                        .query('Result == "Pass"')
+                                        .groupby('Model')['Result']
+                                        .value_counts()
+                                        .reset_index()
+                                        .drop(columns='Result')
+                                        .set_index('Model'))
+                    data_pass_perc['count'] *= (100/total_assertions)
+                    header = f'{d_eval_prompt['_'.join(eval_name.split('_')[1:])]} ({int(total_assertions.iloc[0])})'
+                    data_pass_perc = data_pass_perc.rename(columns={'count': header})
+                    df_report = pd.concat([df_report, data_pass_perc], axis=1)
 
                 yield df_report.to_csv()
 
@@ -219,7 +213,7 @@ def mod_ui(input, output, session):
 
         evals = []
         for test in Config.DIR_TESTS.iterdir():
-            if test.is_dir() and (test / 'output' / 'output.json').exists():
+            if utils.Evaluator.hasOutput(test.name):
                 if level != 'any' and not test.name.startswith(level): continue
                 if prompt != 'any' and prompt not in test.name: continue
                 if species != 'any' and not test.name.endswith(level): continue

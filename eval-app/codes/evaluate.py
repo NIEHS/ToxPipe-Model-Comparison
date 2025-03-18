@@ -198,7 +198,7 @@ def getModelResponse(model_info, prompt_info, vars_info):
 def evaluate(model_info, prompt_info, vars_info, assert_info):
     
     response = getModelResponse(model_info, prompt_info, vars_info)
-    response['results'] = []
+    response['results'] = {}
     if len(assert_info) > 0:
         prompt = prompt_info['user'].format(**vars_info)
         try:
@@ -239,7 +239,8 @@ def resumeLastRun(dir_output):
             if (('error' in t['response'] and len(t['response']['error'].strip()) > 0) or 
                 (not isinstance(t['response']['output'], str)) or 
                 t['response']['output'].strip() == '' or 
-                t['response']['output'].lower().startswith('error')):
+                t['response']['output'].lower().startswith('error') or
+                'error' in t['response']['results']):
                 
                 model_info = t['provider']
                 prompt = t['prompt']

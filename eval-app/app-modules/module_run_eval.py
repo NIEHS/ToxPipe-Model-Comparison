@@ -129,25 +129,27 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     def loadEvals():
-        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / utils.Evaluator.CONFIG_FILE_NAME).exists()])
-        ui.update_select(id='select_eval', choices=tests)
+        ui.update_select(id='select_eval', choices=utils.Evaluator.loadEvals())
 
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadEvalInfo():
-        dir_eval = Config.DIR_TESTS / input.select_eval()
-        return utils.Evaluator.processConfig(dir_eval)
+        return utils.Evaluator.processConfig(input.select_eval())
     
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadLastRunTimestamp():
-        dir_eval_output = Config.DIR_TESTS / input.select_eval() / 'output'
+        eval_name = input.select_eval()
+        dir_eval_output = Config.DIR_TESTS / eval_name / 'output'
         timestamp_test = "Not run yet"
         timestamp_sim = "Not run yet"
 
-        if (dir_eval_output / 'output.json').exists():
-            timestamp_test = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'output.json'))
-        if (dir_eval_output / 'response_embeddings.json').exists():
+        if utils.Evaluator.hasOutput(eval_name):
+            if (dir_eval_output / 'output_0.json').exists():
+                timestamp_test = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'output_0.json'))
+            elif (dir_eval_output / 'output.json').exists():
+                timestamp_test = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'output.json'))
+        if utils.Evaluator.hasEmbeddings(eval_name):
             timestamp_sim = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'response_embeddings.json'))
 
         return {'test': timestamp_test, 'sim': timestamp_sim}
@@ -155,29 +157,28 @@ def mod_ui(input, output, session):
     @reactive.effect
     @reactive.event(input.btn_run_eval)
     def runEval():
-        test_name = input.select_eval()
-        dir_test = Config.DIR_TESTS / test_name
+        eval_name = input.select_eval()
         try:
-            if utils.Evaluator.runTest(dir_test):
-                ui.notification_show(f'"{test_name}" ran successfully', type="message")
+            if utils.Evaluator.runTest(eval_name):
+                ui.notification_show(f'"{eval_name}" ran successfully', type="message")
             else: 
-                ui.notification_show(f'"{test_name}" did not run successfully', type="error")
+                ui.notification_show(f'"{eval_name}" did not run successfully', type="error")
                 
         except Exception as exp:
-            ui.notification_show(f'"{test_name}" did not run successfully', type="error")
+            ui.notification_show(f'"{eval_name}" did not run successfully', type="error")
 
 
     @reactive.effect
     @reactive.event(input.btn_run_sim)
     def runSimilarityExtraction():
-        test_name = input.select_eval()
-        dir_test = Config.DIR_TESTS / test_name / 'output'
-        if not (dir_test / 'output.json').exists():
-            ui.notification_show(f'Please run {test_name} before similarity extraction', type="error")
+        eval_name = input.select_eval()
+        if not utils.Evaluator.hasOutput(eval_name):
+            ui.notification_show(f'Please run {eval_name} before similarity extraction', type="error")
             return
         try:
+            dir_test = Config.DIR_TESTS / eval_name
             generateSimilarity(dir_=dir_test)
-            ui.notification_show(f'"{test_name}" response similarity extracted successfully', type="message")
+            ui.notification_show(f'"{eval_name}" response similarity extracted successfully', type="message")
         except Exception as exp:
             print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
-            ui.notification_show(f'"{test_name}" response similarity extraction did not run successfully', type="error")
+            ui.notification_show(f'"{eval_name}" response similarity extraction did not run successfully', type="error")

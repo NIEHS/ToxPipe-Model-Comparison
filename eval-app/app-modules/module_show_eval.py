@@ -234,19 +234,14 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     def loadEvals():
-        tests = sorted([test.name for test in Config.DIR_TESTS.iterdir() if test.is_dir() and (test / 'output' / 'output.json').exists()])
-        ui.update_select(id='select_eval', choices=tests)
+        ui.update_select(id='select_eval', choices=utils.Evaluator.loadEvals())
 
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadResults():
-        dir_output = Config.DIR_TESTS / input.select_eval() / 'output'
-        output, embeddings = None, None
-        if (dir_output / 'output.json').exists():
-            output = utils.Evaluator.processResults(dir_output)
-        if (dir_output / 'response_embeddings.json').exists():
-            with open(dir_output / 'response_embeddings.json') as f:
-                embeddings = json.load(f)
+        eval_name = input.select_eval()
+        output = utils.Evaluator.processResults(eval_name)
+        embeddings = utils.Evaluator.processEmbeddings(eval_name)
 
         return output, embeddings
     
@@ -286,7 +281,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.select_eval, input.select_prompt, input.select_model)
     def loadResultsByPrompts():
         data, _ = loadResults()
-        if data.empty: return pd.DataFrame()
+        if data.empty: return data
         prompt, model = input.select_prompt(), input.select_model()
       
         if not model or 'Any' in model:
