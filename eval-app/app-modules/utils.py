@@ -149,7 +149,7 @@ class Evaluator:
     CONFIG_FILE_NAME = 'config.yaml'
 
     def hasOutput(eval_name):
-        return (Config.DIR_TESTS / eval_name / 'output' / 'output.json').exists() or (Config.DIR_TESTS / eval_name / 'output' / 'output_0.json').exists()
+        return (Config.DIR_TESTS / eval_name / 'output' / 'output_0.json').exists()
     
     def hasEmbedding(eval_name):
         return (Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json').exists()
@@ -199,7 +199,7 @@ class Evaluator:
 
         results = []
         dir_output = Config.DIR_TESTS / eval_name / 'output'
-        list_output_file_path = sorted(list(dir_output.glob('output*.json')), key=lambda x: int(x.stem.split('_')[-1]) if '_' in x.stem else 0)
+        list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.stem.split('_')[-1]))
     
         for file_path in list_output_file_path:
 
@@ -228,8 +228,7 @@ class Evaluator:
                 
             results += results_chunk
 
-        results = pd.DataFrame(results)    
-        
+        results = pd.DataFrame(results)
         return results
     
     def processEmbeddings(eval_name):

@@ -203,11 +203,7 @@ def mod_ui(input, output, session):
         prompts_allowed = ['tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
         species_allowed = ['human', 'rat', 'mixed']
 
-        def sortKey(x):
-            evals = [f'{f}-{p}-{s}' for f in levels_allowed for p in prompts_allowed for s in species_allowed]
-            eval_dict = {v: len(evals)-i for i, v in enumerate(evals)}
-            if x not in eval_dict: return 0
-            return eval_dict[x]
+        eval_dict = {eval_name: index for index, eval_name in enumerate([f'{f}_{p}_{s}' for f in levels_allowed for p in prompts_allowed for s in species_allowed])}
         
         level, prompt, species = input.select_level(), input.select_prompt(), input.select_species()
 
@@ -237,8 +233,8 @@ def mod_ui(input, output, session):
                         continue
                     
                 evals.append(test.name)
-
-        return sorted(evals, key=sortKey, reverse=True)
+        
+        return sorted(evals, key=lambda x: eval_dict[x])
 
     @reactive.effect
     @reactive.event(input.select_level, input.select_prompt, input.select_species)
