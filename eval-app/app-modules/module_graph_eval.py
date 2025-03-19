@@ -172,23 +172,30 @@ def mod_ui(input, output, session):
                 else:
                     evals = [eval_name]
 
-                df_report = pd.DataFrame()
+                df_report = {}
                 for eval_name in evals:
                     data = utils.Evaluator.processResults(eval_name)
-                    if data.empty(): continue
+                    if data.empty: continue
                     total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
                     data_pass_perc = (data
-                                        .query('Result == "Pass"')
                                         .groupby('Model')['Result']
                                         .value_counts()
                                         .reset_index()
-                                        .drop(columns='Result')
-                                        .set_index('Model'))
-                    data_pass_perc['count'] *= (100/total_assertions)
+                                        .pivot(index='Model', columns='Result', values='count'))
+                    
+                    if data_pass_perc.columns.isin(['Pass']).any(): 
+                        data_pass_perc.loc[data_pass_perc['Pass'].isna(), 'Pass'] = 0
+                    else:
+                        data_pass_perc['Pass'] = 0
+                    
+                    data_pass_perc['Assertion'] =  data_pass_perc['Pass'] + data_pass_perc['Fail']
+                    data_pass_perc['Perc'] = data_pass_perc['Pass'] * 100 / data_pass_perc['Assertion']
                     header = f'{d_eval_prompt['_'.join(eval_name.split('_')[1:])]} ({int(total_assertions.iloc[0])})'
-                    data_pass_perc = data_pass_perc.rename(columns={'count': header})
-                    df_report = pd.concat([df_report, data_pass_perc], axis=1)
-
+                    data_pass_perc = data_pass_perc[['Perc']].rename(columns={'Perc': header}).to_dict()
+                    for k, v in data_pass_perc.items():
+                        df_report[k] = {**df_report.get(k, {}), **v}
+                    
+                df_report = pd.DataFrame(df_report)
                 yield df_report.to_csv()
 
     @render.express
