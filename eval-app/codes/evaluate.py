@@ -174,8 +174,11 @@ def queryToxpipe(type, prompt, model_config):
             if len(res['response']['error'].strip()) > 0:
                 return {'output': res['response']['response'], 
                         'error': f'Error from Toxpipe: {res['response']['error']}', 
-                        'searched_keywords': res['response']['searched_keywords']}
-            return {'output': res['response']['response'], 'searched_keywords': res['response']['searched_keywords']}
+                        'searched_keyphrases': res['response']['searched_keyphrases'],
+                        'steps_taken': res['response']['steps_taken']}
+            return {'output': res['response']['response'], 
+                    'searched_keyphrases': res['response']['searched_keyphrases'],
+                    'steps_taken': res['response']['steps_taken']}
 
         # From AGENTIC: response is {'response': ''}        
         return {'output': res['response']}

@@ -1,4 +1,4 @@
-from shiny import reactive, ui as core_ui
+from shiny import reactive
 from shiny.express import ui, module, render
 from shinywidgets import render_widget
 import plotly.express as px
