@@ -192,26 +192,26 @@ def getModelResponse(model_info, prompt_info, vars_info):
             response = queryToxpipe(type=model_info['id'], model_config=model_info['config'], prompt=prompt_info['user'].format(**vars_info))
         
     except Exception as exp:
-        print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
-        return {'output': '', 'error': str(exp)}
+        error = f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}'
+        print(error)
+        return {'output': '', 'error': error}
     
     return response
 
 def getEvaluationResponse(assert_info, response, prompt):
-
+    
     try:
         return EvaluateResponse(assert_info=assert_info).getEvaluation(response=response, prompt=prompt)
     except Exception as exp:
-        print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
-        return {'output': '', 'error': f'Error in evaluation: {exp}'}
+        error = f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}'
+        print(error)
+        return {'output': '', 'error': f'Error in evaluation: {error}'}
 
 #@traceable
 def getResponseAndEvaluate(model_info, prompt_info, vars_info, assert_info):
 
     response = getModelResponse(model_info, prompt_info, vars_info)
-    response['results'] = getEvaluationResponse(assert_info=assert_info, 
-                                                response=response, 
-                                                prompt=prompt_info['user']) if len(assert_info) > 0 else {}
+    response['results'] = getEvaluationResponse(assert_info=assert_info, response=response, prompt=prompt_info['user']) if len(assert_info) > 0 else {}
 
     return response
 
@@ -248,7 +248,9 @@ def resumeLastRun(dir_output):
                                 (not isinstance(t['response']['output'], str)) or 
                                 t['response']['output'].strip() == '' or 
                                 t['response']['output'].lower().startswith('error'))
-            is_eval_error = ('results' in t['response'] and 'error' in t['response']['results'])
+            is_eval_error = (len(t['assert']) > 0 and ('results' not in t['response'] or 
+                                                            len(t['response']['results']) == 0 or 
+                                                            'error' in t['response']['results']))
             
             if is_response_error or is_eval_error:
                 
@@ -271,7 +273,7 @@ def resumeLastRun(dir_output):
 
         print(f'Processing {output_partial_path.name}')
 
-        with concurrent.futures.ThreadPoolExecutor(10) as pool:
+        with concurrent.futures.ThreadPoolExecutor(20) as pool:
             if eval_sets: 
                 results = pool.map(getResponseAndEvaluate, *zip(*eval_sets))
                 for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
