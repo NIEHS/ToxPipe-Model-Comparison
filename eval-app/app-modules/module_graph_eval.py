@@ -17,19 +17,28 @@ def module_graph(input, output, session, eval_name):
             with ui.div(class_='col'):
                 ui.input_select("select_var", "Variables", choices=[])
 
-        with ui.div(class_='row'):
+        with ui.div(class_='row gap-1'):
+            @render.express
+            def showPlots():
+                with ui.div(class_='col'):
+                    with ui.card(fill=True):
+                        @render_widget
+                        def showPassFailStatPlot():
+                            return plotPassFailStat()
+                        
+                with ui.div(class_='col'):
+                    with ui.card(fill=True):
+                        @render_widget
+                        def showAssertionStatPlot():
+                            return plotAssertionStat()
+                        
+                if eval_name.startswith('rag'):
+                    with ui.div(class_='col'):
+                        with ui.card(fill=True):
+                            @render_widget
+                            def showContextSearchStat():
+                                return plotContextSearchStat()
 
-            with ui.div(class_='col'):
-                with ui.card(fill=True):
-                    @render_widget
-                    def showPassFailStatPlot():
-                        return plotPassFailStatByTest()
-                    
-            with ui.div(class_='col'):
-                with ui.card(fill=True):
-                    @render_widget
-                    def showAssertionStatPlot():
-                        return plotAssertionStatByTest()
                 
     @reactive.calc
     def loadEvalResults():
@@ -40,10 +49,11 @@ def module_graph(input, output, session, eval_name):
         data = loadEvalResults()
         if data.empty: return
         ui.update_select(id="select_var", choices=['Any'] + sorted(data['Variable'].unique()))
-            
+
     @reactive.calc
     @reactive.event(input.select_var)
-    def plotPassFailStatByTest():
+    def plotPassFailStat():
+
         data = loadEvalResults()
         
         var = input.select_var()
@@ -51,22 +61,6 @@ def module_graph(input, output, session, eval_name):
             data = data.copy()
         else:
             data = data.query('Variable == @var')
-
-        return getPassFailStatPlot(data)
-    
-    @reactive.calc
-    @reactive.event(input.select_var)
-    def plotAssertionStatByTest():
-        data = loadEvalResults()
-        var = input.select_var()
-        if var == 'Any':
-            data = data.copy()
-        else:
-            data = data.query('Variable == @var')
-
-        return getAssertionStatPlot(data)
-
-    def getPassFailStatPlot(data: pd.DataFrame):
 
         if data.empty: return getNoDataPlot(title='Correct Responses')
 
@@ -97,7 +91,17 @@ def module_graph(input, output, session, eval_name):
 
         return fig
     
-    def getAssertionStatPlot(data: pd.DataFrame):
+    @reactive.calc
+    @reactive.event(input.select_var)
+    def plotAssertionStat():
+
+        data = loadEvalResults()
+        
+        var = input.select_var()
+        if var == 'Any':
+            data = data.copy()
+        else:
+            data = data.query('Variable == @var')
 
         if data.empty: return getNoDataPlot(title='Correct Assertions in Responses')
             
@@ -145,7 +149,41 @@ def module_graph(input, output, session, eval_name):
         fig.update_xaxes(visible=False)
 
         return fig
+    
+    @reactive.calc
+    @reactive.event(input.select_var)
+    def plotContextSearchStat():
 
+        data = loadEvalResults()
+        
+        var = input.select_var()
+        if var == 'Any':
+            data = data.copy()
+        else:
+            data = data.query('Variable == @var')
+
+        if data.empty: return getNoDataPlot(title='Context search frequency')
+
+        data['Used Context'] = data['Used Context'].apply(lambda x: 'From Resources' if x else 'From Training Data')
+        df_plot = data.groupby('Model')['Used Context'].value_counts().reset_index().sort_values('Model')
+        
+        category_orders = {'Used Context':['From Resources', 'From Training Data']}
+        category_colors = ['#7c8fe6', '#eb8c60']
+        
+        fig = px.bar(df_plot, x='count', y='Model', color='Used Context', orientation='h',
+                     category_orders=category_orders, 
+                     color_discrete_sequence=category_colors)
+
+        fig.update_layout(
+            title="Context search frequency",
+            barmode='stack',
+            **Config.CONFIG_PLOT
+        )
+
+        fig.update_xaxes(visible=False)
+
+        return fig
+    
 @module
 def mod_ui(input, output, session):
 

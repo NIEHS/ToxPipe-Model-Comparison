@@ -218,7 +218,9 @@ class Evaluator:
                             'Response': item['response']['output'],
                             'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
                             'Variable': ', '.join([f'{k}:{v}' for k, v in item['vars'].items()]), 
-                            'Reason': getExplanation(item['response']['results'])
+                            'Reason': getExplanation(item['response']['results']),
+                            'Used Context': ('steps_taken' in item['response']) and (item['response']['steps_taken'][-1] == 'query_with_context'),
+                            'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']]) if 'searched_keyphrases' in item['response'] else []
                         }
                     )
                 except Exception as exp:

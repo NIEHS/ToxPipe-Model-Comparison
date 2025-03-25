@@ -135,10 +135,6 @@ def mod_ui(input, output, session):
 
     with ui.div(class_="d-flex gap-5"):
         ui.input_select("select_eval", "Evals", choices=[])
-        #choices={'test': 'Test', 
-        #'zero-shot':'Zero-shot', 
-        #'zero-shot-assertion':'Zero-shot with Assertions',
-        #'agentic-assertion':'Toxpipe (Agentic) with Assertions'})
         ui.input_select("select_var", 'Variables', choices=[])
         ui.input_select("select_prompt", "Prompts", choices=[])
         ui.input_select("select_model", "Models", choices=[], multiple=True)
@@ -167,6 +163,18 @@ def mod_ui(input, output, session):
                                 id=f"popover_result_reason_{x.name}",
                                 options={"trigger": "hover focus"}
                     )
+                
+                def formatResponse(x):
+                    if 'Searched Keyphrases' in x.index:
+                        return core_ui.div(
+                                    core_ui.div(f'[The following response was taken from {("RAG resources" if x['Used Context'] else "model's training knowledge")}]',
+                                                class_='fst-italic fw-bold mb-4'),
+                                    core_ui.div(core_ui.markdown(x['Response'])),
+                                    class_='app-table-content'
+                                )
+                    
+                    return core_ui.div(core_ui.markdown(x['Response']), class_='app-table-content')
+
                 data = loadResultsByPrompts().copy()
                 
                 if data.empty: return
@@ -181,15 +189,19 @@ def mod_ui(input, output, session):
                                 style_dict[f'row_{i}'] = 'app-table-row-fail'
                             case _:
                                 style_dict[f'row_{i}'] = 'app-table-row-no-assertion'
-                    
-                    data['Response'] = data['Response'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
-                    
+        
+                    data['Response'] = data.apply(lambda x: formatResponse(x), axis=1)
+            
+                if 'Searched Keyphrases' in data.columns:
+                    data['Searched Keyphrases'] = data['Searched Keyphrases'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
+
                 if (data['Result'] == 'No assertion').all():
-                    data = data.drop(columns=['Id', 'eval_id', 'Result', 'Reason'])
+                    data = data.drop(columns=['Id', 'eval_id', 'Reason', 'Result', 'Used Context'])
+                    if 'Searched Keyphrases' in data.columns:
+                        return prettyTableUI(data, col_widths=[1, 9, 2], style_dict=style_dict)
                     return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
                 
                 data['Result'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)   
-                data = data.drop(columns='Reason')
 
                 eval_id = data['eval_id'].unique()[0]
                 eval_name = input.select_eval()
@@ -198,7 +210,10 @@ def mod_ui(input, output, session):
                 data['Feedback'] = data.apply(lambda x: mod_feedback(f'{x.name}', d_feedback[x['Id']] if x['Id'] in d_feedback else {'eval_id': eval_id, 
                                                                                                                                      'eval_name': eval_name, 
                                                                                                                                      'test_id': x['Id']}), axis=1)
-                data = data.drop(columns=['Id', 'eval_id'])
+                data = data.drop(columns=['Id', 'eval_id', 'Reason', 'Used Context'])
+                
+                if 'Searched Keyphrases' in data.columns:
+                    return prettyTableUI(data, col_widths=[1, 7, 2, 1, 1], style_dict=style_dict)
                 
                 return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
 
@@ -282,11 +297,17 @@ def mod_ui(input, output, session):
         data, _ = loadResults()
         if data.empty: return data
         prompt, model = input.select_prompt(), input.select_model()
+
+        eval_name = input.select_eval()
+        if eval_name is not None and eval_name.startswith('rag'):
+            cols = ["Id", "eval_id", "Model", "Response", "Searched Keyphrases", "Result", "Reason", "Used Context"]
+        else:
+            cols = ["Id", "eval_id", "Model", "Response", "Result", "Reason", "Used Context"]
       
         if not model or 'Any' in model:
-            res = data.query('Prompt == @prompt')[["Id", "eval_id", "Model", "Response", "Result", "Reason"]].reset_index(drop=True).sort_values('Model')
+            res = data.query('Prompt == @prompt')[cols].reset_index(drop=True).sort_values('Model')
         else:
-            res = data.query('(Prompt == @prompt) and (Model in @model)')[["Id", "eval_id", "Model", "Response", "Result", "Reason"]].reset_index(drop=True)
+            res = data.query('(Prompt == @prompt) and (Model in @model)')[cols].reset_index(drop=True)
         return res
 
     @reactive.calc
