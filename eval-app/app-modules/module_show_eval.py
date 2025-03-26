@@ -10,10 +10,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 from umap import UMAP
 import plotly.express as px
 from utils import Config
-
-import importlib
-db = importlib.import_module(".db", package="app-modules")
-utils = importlib.import_module(".utils", package="app-modules")
+from .module_common import mod_vars
+from .utils import Evaluator
+from .db import getRating, saveRating
 
 ico_check = """<span class='passed'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
@@ -71,7 +70,7 @@ def mod_feedback(input, output, session, feedback):
         feedback['comments'] = input.txt_reason()
     
         try:
-            db.saveRating(feedback)
+            saveRating(feedback)
             ui.update_action_link(id='btn_feedback', label='', icon=getFeedbackIcon())
             ui.notification_show(core_ui.div("Rating saved", class_="app-notification"), duration=3, type="message")
         except Exception as err:
@@ -110,6 +109,8 @@ def mod_feedback(input, output, session, feedback):
 @module
 def mod_ui(input, output, session):
 
+    var_selected = reactive.value({})
+
     def getExplanationHTML(result):
 
         def resultStr(res):
@@ -135,8 +136,13 @@ def mod_ui(input, output, session):
 
     with ui.div(class_="d-flex gap-5"):
         ui.input_select("select_eval", "Evals", choices=[])
-        ui.input_select("select_var", 'Variables', choices=[])
         ui.input_select("select_prompt", "Prompts", choices=[])
+        @render.express
+        def showVars():
+            data, embeddings = loadResults()
+            if data.empty: return
+            for col in data.columns[9:]:
+                mod_vars(col, var_name=col, var_values=list(data[col].values), fn_reactive=selectVar)
         ui.input_select("select_model", "Models", choices=[], multiple=True)
 
     with ui.div(class_='d-flex flex-column gap-2'):
@@ -147,7 +153,10 @@ def mod_ui(input, output, session):
                 @render.ui
                 def showPrompt():
                     prompt = input.select_prompt.get()
-                    if prompt is None: prompt = ''
+                    try:
+                        prompt = prompt.format(**var_selected.get())
+                    except:
+                        prompt = ''
                     return core_ui.markdown(prompt)
     
     with ui.navset_underline(id="tab", selected="res"):
@@ -175,7 +184,7 @@ def mod_ui(input, output, session):
                     
                     return core_ui.div(core_ui.markdown(x['Response']), class_='app-table-content')
 
-                data = loadResultsByPrompts().copy()
+                data = loadResultsByFilters().copy()
                 
                 if data.empty: return
 
@@ -248,14 +257,15 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     def loadEvals():
-        ui.update_select(id='select_eval', choices=utils.Evaluator.loadEvals())
+        ui.update_select(id='select_eval', choices=Evaluator.loadEvals())
 
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadResults():
+        var_selected.set({})
         eval_name = input.select_eval()
-        output = utils.Evaluator.processResults(eval_name)
-        embeddings = utils.Evaluator.processEmbeddings(eval_name)
+        output = Evaluator.processResults(eval_name)
+        embeddings = Evaluator.processEmbeddings(eval_name)
 
         return output, embeddings
     
@@ -263,39 +273,41 @@ def mod_ui(input, output, session):
     def loadFeedbacks():
         output, _ = loadResults()
         eval_id = output['eval_id'].unique()[0]
-        feedback = db.getRating(eval_id=eval_id)
+        feedback = getRating(eval_id=eval_id)
         feedback['id'] = feedback['test_id']
         return feedback.set_index('id').to_dict(orient='index')
-    
-    # @reactive.effect
-    # @reactive.event(db_changed)
-    # def reloadFeedbacks():
-    #     d_feedbacks = loadFeedbacks()
-    #     breakpoint()
 
     @reactive.effect
     @reactive.event(input.select_eval)
     def loadModelsAndVars():
         data, embeddings = loadResults()
         if data.empty: return
-        ui.update_select(id="select_var", choices=sorted(data['Variable'].unique()))
+        var_selected.set({})
         ui.update_select(id="select_model", choices=['Any'] + sorted(data['Model'].unique()))
+        ui.update_select(id="select_prompt", choices=list(data['Prompt'].unique()))
         if not embeddings: return
         ui.update_select(id="select_embedding", choices=sorted(embeddings.keys()))
 
-    @reactive.effect
-    @reactive.event(input.select_eval, input.select_var)
-    def loadPrompts():
-        data, _ = loadResults()
-        if data.empty: return
-        var = input.select_var()
-        ui.update_select(id="select_prompt", choices={x: x for x in data.query('Variable == @var')['Prompt'].unique()})
+    def selectVar(var_sel):
+        var_selected.set({**var_selected.get(), **var_sel})
         
     @reactive.calc
-    @reactive.event(input.select_eval, input.select_prompt, input.select_model)
-    def loadResultsByPrompts():
+    @reactive.event(input.select_eval, input.select_prompt, var_selected, input.select_model)
+    def loadResultsByFilters():
         data, _ = loadResults()
         if data.empty: return data
+
+        indices = None
+        if var_selected.get():
+            for var_name, var_value in var_selected.get().items():
+                if var_name in data.columns:
+                    if indices is None:
+                        indices = set(data[data[var_name] == var_value].index)
+                    else:
+                        indices &= set(data[data[var_name] == var_value].index)
+        if indices is None: indices = []
+        data = data.loc[sorted(indices)]
+
         prompt, model = input.select_prompt(), input.select_model()
 
         eval_name = input.select_eval()
@@ -308,6 +320,7 @@ def mod_ui(input, output, session):
             res = data.query('Prompt == @prompt')[cols].reset_index(drop=True).sort_values('Model')
         else:
             res = data.query('(Prompt == @prompt) and (Model in @model)')[cols].reset_index(drop=True)
+        
         return res
 
     @reactive.calc

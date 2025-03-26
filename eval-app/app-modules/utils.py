@@ -211,16 +211,18 @@ class Evaluator:
                 try:
                     results_chunk.append(
                         {
-                            'Id': f"{data['id']}|{item['provider']['label']}",
-                            'eval_id': data['id'],
-                            'Prompt': item['prompt'].format(**item['vars']), 
-                            'Model': item['provider']['label'], 
-                            'Response': item['response']['output'],
-                            'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
-                            'Variable': ', '.join([f'{k}:{v}' for k, v in item['vars'].items()]), 
-                            'Reason': getExplanation(item['response']['results']),
-                            'Used Context': ('steps_taken' in item['response']) and (item['response']['steps_taken'][-1] == 'query_with_context'),
-                            'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']]) if 'searched_keyphrases' in item['response'] else []
+                            **{
+                                'Id': f"{data['id']}|{item['provider']['label']}",
+                                'eval_id': data['id'],
+                                'Prompt': item['prompt'], 
+                                'Model': item['provider']['label'], 
+                                'Response': item['response']['output'],
+                                'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail', 
+                                'Reason': getExplanation(item['response']['results']),
+                                'Used Context': ('steps_taken' in item['response']) and (item['response']['steps_taken'][-1] == 'query_with_context'),
+                                'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']]) if 'searched_keyphrases' in item['response'] else []
+                            },
+                            **item['vars']
                         }
                     )
                 except Exception as exp:
@@ -231,6 +233,7 @@ class Evaluator:
             results += results_chunk
 
         results = pd.DataFrame(results)
+
         return results
     
     def processEmbeddings(eval_name):

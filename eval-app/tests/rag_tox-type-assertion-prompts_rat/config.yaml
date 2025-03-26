@@ -1,35 +1,7 @@
-defaultTest:
-  options:
-    provider:
-      embedding:
-        id: openai:embedding:text-embedding-ada-002
-description: Tests on zero-shot framework with toxicity type prompts for rat
-system_prompt: >
-    You are an expert toxicologist with extensive knowledge in chemical safety assessment, 
-    toxicokinetics, and toxicodynamics. Your expertise includes:
-
-    1. Interpreting chemical structures and properties
-    2. Analyzing toxicological data from various sources (e.g., in vitro, in vivo, and in silico studies)
-    3. Applying read-across and QSAR (Quantitative Structure-Activity Relationship) approaches
-    4. Understanding mechanisms of toxicity and adverse outcome pathways
-    5. Evaluating systemic availability based on ADME (Absorption, Distribution, Metabolism, Excretion) properties
-    6. Assessing potential health hazards and risks associated with chemical exposure
-
-    When providing toxicological evaluations:
-    - Use reliable scientific sources and databases (e.g., PubChem, ECHA, EPA, IARC)
-    - Consider both experimental data and predictive models
-    - Explain your reasoning and cite relevant studies or guidelines
-    - Acknowledge uncertainties and data gaps
-    - Provide a balanced assessment, considering both potential hazards and mitigating factors
-    - Use a weight-of-evidence approach when multiple data sources are available
-    - Classify toxicodynamic activity and systemic availability as high, medium, or low based on 
-      the available evidence and expert judgment
-    - When using read-across, clearly state the basis for the analogy and any limitations
-
-    Adhere to ethical standards in toxicology and maintain scientific objectivity in your assessments.
+description: Tests on rag framework with tox-type-assertion-prompts prompts for rat
 prompts:
-  - Answer the following question with a list of string. List the {effect_type}
-    of {chemname} or its synonyms with CAS number {casrn} on rat
+  - Answer the following question with a list of string. List the {effect_type} of
+    {chem_casrn} on rat
 providers:
   - config:
       max_iterations: 10
@@ -59,1514 +31,1322 @@ providers:
       temp: 0
     id: rag
     label: Toxipe (RAG) [Mistral Large]
+system_prompt: "You are an expert toxicologist with extensive knowledge in chemical\
+  \ safety assessment, toxicokinetics, and toxicodynamics. Your expertise includes:\n\
+  1. Interpreting chemical structures and properties 2. Analyzing toxicological data\
+  \ from various sources (e.g., in vitro, in vivo, and in silico studies) 3. Applying\
+  \ read-across and QSAR (Quantitative Structure-Activity Relationship) approaches\
+  \ 4. Understanding mechanisms of toxicity and adverse outcome pathways 5. Evaluating\
+  \ systemic availability based on ADME (Absorption, Distribution, Metabolism, Excretion)\
+  \ properties 6. Assessing potential health hazards and risks associated with chemical\
+  \ exposure\nWhen providing toxicological evaluations: - Use reliable scientific\
+  \ sources and databases (e.g., PubChem, ECHA, EPA, IARC) - Consider both experimental\
+  \ data and predictive models - Explain your reasoning and cite relevant studies\
+  \ or guidelines - Acknowledge uncertainties and data gaps - Provide a balanced assessment,\
+  \ considering both potential hazards and mitigating factors - Use a weight-of-evidence\
+  \ approach when multiple data sources are available - Classify toxicodynamic activity\
+  \ and systemic availability as high, medium, or low based on  the available evidence\
+  \ and expert judgment - When using read-across, clearly state the basis for the\
+  \ analogy and any limitations\nAdhere to ethical standards in toxicology and maintain\
+  \ scientific objectivity in your assessments.\n          "
 tests:
   - assert:
-    - expected_phrases:
-      - Gastrointestinal bleeding
-      type: python
-      value: file://scripts/tests.py
+      - expected_phrases:
+          - Gastrointestinal bleeding
+        type: python
+        value: file://scripts/tests.py
     description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Sub acute toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Sub acute toxicity
   - assert:
-    - expected_phrases:
-      - Angiosarcoma of the liver
-      type: python
-      value: file://scripts/tests.py
+      - expected_phrases:
+          - Angiosarcoma of the liver
+        type: python
+        value: file://scripts/tests.py
     description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Chronic toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Developmental toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Immune/lymphatic system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Reproductive system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Nervous system/Neurological toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Digestive system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Urinary system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Integumentary system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Musculoskeletal system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Cardiovascular system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Endocrine system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Respiratory system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Hematological system toxicity
   - description: Test similarity
     vars:
-      casrn: 50-78-2
-      chemname: Aspirin
+      chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 103-90-2
-      chemname: Paracetamol
+      chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 657-24-9
-      chemname: Metformin
+      chem_casrn: Metformin or its synonyms with CAS number 657-24-9
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 134523-00-5
-      chemname: Atorvastatin
+      chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 53-03-2
-      chemname: Prednisone
+      chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 1746-01-6
-      chemname: Dioxin
+      chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 71-43-2
-      chemname: Benzene
+      chem_casrn: Benzene or its synonyms with CAS number 71-43-2
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 15502-74-6
-      chemname: Arsenite
+      chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 16056-34-1
-      chemname: Methylmercury
+      chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 75-01-4
-      chemname: Vinylchloride
+      chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 2754428-18-5
-      chemname: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      chem_casrn: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine) or its
+        synonyms with CAS number 2754428-18-5
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 85-01-8
-      chemname: Phenanthrene
+      chem_casrn: Phenanthrene or its synonyms with CAS number 85-01-8
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 115-86-6
-      chemname: TPHP (triphenylphosphate)
+      chem_casrn: TPHP (triphenylphosphate) or its synonyms with CAS number 115-86-6
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 7439-91-0
-      chemname: Lanthanum
+      chem_casrn: Lanthanum or its synonyms with CAS number 7439-91-0
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 1222-05-5
-      chemname: Galaxolide
+      chem_casrn: Galaxolide or its synonyms with CAS number 1222-05-5
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 91753-09-2
-      chemname: 1,6-Dimethyl-3,4-dihydroisoquinoline
+      chem_casrn: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with CAS number
+        91753-09-2
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 74148-62-2
-      chemname: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      chem_casrn: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine or its
+        synonyms with CAS number 74148-62-2
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 59864-46-9
-      chemname: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      chem_casrn: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+        or its synonyms with CAS number 59864-46-9
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 29248-42-8
-      chemname: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline
+      chem_casrn: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with CAS
+        number 29248-42-8
       effect_type: Toxicokinetic parameters
   - description: Test similarity
     vars:
-      casrn: 62625-70-1
-      chemname: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine
+      chem_casrn: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms with
+        CAS number 62625-70-1
       effect_type: Toxicokinetic parameters

@@ -3,19 +3,26 @@ from shiny.express import ui, module, render
 from shinywidgets import render_widget
 import plotly.express as px
 from utils import Config, getNoDataPlot
-import importlib
+from .utils import Evaluator
+from .module_common import mod_vars
 import pandas as pd
-utils = importlib.import_module(".utils", package="app-modules")
 
 @module
 def module_graph(input, output, session, eval_name):
+
+    var_selected = reactive.value({})
 
     with ui.div(class_='row border round mt-3 p-3'):
         with ui.div(class_='row'):
             with ui.div(class_='col'):
                 ui.strong(eval_name)
-            with ui.div(class_='col'):
-                ui.input_select("select_var", "Variables", choices=[])
+            @render.express
+            def showVars():
+                data = loadEvalResults()
+                if data.empty: return
+                for col in data.columns[9:]:
+                    with ui.div(class_='col'):
+                        mod_vars(col, var_name=col, var_values=['Any'] + list(data[col].values), fn_reactive=selectVar)
 
         with ui.div(class_='row gap-1'):
             @render.express
@@ -42,25 +49,29 @@ def module_graph(input, output, session, eval_name):
                 
     @reactive.calc
     def loadEvalResults():
-        return utils.Evaluator.processResults(eval_name)
+        return Evaluator.processResults(eval_name)
 
-    @reactive.effect
-    def loadVars():
-        data = loadEvalResults()
-        if data.empty: return
-        ui.update_select(id="select_var", choices=['Any'] + sorted(data['Variable'].unique()))
+    def selectVar(var_sel):
+        var_selected.set({**var_selected.get(), **var_sel})
+
+    def filterDataByVars(data, var_info):
+
+        indices = None
+        for var_name, var_value in var_info.items():
+            if var_name in data.columns:
+                if indices is None:
+                    indices = set(data[data[var_name] == var_value].index if var_value != 'Any' else data.index)
+                else:
+                    indices &= set(data[data[var_name] == var_value].index if var_value != 'Any' else data.index)
+        if indices is None: indices = []
+        return data.loc[sorted(indices)]
 
     @reactive.calc
-    @reactive.event(input.select_var)
+    @reactive.event(var_selected)
     def plotPassFailStat():
 
         data = loadEvalResults()
-        
-        var = input.select_var()
-        if var == 'Any':
-            data = data.copy()
-        else:
-            data = data.query('Variable == @var')
+        data = filterDataByVars(data, var_selected.get())
 
         if data.empty: return getNoDataPlot(title='Correct Responses')
 
@@ -92,16 +103,11 @@ def module_graph(input, output, session, eval_name):
         return fig
     
     @reactive.calc
-    @reactive.event(input.select_var)
+    @reactive.event(var_selected)
     def plotAssertionStat():
 
         data = loadEvalResults()
-        
-        var = input.select_var()
-        if var == 'Any':
-            data = data.copy()
-        else:
-            data = data.query('Variable == @var')
+        data = filterDataByVars(data, var_selected.get())
 
         if data.empty: return getNoDataPlot(title='Correct Assertions in Responses')
             
@@ -151,16 +157,11 @@ def module_graph(input, output, session, eval_name):
         return fig
     
     @reactive.calc
-    @reactive.event(input.select_var)
+    @reactive.event(var_selected)
     def plotContextSearchStat():
 
         data = loadEvalResults()
-        
-        var = input.select_var()
-        if var == 'Any':
-            data = data.copy()
-        else:
-            data = data.query('Variable == @var')
+        data = filterDataByVars(data, var_selected.get())
 
         if data.empty: return getNoDataPlot(title='Context search frequency')
 
@@ -212,7 +213,7 @@ def mod_ui(input, output, session):
 
                 df_report = {}
                 for eval_name in evals:
-                    data = utils.Evaluator.processResults(eval_name)
+                    data = Evaluator.processResults(eval_name)
                     if data.empty: continue
                     total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
                     data_pass_perc = (data
@@ -254,7 +255,7 @@ def mod_ui(input, output, session):
 
         evals = []
         for test in Config.DIR_TESTS.iterdir():
-            if utils.Evaluator.hasOutput(test.name):
+            if Evaluator.hasOutput(test.name):
                 if level != 'any' and not test.name.startswith(level): continue
                 if prompt != 'any' and prompt not in test.name: continue
                 if species != 'any' and not test.name.endswith(level): continue

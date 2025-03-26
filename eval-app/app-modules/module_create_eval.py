@@ -7,9 +7,7 @@ import json
 import faicons as fa
 import regex
 from utils import Config
-
-import importlib
-utils = importlib.import_module(".utils", package="app-modules")
+from .utils import Evaluator
 
 def logexp(func):
     def wrapper(*args, **kargs):
@@ -309,7 +307,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.txt_prompt)
     def extractPromptVars():
         prompt = input.txt_prompt()
-        variables = regex.findall(rf'{utils.Evaluator.PROMPT_VAR_FORMAT}', prompt)
+        variables = regex.findall(rf'{Evaluator.PROMPT_VAR_FORMAT}', prompt)
         return variables
 
     @reactive.effect
@@ -432,7 +430,7 @@ def mod_ui(input, output, session):
                 tests.append(d_dict)
 
         
-        if utils.Evaluator.createTest(
+        if Evaluator.createTest(
                         Config.DIR_TESTS / test_name,
                         {
                             'test_name': test_name, 

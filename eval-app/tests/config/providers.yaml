@@ -1,0 +1,82 @@
+base-model:
+  providers:
+    - config:
+        temperature: 0
+      id: openai:chat:azure-gpt-4o
+      label: GPT-4o
+    - config:
+        temperature: 0
+      id: openai:chat:claude-3-5-sonnet
+      label: Claude 3.5 Sonnet
+    - config:
+        temperature: 0
+      id: openai:chat:llama3-1-405b
+      label: Llama 3.1 405B
+    - config:
+        temperature: 0
+      id: openai:chat:gemini-1.5-pro
+      label: Gemini 1.5 Pro
+    - config:
+        temperature: 0
+      id: openai:chat:mistral-large-2
+      label: Mistral Large 2
+rag:
+  providers:
+    - config:
+        max_iterations: 10
+        model: azure-gpt-4o
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxipe (RAG) [GPT-4o]
+    - config:
+        max_iterations: 10
+        model: claude-3-5-sonnet
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxipe (RAG) [Claude-3.5 Sonnet]
+    - config:
+        max_iterations: 10
+        model: gemini-1.5-pro
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxipe (RAG) [Gemini 1.5 Pro]
+    - config:
+        max_iterations: 10
+        model: mistral-large
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxipe (RAG) [Mistral Large]
+agentic:
+  providers:
+    - config:
+        max_iterations: 10
+        model: azure-gpt-4o
+        summarize: 'false'
+        temp: 0
+      id: agentic
+      label: Toxipe (Agentic) [GPT-4o]
+    - config:
+        max_iterations: 10
+        model: claude-3-5-sonnet
+        summarize: 'false'
+        temp: 0
+      id: agentic
+      label: Toxipe (Agentic) [Claude-3.5 Sonnet]
+    - config:
+        max_iterations: 10
+        model: gemini-1.5-pro
+        summarize: 'false'
+        temp: 0
+      id: agentic
+      label: Toxipe (Agentic) [Gemini 1.5 Pro]
+    - config:
+        max_iterations: 10
+        model: mistral-large
+        summarize: 'false'
+        temp: 0
+      id: agentic
+      label: Toxipe (Agentic) [Mistral Large]

@@ -1,17 +1,6 @@
+prompts:
 - 'Consider the following question followed by options. Answer the question from choosing
   the options. You can choose multiple options. Each option must start with the option
   number.
 
-
-  **Question**:
-
-
-  {{question}}
-
-
-  **Options**:
-
-
-  {{options}}
-
-  '
+  {question_with_options}'

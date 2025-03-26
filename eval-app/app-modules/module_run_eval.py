@@ -2,11 +2,10 @@ from shiny import reactive, ui as core_ui
 from shiny.express import ui, render, module
 from codes.generate_response_embeddings import generateSimilarity
 from utils import Config
+from .utils import Evaluator
 import traceback
 import datetime
 import os
-import importlib
-utils = importlib.import_module(".utils", package="app-modules")
 
 @module
 def mod_ui(input, output, session):
@@ -129,12 +128,12 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     def loadEvals():
-        ui.update_select(id='select_eval', choices=utils.Evaluator.loadEvals())
+        ui.update_select(id='select_eval', choices=Evaluator.loadEvals())
 
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadEvalInfo():
-        return utils.Evaluator.processConfig(input.select_eval())
+        return Evaluator.processConfig(input.select_eval())
     
     @reactive.calc
     @reactive.event(input.select_eval)
@@ -144,12 +143,12 @@ def mod_ui(input, output, session):
         timestamp_test = "Not run yet"
         timestamp_sim = "Not run yet"
 
-        if utils.Evaluator.hasOutput(eval_name):
+        if Evaluator.hasOutput(eval_name):
             if (dir_eval_output / 'output_0.json').exists():
                 timestamp_test = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'output_0.json'))
             elif (dir_eval_output / 'output.json').exists():
                 timestamp_test = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'output.json'))
-        if utils.Evaluator.hasEmbeddings(eval_name):
+        if Evaluator.hasEmbedding(eval_name):
             timestamp_sim = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'response_embeddings.json'))
 
         return {'test': timestamp_test, 'sim': timestamp_sim}
@@ -159,7 +158,7 @@ def mod_ui(input, output, session):
     def runEval():
         eval_name = input.select_eval()
         try:
-            if utils.Evaluator.runTest(eval_name):
+            if Evaluator.runTest(eval_name):
                 ui.notification_show(f'"{eval_name}" ran successfully', type="message")
             else: 
                 ui.notification_show(f'"{eval_name}" did not run successfully', type="error")
@@ -172,7 +171,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.btn_run_sim)
     def runSimilarityExtraction():
         eval_name = input.select_eval()
-        if not utils.Evaluator.hasOutput(eval_name):
+        if not Evaluator.hasOutput(eval_name):
             ui.notification_show(f'Please run {eval_name} before similarity extraction', type="error")
             return
         try:
