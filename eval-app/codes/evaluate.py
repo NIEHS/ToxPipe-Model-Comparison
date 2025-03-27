@@ -273,7 +273,7 @@ def resumeLastRun(dir_output):
 
         print(f'Processing {output_partial_path.name}')
 
-        with concurrent.futures.ThreadPoolExecutor(20) as pool:
+        with concurrent.futures.ThreadPoolExecutor(10) as pool:
             if eval_sets: 
                 results = pool.map(getResponseAndEvaluate, *zip(*eval_sets))
                 for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
