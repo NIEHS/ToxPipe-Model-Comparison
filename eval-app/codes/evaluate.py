@@ -167,21 +167,25 @@ def queryToxpipe(type, prompt, model_config):
 
         response = requests.get(url=url)
         if not response.ok: raise Exception(f'API url: {url}, Response status code: {response.status_code}, Response: {response.text}')
-        res = response.json()
+        res = response.json()['response']
 
-        # From RAG: response is {'response': {'response': '', 'error': '', 'searched_keywords': ''}}
+        # From RAG: response is {'response': {'response': '', 'searched_keywords': '', 'steps_taken': '', 'error': ''}}
         if type == 'rag':
-            if len(res['response']['error'].strip()) > 0:
-                return {'output': res['response']['response'], 
-                        'error': f'Error from Toxpipe: {res['response']['error']}', 
-                        'searched_keyphrases': res['response']['searched_keyphrases'],
-                        'steps_taken': res['response']['steps_taken']}
-            return {'output': res['response']['response'], 
-                    'searched_keyphrases': res['response']['searched_keyphrases'],
-                    'steps_taken': res['response']['steps_taken']}
+            for k in ['response', 'searched_keyphrases', 'steps_taken', 'error']:
+                if k not in res:
+                    raise Exception(res)
+            if len(res['error'].strip()) > 0:
+                return {'output': res['response'], 
+                        'error': f'Error from Toxpipe: {res['error']}', 
+                        'searched_keyphrases': res['searched_keyphrases'],
+                        'steps_taken': res['steps_taken']}
+            
+            return {'output': res['response'], 
+                    'searched_keyphrases': res['searched_keyphrases'],
+                    'steps_taken': res['steps_taken']}
 
         # From AGENTIC: response is {'response': ''}        
-        return {'output': res['response']}
+        return {'output': res}
 
 def getModelResponse(model_info, prompt_info, vars_info):
 
@@ -273,17 +277,17 @@ def resumeLastRun(dir_output):
 
         print(f'Processing {output_partial_path.name}')
 
-        with concurrent.futures.ThreadPoolExecutor(10) as pool:
-            if eval_sets: 
-                results = pool.map(getResponseAndEvaluate, *zip(*eval_sets))
-                for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
-                    pbar.set_description(descs[i])
-                    output['tests'][indices[i]]['response'] = res
-            if eval_sets_eval:
-                results = pool.map(getEvaluationResponse, *zip(*eval_sets_eval))
-                for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
-                    pbar.set_description(descs_eval[i])
-                    output['tests'][indices_eval[i]]['response']['results'] = res
+        #with concurrent.futures.ThreadPoolExecutor(10) as pool:
+        if eval_sets: 
+            results = map(getResponseAndEvaluate, *zip(*eval_sets))
+            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+                pbar.set_description(descs[i])
+                output['tests'][indices[i]]['response'] = res
+        if eval_sets_eval:
+            results = map(getEvaluationResponse, *zip(*eval_sets_eval))
+            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+                pbar.set_description(descs_eval[i])
+                output['tests'][indices_eval[i]]['response']['results'] = res
 
         writeJSON(output_path=output_partial_path, data=output)
 
