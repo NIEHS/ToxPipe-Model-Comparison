@@ -27,6 +27,7 @@ def module_graph(input, output, session, eval_name):
         with ui.div(class_='row gap-1'):
             @render.express
             def showPlots():
+            
                 with ui.div(class_='col'):
                     with ui.card(fill=True):
                         @render_widget
@@ -191,9 +192,11 @@ def mod_ui(input, output, session):
     with ui.div(class_="row gap-5"):
         with ui.div(class_="col d-flex justify-content-start align-items-center gap-2"):
             ui.input_select("select_level", "Levels", choices={'any': 'Any', 'base-model': 'Base model', 'rag': 'RAG', 'agentic': 'Agentic'})
-            ui.input_select("select_prompt", "Prompts", choices={'any': 'Any', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
+            ui.input_select("select_prompt", "Prompts", choices={'any': 'Any', 'basic-prompts': 'Basic prompts', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
             ui.input_select("select_species", "Species", choices={'any': 'Any', 'human': 'Human', 'rat': 'Rat'})
             ui.input_select("select_eval", "Evals", choices=[])
+        with ui.div(class_="col d-flex pb-1 justify-content-start align-items-end"):
+            ui.input_checkbox("chk_hide_no_assertion_evals", "Hide unlabeled evals", value=True)
         with ui.div(class_="col d-flex pb-3 justify-content-end align-items-end"):
             @render.download(
                 filename='eval_report.csv',
@@ -213,6 +216,7 @@ def mod_ui(input, output, session):
 
                 df_report = {}
                 for eval_name in evals:
+                    if 'assertion' not in eval_name: continue
                     data = Evaluator.processResults(eval_name)
                     if data.empty: continue
                     total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
@@ -246,7 +250,7 @@ def mod_ui(input, output, session):
     def getEvals():
 
         levels_allowed = ['base-model', 'rag', 'agentic']
-        prompts_allowed = ['tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
+        prompts_allowed = ['basic-prompts', 'tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
         species_allowed = ['human', 'rat', 'mixed']
 
         eval_dict = {eval_name: index for index, eval_name in enumerate([f'{f}_{p}_{s}' for f in levels_allowed for p in prompts_allowed for s in species_allowed])}
@@ -289,10 +293,11 @@ def mod_ui(input, output, session):
         ui.update_select(id='select_eval', choices=['Any'] + evals)
 
     @reactive.calc
-    @reactive.event(input.select_level, input.select_prompt, input.select_species, input.select_eval)
+    @reactive.event(input.select_level, input.select_prompt, input.select_species, input.select_eval, input.chk_hide_no_assertion_evals)
     def loadResults():
+        print('loadResults')
         eval_name = input.select_eval()
         if eval_name == 'Any':
             evals = getEvals()
-            return [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals)]
+            return [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals) if not ('basic-prompts' in ev and input.chk_hide_no_assertion_evals())]
         return module_graph('eval_0', eval_name)    

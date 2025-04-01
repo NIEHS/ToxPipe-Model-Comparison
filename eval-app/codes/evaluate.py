@@ -166,7 +166,7 @@ def queryToxpipe(type, prompt, model_config):
             url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
 
         response = requests.get(url=url)
-        if not response.ok: raise Exception(f'API url: {url}, Response status code: {response.status_code}, Response: {response.text}')
+        if not response.ok: raise Exception(f'API url: {url}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()['response']
 
         # From RAG: response is {'response': {'response': '', 'searched_keywords': '', 'steps_taken': '', 'error': ''}}
