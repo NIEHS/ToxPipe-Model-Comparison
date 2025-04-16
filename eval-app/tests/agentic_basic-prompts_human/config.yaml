@@ -174,11 +174,11 @@ providers:
     label: Toxipe (Agentic) [Gemini 1.5 Pro]
   - config:
       max_iterations: 10
-      model: mistral-large
+      model: mistral-large-2
       summarize: 'false'
       temp: 0
     id: agentic
-    label: Toxipe (Agentic) [Mistral Large]
+    label: Toxipe (Agentic) [Mistral Large 2]
 system_prompt: "You are an expert toxicologist with extensive knowledge in chemical\
   \ safety assessment, toxicokinetics, and toxicodynamics. Your expertise includes:\n\
   1. Interpreting chemical structures and properties 2. Analyzing toxicological data\

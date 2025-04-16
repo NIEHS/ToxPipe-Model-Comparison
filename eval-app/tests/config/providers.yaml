@@ -45,11 +45,11 @@ rag:
       label: Toxipe (RAG) [Gemini 1.5 Pro]
     - config:
         max_iterations: 10
-        model: mistral-large
+        model: mistral-large-2
         summarize: 'false'
         temp: 0
       id: rag
-      label: Toxipe (RAG) [Mistral Large]
+      label: Toxipe (RAG) [Mistral Large 2]
 agentic:
   providers:
     - config:
@@ -75,8 +75,8 @@ agentic:
       label: Toxipe (Agentic) [Gemini 1.5 Pro]
     - config:
         max_iterations: 10
-        model: mistral-large
+        model: mistral-large-2
         summarize: 'false'
         temp: 0
       id: agentic
-      label: Toxipe (Agentic) [Mistral Large]
+      label: Toxipe (Agentic) [Mistral Large 2]
