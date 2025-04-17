@@ -279,12 +279,12 @@ def resumeLastRun(dir_output):
 
         with concurrent.futures.ThreadPoolExecutor(10) as pool:
             if eval_sets: 
-                results = map(getResponseAndEvaluate, *zip(*eval_sets))
+                results = pool.map(getResponseAndEvaluate, *zip(*eval_sets))
                 for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                     pbar.set_description(descs[i])
                     output['tests'][indices[i]]['response'] = res
             if eval_sets_eval:
-                results = map(getEvaluationResponse, *zip(*eval_sets_eval))
+                results = pool.map(getEvaluationResponse, *zip(*eval_sets_eval))
                 for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                     pbar.set_description(descs_eval[i])
                     output['tests'][indices_eval[i]]['response']['results'] = res
