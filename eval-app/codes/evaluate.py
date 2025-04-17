@@ -246,17 +246,16 @@ def resumeLastRun(dir_output):
             output = json.load(f)
 
         if 'tests' not in output: return {}
-
+    
         for index, t in enumerate(output['tests']):
             is_response_error = (('error' in t['response'] and len(t['response']['error'].strip()) > 0) or 
                                 (not isinstance(t['response']['output'], str)) or 
                                 t['response']['output'].strip() == '' or
-                                'thought' in t['response']['output'] or
                                 t['response']['output'].lower().startswith('error'))
             is_eval_error = (len(t['assert']) > 0 and ('results' not in t['response'] or 
                                                             len(t['response']['results']) == 0 or 
                                                             'error' in t['response']['results']))
-            
+
             if is_response_error or is_eval_error:
                 
                 model_info = t['provider']
@@ -278,17 +277,17 @@ def resumeLastRun(dir_output):
 
         print(f'Processing {output_partial_path.name}')
 
-        #with concurrent.futures.ThreadPoolExecutor(10) as pool:
-        if eval_sets: 
-            results = map(getResponseAndEvaluate, *zip(*eval_sets))
-            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
-                pbar.set_description(descs[i])
-                output['tests'][indices[i]]['response'] = res
-        if eval_sets_eval:
-            results = map(getEvaluationResponse, *zip(*eval_sets_eval))
-            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
-                pbar.set_description(descs_eval[i])
-                output['tests'][indices_eval[i]]['response']['results'] = res
+        with concurrent.futures.ThreadPoolExecutor(10) as pool:
+            if eval_sets: 
+                results = map(getResponseAndEvaluate, *zip(*eval_sets))
+                for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+                    pbar.set_description(descs[i])
+                    output['tests'][indices[i]]['response'] = res
+            if eval_sets_eval:
+                results = map(getEvaluationResponse, *zip(*eval_sets_eval))
+                for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+                    pbar.set_description(descs_eval[i])
+                    output['tests'][indices_eval[i]]['response']['results'] = res
 
         writeJSON(output_path=output_partial_path, data=output)
 
