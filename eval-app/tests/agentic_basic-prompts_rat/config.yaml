@@ -157,27 +157,6 @@ providers:
       temp: 0
     id: agentic
     label: Toxipe (Agentic) [GPT-4o]
-  - config:
-      max_iterations: 10
-      model: claude-3-5-sonnet
-      summarize: 'false'
-      temp: 0
-    id: agentic
-    label: Toxipe (Agentic) [Claude-3.5 Sonnet]
-  - config:
-      max_iterations: 10
-      model: gemini-1.5-pro
-      summarize: 'false'
-      temp: 0
-    id: agentic
-    label: Toxipe (Agentic) [Gemini 1.5 Pro]
-  - config:
-      max_iterations: 10
-      model: mistral-large-2
-      summarize: 'false'
-      temp: 0
-    id: agentic
-    label: Toxipe (Agentic) [Mistral Large 2]
 system_prompt: "You are an expert toxicologist with extensive knowledge in chemical\
   \ safety assessment, toxicokinetics, and toxicodynamics. Your expertise includes:\n\
   1. Interpreting chemical structures and properties 2. Analyzing toxicological data\
