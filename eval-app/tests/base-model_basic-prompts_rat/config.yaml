@@ -152,20 +152,28 @@ prompts:
 providers:
   - config:
       temperature: 0
+    id: openai:chat:azure-o3
+    label: o3
+  - config:
+      temperature: 0
     id: openai:chat:azure-gpt-4o
     label: GPT-4o
   - config:
       temperature: 0
-    id: openai:chat:claude-3-5-sonnet
-    label: Claude 3.5 Sonnet
+    id: openai:chat:claude-3-7-sonnet
+    label: Claude 3.7 Sonnet
   - config:
       temperature: 0
-    id: openai:chat:llama3-1-405b
-    label: Llama 3.1 405B
+    id: openai:chat:gemini-2.5-pro
+    label: Gemini 2.5 Pro
   - config:
       temperature: 0
-    id: openai:chat:gemini-1.5-pro
-    label: Gemini 1.5 Pro
+    id: openai:chat:gemini-2.5-flash
+    label: Gemini 2.5 Flash
+  - config:
+      temperature: 0
+    id: openai:chat:llama3-3-90b
+    label: Llama 3.3 90B
   - config:
       temperature: 0
     id: openai:chat:mistral-large-2

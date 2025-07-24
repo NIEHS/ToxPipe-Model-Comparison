@@ -6,6 +6,7 @@ from utils import Config, getNoDataPlot
 from .utils import Evaluator
 from .module_common import mod_vars
 import pandas as pd
+import asyncio
 
 @module
 def module_graph(input, output, session, eval_name):
@@ -241,10 +242,6 @@ def mod_ui(input, output, session):
                 df_report = pd.DataFrame(df_report)
                 yield df_report.to_csv()
 
-    @render.express
-    def showPlots():
-        loadResults()
-
     @reactive.calc
     @reactive.event(input.select_level, input.select_prompt, input.select_species)
     def getEvals():
@@ -295,9 +292,12 @@ def mod_ui(input, output, session):
     @reactive.calc
     @reactive.event(input.select_level, input.select_prompt, input.select_species, input.select_eval, input.chk_hide_no_assertion_evals)
     def loadResults():
-        print('loadResults')
         eval_name = input.select_eval()
         if eval_name == 'Any':
             evals = getEvals()
             return [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals) if not ('basic-prompts' in ev and input.chk_hide_no_assertion_evals())]
-        return module_graph('eval_0', eval_name)    
+        return module_graph('eval_0', eval_name)
+
+    @render.express
+    def showPlots():
+        loadResults()    

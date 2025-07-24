@@ -5,6 +5,13 @@ prompts:
 providers:
   - config:
       max_iterations: 10
+      model: azure-o3
+      summarize: 'false'
+      temp: 0
+    id: rag
+    label: Toxpipe (RAG) [o3]
+  - config:
+      max_iterations: 10
       model: azure-gpt-4o
       summarize: 'false'
       temp: 0
@@ -12,18 +19,32 @@ providers:
     label: Toxpipe (RAG) [GPT-4o]
   - config:
       max_iterations: 10
-      model: claude-3-5-sonnet
+      model: claude-3-7-sonnet
       summarize: 'false'
       temp: 0
     id: rag
-    label: Toxpipe (RAG) [Claude-3.5 Sonnet]
+    label: Toxpipe (RAG) [Claude-3.7 Sonnet]
   - config:
       max_iterations: 10
-      model: gemini-1.5-pro
+      model: gemini-2.5-pro
       summarize: 'false'
       temp: 0
     id: rag
-    label: Toxpipe (RAG) [Gemini 1.5 Pro]
+    label: Toxpipe (RAG) [Gemini 2.5 Pro]
+  - config:
+      max_iterations: 10
+      model: gemini-2.5-flash
+      summarize: 'false'
+      temp: 0
+    id: rag
+    label: Toxpipe (RAG) [Gemini 2.5 flash]
+  - config:
+      max_iterations: 10
+      model: llama3-3-90b
+      summarize: 'false'
+      temp: 0
+    id: rag
+    label: Toxpipe (RAG) [Llama 3.3 90B]
   - config:
       max_iterations: 10
       model: mistral-large-2
