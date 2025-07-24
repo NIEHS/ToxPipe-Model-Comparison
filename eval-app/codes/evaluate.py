@@ -18,6 +18,12 @@ from datetime import datetime
 from uuid import uuid4
 import sys
 
+import httpx
+import truststore
+truststore.inject_into_ssl()
+cert_path = str(Path(Config.DIR_HOME / 'certs/NIH-FULL.pem'))
+client = httpx.Client(verify=cert_path)
+
 class SchemaForSemanticSimilarityEvaluation(BaseModel):
     '''
     Represents the response and reason for semantic similarity
@@ -122,7 +128,8 @@ def createOpenAIModel(model_name, temperature):
         max_tokens=None,
         timeout=None,
         max_retries=10,
-        seed=1000
+        seed=1000,
+        http_client=client
     )
 
 def createBaseModel(model_info):
@@ -156,7 +163,7 @@ def queryToxpipe(type, prompt, model_config):
     with threading.Lock():
         model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
         url = f'{env_config['TOXPIPE_API_HOST']}/agent/create/'
-        response = requests.get(url=f"{url}?{model_params}")
+        response = requests.get(url=f"{url}?{model_params}", verify=cert_path)
         if not response.ok: raise Exception(response.text)
         agentid = response.json()['agentid']
         
@@ -165,7 +172,7 @@ def queryToxpipe(type, prompt, model_config):
         else:
             url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
 
-        response = requests.get(url=url)
+        response = requests.get(url=url, verify=cert_path)
         if not response.ok: raise Exception(f'API url: {url}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()['response']
 
