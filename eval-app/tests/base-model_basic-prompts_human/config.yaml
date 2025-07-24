@@ -173,8 +173,8 @@ providers:
     label: Gemini 2.5 Flash
   - config:
       temperature: 0
-    id: openai:chat:llama3-3-90b
-    label: Llama 3.3 90B
+    id: openai:chat:llama3-3-70b
+    label: Llama 3.3 70B
   - config:
       temperature: 0
     id: openai:chat:mistral-large-2

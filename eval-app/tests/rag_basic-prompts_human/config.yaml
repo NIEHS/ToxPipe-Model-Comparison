@@ -188,11 +188,11 @@ providers:
     label: Toxpipe (RAG) [Gemini 2.5 flash]
   - config:
       max_iterations: 10
-      model: llama3-3-90b
+      model: llama3-3-70b
       summarize: 'false'
       temp: 0
     id: rag
-    label: Toxpipe (RAG) [Llama 3.3 90B]
+    label: Toxpipe (RAG) [Llama 3.3 70B]
   - config:
       max_iterations: 10
       model: mistral-large-2
