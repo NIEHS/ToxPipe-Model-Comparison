@@ -116,8 +116,8 @@ def createOpenAIModel(model_name, temperature):
 
     return ChatOpenAI(
         model=model_name,
-        base_url=env_config['OPENAI_BASE_URL'],
-        api_key=env_config['OPENAI_API_KEY'],
+        base_url=env_config['AI_BASE_URL'],
+        api_key=env_config['AI_API_KEY'],
         temperature=temperature,
         max_tokens=None,
         timeout=None,

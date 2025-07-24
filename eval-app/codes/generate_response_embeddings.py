@@ -9,7 +9,7 @@ def reqEmbedding(text, embedding):
     response = requests.post(
                 url="https://litellm.toxpipe.niehs.nih.gov/embeddings",
                 headers={
-                    "Authorization": f"Bearer {Config.env_config['OPENAI_API_KEY']}",
+                    "Authorization": f"Bearer {Config.env_config['AI_API_KEY']}",
                     "Content-Type": "application/json"},
                 json={
                     "input": text,
