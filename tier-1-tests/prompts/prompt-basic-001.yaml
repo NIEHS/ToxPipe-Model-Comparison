@@ -23,4 +23,4 @@
 
     Adhere to ethical standards in toxicology and maintain scientific objectivity in your assessments.
 - role: user
-  content: What are the primary mechanisms of toxicity for {{chemname}} or its synonyms with CAS number {{casrn}}? Please describe the molecular and cellular processes involved in its toxic effects.
+  content: What is the toxicodynamic activity and potential systemic availability of {{chemname}} or its synonyms with CAS number {{casrn}}? Please classify both as either high, medium, or low for mammals. Follow a read-across approach if only limited scientific information is available.
