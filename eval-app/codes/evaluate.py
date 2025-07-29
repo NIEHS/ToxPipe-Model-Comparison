@@ -24,6 +24,8 @@ truststore.inject_into_ssl()
 cert_path = str(Path(Config.DIR_HOME / 'certs/NIH-FULL.pem'))
 client = httpx.Client(verify=cert_path)
 
+env_config = Config.env_config
+
 class SchemaForSemanticSimilarityEvaluation(BaseModel):
     '''
     Represents the response and reason for semantic similarity
@@ -168,7 +170,7 @@ def queryToxpipe(type, prompt, model_config):
         agentid = response.json()['agentid']
         
         if type == 'rag':
-            url = f'{env_config['TOXPIPE_API_HOST']}/agent/rag/?agentid={agentid}&q={prompt}'
+            url = f'{env_config['TOXPIPE_API_HOST']}/rag/?agentid={agentid}&q={prompt}'
         else:
             url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
 
@@ -332,8 +334,6 @@ def runTest(config_path, resume=False):
             writeJSON(output_path=dir_output / f'output_{index}.json', data=output)
 
     resumeLastRun(dir_output)
-
-env_config = dotenv.dotenv_values(Path(__file__).parent.parent / ".env")
 
 if __name__ == '__main__':
     if len(sys.argv) > 2 and sys.argv[2] == 'r':
