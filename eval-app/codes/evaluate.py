@@ -162,6 +162,28 @@ def queryBaseModel(model_info, prompt_info, vars_info):
     return {'output': response}
 
 def queryToxpipe(type, prompt, model_config):
+    if type == 'rag':
+        model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
+        url = f'{env_config['TOXPIPE_API_HOST']}/rag/'
+        
+        response = requests.get(url=f"{url}?{model_params}&q={prompt}", verify=cert_path)
+        if not response.ok: raise Exception(f'API url: {url}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
+        res = response.json()['response']
+
+        # From RAG: response is {'response': {'response': '', 'searched_keywords': '', 'steps_taken': '', 'error': ''}}
+        for k in ['response', 'searched_keyphrases', 'steps_taken', 'error']:
+            if k not in res:
+                raise Exception(res)
+        if len(res['error'].strip()) > 0:
+            return {'output': res['response'], 
+                    'error': f'Error from Toxpipe: {res['error']}', 
+                    'searched_keyphrases': res['searched_keyphrases'],
+                    'steps_taken': res['steps_taken']}
+        
+        return {'output': res['response'], 
+                'searched_keyphrases': res['searched_keyphrases'],
+                'steps_taken': res['steps_taken']}
+
     with threading.Lock():
         model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
         url = f'{env_config['TOXPIPE_API_HOST']}/agent/create/'
@@ -169,29 +191,11 @@ def queryToxpipe(type, prompt, model_config):
         if not response.ok: raise Exception(response.text)
         agentid = response.json()['agentid']
         
-        if type == 'rag':
-            url = f'{env_config['TOXPIPE_API_HOST']}/rag/?agentid={agentid}&q={prompt}'
-        else:
-            url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
+        url = f'{env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
 
         response = requests.get(url=url, verify=cert_path)
         if not response.ok: raise Exception(f'API url: {url}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()['response']
-
-        # From RAG: response is {'response': {'response': '', 'searched_keywords': '', 'steps_taken': '', 'error': ''}}
-        if type == 'rag':
-            for k in ['response', 'searched_keyphrases', 'steps_taken', 'error']:
-                if k not in res:
-                    raise Exception(res)
-            if len(res['error'].strip()) > 0:
-                return {'output': res['response'], 
-                        'error': f'Error from Toxpipe: {res['error']}', 
-                        'searched_keyphrases': res['searched_keyphrases'],
-                        'steps_taken': res['steps_taken']}
-            
-            return {'output': res['response'], 
-                    'searched_keyphrases': res['searched_keyphrases'],
-                    'steps_taken': res['steps_taken']}
 
         # From AGENTIC: response is {'response': ''}        
         return {'output': res}
