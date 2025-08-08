@@ -263,7 +263,7 @@ def resumeLastRun(dir_output):
         for index, t in enumerate(output['tests']):
             is_response_error = (('error' in t['response'] and len(t['response']['error'].strip()) > 0) or 
                                 (not isinstance(t['response']['output'], str)) or 
-                                t['response']['output'].strip() == '' or
+                                #t['response']['output'].strip() == '' or
                                 t['response']['output'].lower().startswith('error'))
             is_eval_error = (len(t['assert']) > 0 and ('results' not in t['response'] or 
                                                             len(t['response']['results']) == 0 or 
