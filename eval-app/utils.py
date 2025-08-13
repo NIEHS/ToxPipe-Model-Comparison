@@ -1,6 +1,5 @@
 
 from pathlib import Path
-import plotly.express as px
 import yaml
 
 class Config:
@@ -35,15 +34,3 @@ def saveYML(data, file_path):
     with open(file_path, 'w') as outfile:
         yaml.dump(data, outfile, Dumper=MyDumper, default_flow_style=False)
 
-def getNoDataPlot(title):
-        
-    fig = px.scatter(x=[0.5], y=[0.5], text=['No data found<br />or<br />Error in data extraction'], size=[0]) 
-    fig.update_layout(
-        title=title,
-        **Config.CONFIG_PLOT
-    )
-
-    fig.update_xaxes(visible=False)
-    fig.update_yaxes(visible=False)
-                        
-    return fig

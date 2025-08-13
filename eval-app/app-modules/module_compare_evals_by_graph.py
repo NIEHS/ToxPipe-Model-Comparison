@@ -2,9 +2,9 @@ from shiny import reactive
 from shiny.express import ui, module, render
 from shinywidgets import render_widget
 import plotly.express as px
-from utils import Config, getNoDataPlot
+from utils import Config
 from .utils import Evaluator
-from .module_common import mod_vars
+from .module_common import mod_vars, getEvals, getNoDataPlot
 import pandas as pd
 import asyncio
 
@@ -47,7 +47,6 @@ def module_graph(input, output, session, eval_name):
                             @render_widget
                             def showContextSearchStat():
                                 return plotContextSearchStat()
-
                 
     @reactive.calc
     def loadEvalResults():
@@ -193,7 +192,7 @@ def mod_ui(input, output, session):
     with ui.div(class_="row gap-5"):
         with ui.div(class_="col d-flex justify-content-start align-items-center gap-2"):
             ui.input_select("select_level", "Levels", choices={'any': 'Any', 'base-model': 'Base model', 'rag': 'RAG', 'agentic': 'Agentic'})
-            ui.input_select("select_prompt", "Prompts", choices={'any': 'Any', 'basic-prompts': 'Basic prompts', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
+            ui.input_select("select_eval_set", "Eval set", choices={'any': 'Any', 'basic-prompts': 'Basic prompts', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
             ui.input_select("select_species", "Species", choices={'any': 'Any', 'human': 'Human', 'rat': 'Rat'})
             ui.input_select("select_eval", "Evals", choices=[])
         with ui.div(class_="col d-flex pb-1 justify-content-start align-items-end"):
@@ -211,7 +210,7 @@ def mod_ui(input, output, session):
 
                 eval_name = input.select_eval()
                 if eval_name == 'Any':
-                    evals = getEvals()
+                    evals = processEvals()
                 else:
                     evals = [eval_name]
 
@@ -243,58 +242,22 @@ def mod_ui(input, output, session):
                 yield df_report.to_csv()
 
     @reactive.calc
-    @reactive.event(input.select_level, input.select_prompt, input.select_species)
-    def getEvals():
-
-        levels_allowed = ['base-model', 'rag', 'agentic']
-        prompts_allowed = ['basic-prompts', 'tox-type-assertion-prompts', 'abt-qa-assertion-prompts']
-        species_allowed = ['human', 'rat', 'mixed']
-
-        eval_dict = {eval_name: index for index, eval_name in enumerate([f'{f}_{p}_{s}' for f in levels_allowed for p in prompts_allowed for s in species_allowed])}
-        
-        level, prompt, species = input.select_level(), input.select_prompt(), input.select_species()
-
-        evals = []
-        for test in Config.DIR_TESTS.iterdir():
-            if Evaluator.hasOutput(test.name):
-                if level != 'any' and not test.name.startswith(level): continue
-                if prompt != 'any' and prompt not in test.name: continue
-                if species != 'any' and not test.name.endswith(level): continue
-                if level == 'any': 
-                    for l in levels_allowed:
-                        if test.name.startswith(l):
-                            break
-                    else:
-                        continue
-                if prompt == 'any': 
-                    for p in prompts_allowed:
-                        if p in test.name:
-                            break
-                    else:
-                        continue
-                if species == 'any': 
-                    for s in species_allowed:
-                        if test.name.endswith(s):
-                            break
-                    else:
-                        continue
-                    
-                evals.append(test.name)
-        
-        return sorted(evals, key=lambda x: eval_dict[x])
+    @reactive.event(input.select_level, input.select_eval_set, input.select_species)
+    def processEvals():
+        return getEvals(level=input.select_level(), eval_set=input.select_eval_set(), species=input.select_species())
 
     @reactive.effect
-    @reactive.event(input.select_level, input.select_prompt, input.select_species)
+    @reactive.event(input.select_level, input.select_eval_set, input.select_species)
     def loadEvalMenu():
-        evals = getEvals()
+        evals = processEvals()
         ui.update_select(id='select_eval', choices=['Any'] + evals)
 
     @reactive.calc
-    @reactive.event(input.select_level, input.select_prompt, input.select_species, input.select_eval, input.chk_hide_no_assertion_evals)
+    @reactive.event(input.select_level, input.select_eval_set, input.select_species, input.select_eval, input.chk_hide_no_assertion_evals)
     def loadResults():
         eval_name = input.select_eval()
         if eval_name == 'Any':
-            evals = getEvals()
+            evals = processEvals()
             return [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals) if not ('basic-prompts' in ev and input.chk_hide_no_assertion_evals())]
         return module_graph('eval_0', eval_name)
 

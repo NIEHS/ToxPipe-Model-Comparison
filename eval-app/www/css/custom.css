@@ -2,6 +2,10 @@
     width:90vw;
     margin-right: auto;
     margin-left: auto;
+
+    * {
+        font-family: inherit !important;
+    }
 }
 
 .prompt {
@@ -11,6 +15,32 @@
 
 .app-table {
     color: #333;
+}
+
+.app-table {
+    h1 {
+        font-size: 1.5em !important;
+    }
+
+    h2 {
+        font-size: 1.25em !important;
+    }
+
+    h3 {
+        font-size: 1.15em !important;
+    }
+
+    h4 {
+        font-size: 1.1em !important;
+    }
+
+    h5 {
+        font-size: 1.05em !important;
+    }
+
+    h6 {
+        font-size: 1em !important;
+    }
 }
 
 .app-table .form-group {
@@ -86,3 +116,46 @@ div.cards-container {
 .app-ico-failed {
     color: #d41616;
 }
+
+/* .app-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.app-table,
+.app-table th,
+.app-table td {
+  border: 1px solid #ccc;
+}
+
+.app-table th,
+.app-table td {
+  padding: 0.5rem;
+}
+
+.app-table th {
+    position: relative;
+    cursor: grab;
+    user-select: none;
+}   
+.app-table th:active {
+    cursor: grabbing;
+}
+
+.resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  cursor: col-resize;
+  user-select: none;
+}
+
+.resizer:hover,
+.resizing {
+  border-right: 2px solid blue;
+}
+
+.dragging {
+  background-color: #f0f0f0;
+} */

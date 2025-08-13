@@ -84,15 +84,15 @@ class Evaluator:
                                 'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail', 
                                 'Reason': getExplanation(item['response']['results']),
                                 'Used Context': ('steps_taken' in item['response']) and (item['response']['steps_taken'][-1] == 'query_with_context'),
-                                'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']]) if 'searched_keyphrases' in item['response'] else []
+                                'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']]) if 'searched_keyphrases' in item['response'] else ''
                             },
                             **item['vars']
                         }
                     )
                 except Exception as exp:
-                    print(f'Error reading output from {dir_output}')
+                    print(f'Error reading output from {file_path}')
                     print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
-                    return pd.DataFrame()
+                    continue
                 
             results += results_chunk
 
