@@ -1,3 +1,0 @@
-prompts:
-  - Answer the following question with a list of string. List the {effect_type} of
-    {chem_casrn} on rat
