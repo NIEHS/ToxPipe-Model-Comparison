@@ -1,6 +1,6 @@
 
-from shiny import reactive, ui as core_ui
-from shiny.express import ui, render, module
+from shiny import reactive
+from shiny.express import ui, render, module, expressify
 from shiny.types import SilentException
 import traceback
 import json
@@ -31,7 +31,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
     def keywordContainer(input, output, session, index, keyphrase):
 
         with ui.hold() as content:
-            with ui.div(class_='position-relative border rounded p-2'):
+            with ui.div(class_='position-relative border rounded p-2', style='width:fit-content'):
                 ui.input_action_link(id='btn_remove_kw', label='', icon=fa.icon_svg("circle-xmark", "regular"), 
                                                         style='position:absolute; top:-10px; right:-10px; background-color:#fff')
                 with ui.div():
@@ -46,26 +46,30 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
         return content
     
     @module
-    def keywordInputContainer(input, output, session, index):
+    def kpContainer(input, output, session, index):
 
         with ui.hold() as content:
             with ui.div(class_='row gap-2 pt-3'):
-                with ui.div(class_='d-flex gap-3'):
+                with ui.div(class_='d-flex'):
                     with ui.div(class_='d-flex justify-content-start'):
-                        with ui.div(class_='d-flex justify-content-start'):
-                            ui.input_text(id='text_keywords', label="Response key phrases (optional)")
-                        with ui.div(class_='d-flex justify-content-start'):
-                            with ui.tooltip(placement="right"):
-                                ui.span(fa.icon_svg('circle-question'))
-                                "Phrases that the response should contain. High similarity with these phrases will be used to rank a response."
-                        with ui.div(class_='d-flex align-items-center pt-3'):
-                            ui.input_action_button(id='btn_add_keyword', label="Add")
+                        ui.input_text(id='text_keywords', label="Response key phrases (optional)")
+                    with ui.div(class_='d-flex justify-content-start'):
+                        with ui.tooltip(placement="right"):
+                            ui.span(fa.icon_svg('circle-question'))
+                            "Phrases that the response should contain. High similarity with these phrases will be used to rank a response."
+                    with ui.div(class_='d-flex align-items-center pt-3'):
+                        ui.input_action_button(id='btn_add_keyword', label="Add")
 
                 if index in expected_phrases.get():
                     with ui.div(class_='d-flex flex-wrap gap-2'):
                         with ui.div(class_='d-contents'):
                             for v in expected_phrases.get()[index]:
                                 keywordContainer(str(hash(v))[1:], index, v)
+
+        @reactive.effect
+        @reactive.event(input.text_keywords)
+        def showAddButton():
+            ui.update_action_button('btn_add_keyword', disabled=not input.text_keywords())
 
         @reactive.effect
         @reactive.event(input.btn_add_keyword, ignore_init=True)
@@ -82,6 +86,28 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
 
             expected_phrases.set({**values, **{index: values[index] | {kw}}})
 
+        return content
+    
+    @module
+    def varKpContainer(input, output, session, index, var):
+
+        with ui.hold() as content:
+            with ui.div(class_='position-relative border rounded p-2', style='width:fit-content'):
+                ui.input_action_link(id='btn_remove_var', label='', icon=fa.icon_svg("circle-xmark", "regular"), 
+                                                    style='position:absolute; top:-10px; right:-10px; background-color:#fff')
+                with ui.div():
+                    var
+                kpContainer(str(index), index), 
+
+        @reactive.effect
+        @reactive.event(input.btn_remove_var, ignore_init=True)
+        def removeVar():
+            values = test_vars.get()
+            test_vars.set({k: v for k, v in values.items() if k != index})
+
+            values = expected_phrases.get()
+            expected_phrases.set({k: v for k, v in values.items() if k != index})
+        
         return content
 
     with ui.div(class_="row error m-2"):
@@ -106,33 +132,24 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
                         ui.input_select(id='select_models', label='Model list', choices=model_list, multiple=True)
 
                 with ui.div(class_="col-9"):
-                    @render.ui
+                    @render.express
                     def showModelConfig():
                         model_options_sel = loadModelConfig()
-                        ui_list = []
-                        for index, model_options in model_options_sel:
-                            model_name = model_options['label']
-                            ui_list_per_model = []
-                            for k, v in model_options['config'].items():
-                                if isinstance(v['type'], list):
-                                    ui_list_per_model.append(ui.input_select(id=f'select_model_config_{index}_{k}', label=v['label'], choices=v['type'], selected=v['default']))
-                                elif v['type'] == 'int':
-                                    if 'min' in v and 'max' in v:
-                                        ui_list_per_model.append(ui.input_slider(id=f'txt_model_config_{index}_{k}', label=v['label'], min=int(v['min']), max=int(v['max']), value=int(v['default']), step=0.1))
-                                    else:
-                                        ui_list_per_model.append(ui.input_text(id=f'txt_model_config_{index}_{k}', label=v['label'], value=int(v['default'])))
-                            ui_list.append(
-                                core_ui.div(
-                                    core_ui.card(
-                                        core_ui.card_header(model_name),
-                                        *ui_list_per_model
-                                    ),
-                                    class_="col-3 col-5-sm"
-                                )
-                            )
+                        with ui.div(class_='row'):
+                            for index, model_options in model_options_sel:
+                                model_name = model_options['label']
 
-                        return core_ui.div(*ui_list, class_="row")
-            
+                                with ui.div(class_="col-3 col-5-sm"):
+                                    with ui.card():
+                                        ui.card_header(model_name)
+                                        for k, v in model_options['config'].items():
+                                            if isinstance(v['type'], list):
+                                                ui.input_select(id=f'select_model_config_{index}_{k}', label=v['label'], choices=v['type'], selected=v['default'])
+                                            elif v['type'] == 'int':
+                                                if 'min' in v and 'max' in v:
+                                                    ui.input_slider(id=f'txt_model_config_{index}_{k}', label=v['label'], min=int(v['min']), max=int(v['max']), value=int(v['default']), step=0.1)
+                                                else:
+                                                    ui.input_text(id=f'txt_model_config_{index}_{k}', label=v['label'], value=int(v['default']))
             
             with ui.div(class_='row gap-2'):
 
@@ -143,79 +160,51 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
                         with ui.tooltip(placement="right"):
                             ui.span(fa.icon_svg('circle-question'))
                             "You can also use variable for a prompt using curly braces. e.g. What is the function of {chemname}?"
-                @module
-                def varContainer(input, output, session, index, content):
 
-                    @reactive.effect
-                    @reactive.event(input.btn_remove_var, ignore_init=True)
-                    def removeVar():
-                        values = test_vars.get()
-                        test_vars.set({k: v for k, v in values.items() if k != index})
-
-                        values = expected_phrases.get()
-                        expected_phrases.set({k: v for k, v in values.items() if k != index})
-                    
-                    return core_ui.div(core_ui.input_action_link(id='btn_remove_var', label='', icon=fa.icon_svg("circle-xmark", "regular"), 
-                                                                style='position:absolute; top:-10px; right:-10px; background-color:#fff'),
-                                    core_ui.div(content),
-                                    keywordInputContainer(str(index), index), 
-                                    class_='position-relative border rounded p-2')
                 with ui.div(class_='row'):
                     with ui.div(class_='col'):
-                        @render.ui
+                        @render.express
                         def showVars():
-                            def showAddedVars():
-                                if not test_vars.get(): return
-                                ui_list = []
-                                for i, var in test_vars.get().items():
-                                    content = core_ui.HTML(f"<ul>{''.join([f"<li><strong>{k}:</strong><span class='ms-1'>{v}</span></li>" for k, v in var])}</ul>")
-                                    ui_list.append(
-                                        core_ui.div(
-                                            varContainer(str(hash(var))[1:], i, content),
-                                            class_="col-3 col-5-sm"
-                                        )
-                                    )
-                                return core_ui.div(*ui_list, class_='row')
-                            variables = extractPromptVars()
-                            if variables:
-                                try:
-                                    return core_ui.div(
-                                            core_ui.div(
-                                                core_ui.div(
-                                                    core_ui.div(
-                                                        *[core_ui.div(
-                                                            ui.input_text(id=f'txt_var_{v}', label=v),
-                                                            class_='col-3'
-                                                        ) for v in variables],
-                                                        class_='row'
-                                                    ),
-                                                    class_='col'
-                                                ),
-                                                core_ui.div(
-                                                    ui.input_action_button(id='btn_add_var', label="Add"),
-                                                    class_='col-auto'
-                                                ),
-                                                class_='row'
-                                            ),
-                                            showAddedVars(),
-                                            class_='row border rounded p-2 m-2'
-                                        ) 
-                                except:
-                                    return
-                            else:
-                                test_vars.set({})
-                                expected_phrases.set({})
+                            variables = validatePromptVars(extractPromptVars())
+
+                            if not variables: return
+                    
+                            with ui.div(class_='row border rounded p-2 m-2'):
+                                with ui.div(class_='row'):
+                                    with ui.div(class_='col'):
+                                        with ui.div(class_='row'):
+                                            for v in variables:
+                                                with ui.div(class_='col-3'):
+                                                    ui.input_text(id=f'txt_var_{v}', label=v)
+                                    with ui.div(class_='col-auto'):
+                                        ui.input_action_button(id='btn_add_var', label="Add")
+
+                                @render.express
+                                def showKPPerVar():
+                                    if not test_vars.get(): return
+                                    with ui.div(class_='row'):
+                                        for i, var in test_vars.get().items():
+                                            content = ui.HTML(f"<ul>{''.join([f"<li><strong>{k}:</strong><span class='ms-1'>{v}</span></li>" for k, v in var])}</ul>")
+                                            with ui.div(class_="col-3 col-5-sm"):
+                                                varKpContainer(str(hash(var))[1:], i, content)
 
             with ui.div(class_='row'):
             
-                @render.ui
-                def showKeyPhraseUI():
-                    variables = extractPromptVars()
-                    if len(variables) == 0:
-                        return keywordInputContainer('0', 0)
+                @render.express
+                def showKP():
+                    variables = validatePromptVars(extractPromptVars())
+                    if len(variables) > 0: return
+                    
+                    kpContainer('0', 0)
 
         with ui.div(class_='col-auto justify-content-center'):        
             ui.input_task_button(id="btn_create_eval", label="Create")
+
+    def validatePromptVars(variables):
+        p = regex.compile(r'[A-Za-z0-9\-\_]*')
+        for val in variables:
+            if not bool(p.fullmatch(val)): return []
+        return variables
 
     @reactive.calc
     @reactive.event(input.txt_test, input.txt_desc, input.select_models, input.txt_prompt, input.btn_create_eval, ignore_init=True)
@@ -250,10 +239,8 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
         if len(val.strip()) == 0:
             errors.append('Prompt cannot be empty')
 
-        p = regex.compile(r'[A-Za-z0-9\-\_]*')
-        variables = extractPromptVars()
-        for val in variables:
-            if not bool(p.fullmatch(val)): errors.append('Prompt variable can only contain alphanumeric characters, "-" and "_"') 
+        prompt_vars = extractPromptVars()
+        if prompt_vars and len(validatePromptVars(prompt_vars)) == 0: errors.append('Prompt variable can only contain alphanumeric characters, "-" and "_"') 
 
         return errors
 
@@ -276,7 +263,8 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
     @reactive.event(input.txt_prompt)
     def extractPromptVars():
         prompt = input.txt_prompt()
-        variables = regex.findall(rf'{Evaluator.PROMPT_VAR_FORMAT}', prompt)
+        variables = regex.findall(rf'{Evaluator.PROMPT_VAR_FORMAT}', prompt)    
+        test_vars.set({})
         return variables
 
     @reactive.effect
