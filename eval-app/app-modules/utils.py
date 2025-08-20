@@ -20,6 +20,9 @@ class Evaluator:
     
     def loadEvals():
         return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if Evaluator.hasOutput(eval_name)])
+    
+    def loadEvalsToRun():
+        return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if (Config.DIR_TESTS / eval_name / 'config.yaml').exists()])
 
     def processConfig(eval_name):
         return loadYML(Config.DIR_TESTS / eval_name / 'config.yaml')
@@ -108,7 +111,7 @@ class Evaluator:
     
     def runTest(eval_name):
 
-        from codes.evaluate import evaluate
+        from codes.evaluation import runTest
         import concurrent.futures
         from datetime import datetime
         from uuid import uuid4
@@ -175,7 +178,8 @@ class Evaluator:
                 json.dump(output, f)
 
         try:
-            run(Config.DIR_TESTS / eval_name / 'config.yaml')
+            #run(Config.DIR_TESTS / eval_name / 'config.yaml')
+            runTest(Config.DIR_TESTS / eval_name  / 'config.yaml', resume=False, skip_run=False)
         except Exception as exp:
             print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
             return False

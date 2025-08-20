@@ -2,8 +2,6 @@ tests:
   - assert:
       - expected_phrases:
           - Gastrointestinal bleeding
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -93,8 +91,6 @@ tests:
   - assert:
       - expected_phrases:
           - Angiosarcoma of the liver
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2

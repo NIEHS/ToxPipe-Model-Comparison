@@ -33,8 +33,6 @@ tests:
   - assert:
       - expected_phrases:
           - Gastrointestinal bleeding
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -44,8 +42,6 @@ tests:
           - Hypothermia
           - Acidosis
           - Hepatocellular/liver injury
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
@@ -53,8 +49,6 @@ tests:
   - assert:
       - expected_phrases:
           - Acidosis
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Metformin or its synonyms with CAS number 657-24-9
@@ -67,8 +61,6 @@ tests:
       - expected_phrases:
           - Weight gain
           - Increased appetite
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -76,8 +68,6 @@ tests:
   - assert:
       - expected_phrases:
           - Altered liver function
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
@@ -89,8 +79,6 @@ tests:
   - assert:
       - expected_phrases:
           - Fatty degeneration of the heart
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
@@ -99,8 +87,6 @@ tests:
       - expected_phrases:
           - Loss of peripheral vision
           - Lack of coordination of movements
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
@@ -112,8 +98,6 @@ tests:
           - Drowsiness
           - Headache
           - Loss of consciousness
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
@@ -169,8 +153,6 @@ tests:
           - Gastrointestinal bleeding
           - Anemia
           - Chronic kidney disease
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -193,8 +175,6 @@ tests:
           - Weight gain
           - Increased appetite
           - Diabetes
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -204,8 +184,6 @@ tests:
           - Breast cancer
           - Endometrial cancer
           - Testis cancer
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
@@ -218,8 +196,6 @@ tests:
           - Acute nonlymphocytic leukemia
           - Non-Hodgkin's lymphoma
           - 'Multiple myeloma '
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Benzene or its synonyms with CAS number 71-43-2
@@ -235,8 +211,6 @@ tests:
           - Lung cancer
           - Skin cancer (in situ squamous cell carcinoma)
           - Bladder cancer
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Arsenite or its synonyms with CAS number 15502-74-6
@@ -252,8 +226,6 @@ tests:
           - Raynaud's phenomenon (blanching, numbness, and discomfort of the fingers
             upon exposure to cold)
           - Degeneration of the bones
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Vinylchloride or its synonyms with CAS number 75-01-4
@@ -307,8 +279,6 @@ tests:
   - assert:
       - expected_phrases:
           - Gastroschisis
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -348,8 +318,6 @@ tests:
           - Physical growth disorder
           - Dysarthria
           - Limb deformities
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
@@ -407,8 +375,6 @@ tests:
   - assert:
       - expected_phrases:
           - Hypersensitivity/allergic reaction
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -429,8 +395,6 @@ tests:
       - expected_phrases:
           - Edema
           - Immune suppression
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -438,8 +402,6 @@ tests:
   - assert:
       - expected_phrases:
           - Immune suppression
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
@@ -530,8 +492,6 @@ tests:
       - expected_phrases:
           - Endometriosis
           - Decreased sperm count
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
@@ -601,8 +561,6 @@ tests:
   - assert:
       - expected_phrases:
           - Ototoxicity
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -610,8 +568,6 @@ tests:
   - assert:
       - expected_phrases:
           - Ototoxicity
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
@@ -619,8 +575,6 @@ tests:
   - assert:
       - expected_phrases:
           - Visual disturbances
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Metformin or its synonyms with CAS number 657-24-9
@@ -631,8 +585,6 @@ tests:
           - Dry eyes
           - Eye hemorrhage
           - Glaucoma
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
@@ -643,8 +595,6 @@ tests:
           - Cataracts
           - Insomnia
           - Aggression
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -662,8 +612,6 @@ tests:
           - Tremor
           - Delirium
           - Loss of consciousness
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Benzene or its synonyms with CAS number 71-43-2
@@ -675,8 +623,6 @@ tests:
   - assert:
       - expected_phrases:
           - Low IQ
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Methylmercury or its synonyms with CAS number 16056-34-1
@@ -736,8 +682,6 @@ tests:
           - Gastrointestinal bleeding
           - Ulcers
           - Autoimmune pancreatitis
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -747,8 +691,6 @@ tests:
           - Hepatocellular/Liver injury
           - Pancreatitis
           - Oral erythema multiforme
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
@@ -759,8 +701,6 @@ tests:
           - Vomiting
           - Hepatocellular injury
           - Cholestasis
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Metformin or its synonyms with CAS number 657-24-9
@@ -770,8 +710,6 @@ tests:
           - Constipation
           - Pancreatitis
           - Liver toxicity
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
@@ -779,8 +717,6 @@ tests:
   - assert:
       - expected_phrases:
           - Pancreatitis
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -858,8 +794,6 @@ tests:
   - assert:
       - expected_phrases:
           - Acidosis
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
@@ -950,8 +884,6 @@ tests:
       - expected_phrases:
           - Fixed drug eruption
           - Steven-Johnson syndrome
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
@@ -964,8 +896,6 @@ tests:
       - expected_phrases:
           - Alopecia
           - Erythema multiforme
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
@@ -973,8 +903,6 @@ tests:
   - assert:
       - expected_phrases:
           - Alopecia
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -982,8 +910,6 @@ tests:
   - assert:
       - expected_phrases:
           - Chloracne
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
@@ -1065,8 +991,6 @@ tests:
   - assert:
       - expected_phrases:
           - Rhabdomyloysis
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
@@ -1075,8 +999,6 @@ tests:
       - expected_phrases:
           - Osteoporosis
           - Sarcopenia/Muscle weakness
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -1153,8 +1075,6 @@ tests:
           - Sinus bradycardia
           - Atrioventricular block
           - Intracerebral hemmorhage
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -1162,8 +1082,6 @@ tests:
   - assert:
       - expected_phrases:
           - Myocardial ischemia
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
@@ -1179,8 +1097,6 @@ tests:
   - assert:
       - expected_phrases:
           - Hypertension
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -1192,8 +1108,6 @@ tests:
   - assert:
       - expected_phrases:
           - Ventricular fibrillation
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Benzene or its synonyms with CAS number 71-43-2
@@ -1259,8 +1173,6 @@ tests:
   - assert:
       - expected_phrases:
           - Hypothyroidism
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -1272,8 +1184,6 @@ tests:
   - assert:
       - expected_phrases:
           - Hypothyroidism
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Metformin or its synonyms with CAS number 657-24-9
@@ -1281,8 +1191,6 @@ tests:
   - assert:
       - expected_phrases:
           - Diabetes
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Atorvastatin or its synonyms with CAS number 134523-00-5
@@ -1291,8 +1199,6 @@ tests:
       - expected_phrases:
           - Hyperglycemia
           - Diabetes
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -1300,8 +1206,6 @@ tests:
   - assert:
       - expected_phrases:
           - Thyroid disruption
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6
@@ -1376,8 +1280,6 @@ tests:
       - expected_phrases:
           - Asthma
           - Bronchospasm
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
@@ -1401,8 +1303,6 @@ tests:
   - assert:
       - expected_phrases:
           - Mucous membrane irritation
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Benzene or its synonyms with CAS number 71-43-2
@@ -1469,8 +1369,6 @@ tests:
       - expected_phrases:
           - Autoimmune thrombocytopenia
           - Autoimmune agranulocytosis
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -1480,8 +1378,6 @@ tests:
           - Thrombocytopenia
           - Neutropenia
           - Hemolytic anemia
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Paracetamol or its synonyms with CAS number 103-90-2
@@ -1490,8 +1386,6 @@ tests:
       - expected_phrases:
           - Hemolytic anemia
           - Macrocytic anemia
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Metformin or its synonyms with CAS number 657-24-9
@@ -1503,8 +1397,6 @@ tests:
   - assert:
       - expected_phrases:
           - Delayed wound healing
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Prednisone or its synonyms with CAS number 53-03-2
@@ -1519,8 +1411,6 @@ tests:
           - Leukopenia
           - Anemia
           - Pancytopenia
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Benzene or its synonyms with CAS number 71-43-2
@@ -1588,8 +1478,6 @@ tests:
           - "Bioavailability: 80\u2013100%, Protein binding 80\u201390%"
           - 'Elimination half-life: 15-30 hour'
           - 'Excretion: Urine (80-100%), Sweat, Saliva, Feces'
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -1613,8 +1501,6 @@ tests:
   - assert:
       - expected_phrases:
           - "Half-life: 7\u201311 years"
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Dioxin or its synonyms with CAS number 1746-01-6

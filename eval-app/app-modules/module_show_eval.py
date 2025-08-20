@@ -107,7 +107,7 @@ def mod_feedback(input, output, session, feedback):
     )
 
 @module
-def mod_ui(input, output, session):
+def mod_ui(input, output, session, reload_evals_flag):
 
     var_selected = reactive.value({})
 
@@ -256,6 +256,7 @@ def mod_ui(input, output, session):
                         return loadEmbeddingHeatmapPlot()
 
     @reactive.effect
+    @reactive.event(reload_evals_flag)
     def loadEvals():
         ui.update_select(id='select_eval', choices=Evaluator.loadEvals())
 

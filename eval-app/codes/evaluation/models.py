@@ -1,8 +1,9 @@
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
+from langsmith import traceable
 import threading
 from pathlib import Path
-from utils import Config
+from ..utils import Config
 import requests
 
 import httpx
@@ -30,6 +31,7 @@ def createBaseModel(model_info):
         return createOpenAIModel(model_info['id'].split(':')[-1], **model_info['config'])
     raise NotImplementedError(model_info['id'])
 
+#@traceable
 def queryBaseModel(model_info, prompt_info, vars_info):
     model = createBaseModel(model_info=model_info)
     prompt = ChatPromptTemplate.from_messages(
@@ -39,9 +41,6 @@ def queryBaseModel(model_info, prompt_info, vars_info):
                 ]
     )
 
-    # Langchain still does not have structured output facility for Mistral and LLama models, so rolling back to
-    # old code. Will use this later when Langchain adds the facilities. 
-    #response = dict((prompt | model.with_structured_output(SchemaForQueryResponse)).invoke(vars_info))['response']
     response = (prompt | model).invoke(vars_info).content
     
     return {'output': response}

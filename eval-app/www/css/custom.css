@@ -117,6 +117,10 @@ div.cards-container {
     color: #d41616;
 }
 
+.shiny-data-grid-table > table > thead > tr:last-child > th {
+    text-align: center !important;
+}
+
 /* .app-table {
   border-collapse: collapse;
   width: 100%;

@@ -7,11 +7,11 @@ import tqdm
 import traceback
 import json
 import yaml
-import datetime
+from datetime import datetime
 from uuid import uuid4
 
 def getModelResponse(model_info, prompt_info, vars_info):
-
+    
     try:
         if model_info['id'] not in ['agentic', 'rag']:
             response = queryBaseModel(model_info, prompt_info, vars_info)
@@ -34,7 +34,7 @@ def getEvaluationResponse(assert_info, response, prompt):
         print(error)
         return {'output': '', 'error': f'Error in evaluation: {error}'}
 
-@traceable
+#@traceable 
 def getResponseAndEvaluate(model_info, prompt_info, vars_info, assert_info):
 
     response = getModelResponse(model_info, prompt_info, vars_info)
@@ -73,7 +73,7 @@ def resumeLastRun(dir_output, skip_run, resume_eval):
         for index, t in enumerate(output['tests']):
             is_response_error = (not skip_run) and (('error' in t['response'] and len(t['response']['error'].strip()) > 0) or 
                                 (not isinstance(t['response']['output'], str)) or 
-                                #t['response']['output'].strip() == '' or
+                                t['response']['output'].strip() == '' or
                                 t['response']['output'].lower().startswith('error'))
                                 
             is_eval_error =  (len(t['assert']) > 0 and ((not resume_eval) or 

@@ -8,7 +8,7 @@ import datetime
 import os
 
 @module
-def mod_ui(input, output, session):
+def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
 
     with ui.div(class_="row"):
         with ui.div(class_="col gap-5 border rounded p-5"):
@@ -127,8 +127,9 @@ def mod_ui(input, output, session):
                 ui.input_task_button(id="btn_run_sim", label="Extract Response Similarity")
 
     @reactive.effect
+    @reactive.event(reload_unrun_evals_flag)
     def loadEvals():
-        ui.update_select(id='select_eval', choices=Evaluator.loadEvals())
+        ui.update_select(id='select_eval', choices=Evaluator.loadEvalsToRun())
 
     @reactive.calc
     @reactive.event(input.select_eval)
@@ -160,10 +161,12 @@ def mod_ui(input, output, session):
         try:
             if Evaluator.runTest(eval_name):
                 ui.notification_show(f'"{eval_name}" ran successfully', type="message")
+                reload_evals_flag.set(not reload_evals_flag.get())
             else: 
                 ui.notification_show(f'"{eval_name}" did not run successfully', type="error")
                 
         except Exception as exp:
+            print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
             ui.notification_show(f'"{eval_name}" did not run successfully', type="error")
 
 

@@ -23,7 +23,7 @@ providers:
       summarize: 'false'
       temp: 0
     id: rag
-    label: Toxpipe (RAG) [Claude-3.7 Sonnet]
+    label: Toxpipe (RAG) [Claude 3.7 Sonnet]
   - config:
       max_iterations: 10
       model: gemini-2.5-pro
@@ -37,7 +37,7 @@ providers:
       summarize: 'false'
       temp: 0
     id: rag
-    label: Toxpipe (RAG) [Gemini 2.5 flash]
+    label: Toxpipe (RAG) [Gemini 2.5 Flash]
   - config:
       max_iterations: 10
       model: llama3-3-70b
@@ -74,8 +74,6 @@ tests:
   - assert:
       - expected_phrases:
           - Gastrointestinal bleeding
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2
@@ -165,8 +163,6 @@ tests:
   - assert:
       - expected_phrases:
           - Angiosarcoma of the liver
-        type: python
-        value: file://scripts/tests.py
     description: Test similarity
     vars:
       chem_casrn: Aspirin or its synonyms with CAS number 50-78-2

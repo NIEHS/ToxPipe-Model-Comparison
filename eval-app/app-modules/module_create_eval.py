@@ -6,7 +6,7 @@ import traceback
 import json
 import faicons as fa
 import regex
-from utils import Config
+from utils import Config, loadYML
 from .utils import Evaluator
 
 def logexp(func):
@@ -22,54 +22,50 @@ def logexp(func):
 
 
 @module
-def mod_ui(input, output, session):
-
-    question_circle_fill = ui.HTML(
-        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-question-circle-fill mb-1" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z"/></svg>'
-    )
+def mod_ui(input, output, session, reload_unrun_evals_flag):
 
     expected_phrases = reactive.value({})
     test_vars = reactive.value({})
 
     @module
-    def keywordContainer(input, output, session, index, content):
+    def keywordContainer(input, output, session, index, keyphrase):
 
-        # with ui.div(class_='position-relative border rounded p-2'):
-        #     ui.input_action_link(id='btn_remove_kw', label='', icon=fa.icon_svg("circle-xmark", "regular"), 
-        #                                             style='position:absolute; top:-10px; right:-10px; background-color:#fff')
-        #     with ui.div():
-        #         content
+        with ui.hold() as content:
+            with ui.div(class_='position-relative border rounded p-2'):
+                ui.input_action_link(id='btn_remove_kw', label='', icon=fa.icon_svg("circle-xmark", "regular"), 
+                                                        style='position:absolute; top:-10px; right:-10px; background-color:#fff')
+                with ui.div():
+                    keyphrase
         
         @reactive.effect
         @reactive.event(input.btn_remove_kw, ignore_init=True)
         def removeKeyword():
             values = expected_phrases.get()
-            expected_phrases.set({**values, **{index: values[index] - {content}}})
+            expected_phrases.set({**values, **{index: values[index] - {keyphrase}}})
 
-        return core_ui.div(
-                ui.input_action_link(id='btn_remove_kw', label='', icon=fa.icon_svg("circle-xmark", "regular"), style='position:absolute; top:-10px; right:-10px; background-color:#fff'),
-                core_ui.div(content),
-                class_='position-relative border rounded p-2'
-            )
+        return content
+    
     @module
     def keywordInputContainer(input, output, session, index):
-        # with ui.div(class_='d-flex justify-content-start align-items-center column-gap-3'):
-        #     with ui.div(class_='d-flex justify-content-start'):
-        #         ui.input_text(id='text_keywords', label="Response key phrases (optional)")
-        #         with ui.tooltip(placement="right", id="card_tooltip"):
-        #             ui.span(question_circle_fill)
-        #             "Phrases that the response should contain. High similarity with these phrases will be used to rank a response."
-        #     with ui.div(class_='d-flex pt-3'):
-        #         ui.input_action_button(id='btn_add_keyword', label="Add")
-            
-        #     @render.ui
-        #     def showKeyPhraseInputUI():
-        #         return core_ui.div(
-        #                     *[keywordContainer(str(hash(v))[1:], k, v) for k, v in expected_phrases.get().items()],
-        #                     class_='d-flex column-gap-2 pt-3'
-        #         )
 
-        ui_elements = [keywordContainer(str(hash(v))[1:], index, v) for v in expected_phrases.get()[index]] if index in expected_phrases.get() else ''
+        with ui.hold() as content:
+            with ui.div(class_='row gap-2 pt-3'):
+                with ui.div(class_='d-flex gap-3'):
+                    with ui.div(class_='d-flex justify-content-start'):
+                        with ui.div(class_='d-flex justify-content-start'):
+                            ui.input_text(id='text_keywords', label="Response key phrases (optional)")
+                        with ui.div(class_='d-flex justify-content-start'):
+                            with ui.tooltip(placement="right"):
+                                ui.span(fa.icon_svg('circle-question'))
+                                "Phrases that the response should contain. High similarity with these phrases will be used to rank a response."
+                        with ui.div(class_='d-flex align-items-center pt-3'):
+                            ui.input_action_button(id='btn_add_keyword', label="Add")
+
+                if index in expected_phrases.get():
+                    with ui.div(class_='d-flex flex-wrap gap-2'):
+                        with ui.div(class_='d-contents'):
+                            for v in expected_phrases.get()[index]:
+                                keywordContainer(str(hash(v))[1:], index, v)
 
         @reactive.effect
         @reactive.event(input.btn_add_keyword, ignore_init=True)
@@ -86,39 +82,7 @@ def mod_ui(input, output, session):
 
             expected_phrases.set({**values, **{index: values[index] | {kw}}})
 
-        return core_ui.div(
-                core_ui.div(
-                    core_ui.div(
-                        core_ui.div(
-                            ui.input_text(id='text_keywords', label="Response key phrases (optional)"),
-                            class_='d-flex justify-content-start'
-                        ),
-                        core_ui.div(
-                            core_ui.tooltip(
-                                ui.span(question_circle_fill),
-                                "Phrases that the response should contain. High similarity with these phrases will be used to rank a response.", 
-                                placement="right", 
-                                id="card_tooltip"
-                            ),
-                            class_='d-flex justify-content-start'
-                        ),
-                        class_='d-flex justify-content-start'
-                    ),
-                    core_ui.div(
-                        ui.input_action_button(id='btn_add_keyword', label="Add"),
-                        class_='d-flex align-items-center pt-3'
-                    ),
-                    class_='d-flex gap-3'
-                ),
-                core_ui.div(
-                    core_ui.div(
-                        *ui_elements,
-                        class_='d-contents'
-                    ),
-                    class_='d-flex flex-wrap gap-2'
-                ),
-                class_='row gap-2 pt-3'
-        )
+        return content
 
     with ui.div(class_="row error m-2"):
         @render.ui
@@ -135,11 +99,11 @@ def mod_ui(input, output, session):
             with ui.div(class_="row gap-2"):
 
                 with ui.div(class_='col-2'):
-                    @render.ui
+                    @render.express
                     def showModels():
                         model_options = loadModelSettings()
                         model_list = {i: item['label'] for i, item in enumerate(model_options)}
-                        return ui.input_select(id='select_models', label='Model list', choices=model_list, multiple=True)
+                        ui.input_select(id='select_models', label='Model list', choices=model_list, multiple=True)
 
                 with ui.div(class_="col-9"):
                     @render.ui
@@ -173,7 +137,12 @@ def mod_ui(input, output, session):
             with ui.div(class_='row gap-2'):
 
                 with ui.div(class_='row'):
-                    ui.input_text_area(id='txt_prompt', label='Prompt', rows=5, width='100%')
+                    with ui.div(class_='col'):
+                        ui.input_text_area(id='txt_prompt', label='Prompt', rows=5, width='100%', placeholder='What is the function of Aspirin?')
+                    with ui.div(class_='col-auto'):
+                        with ui.tooltip(placement="right"):
+                            ui.span(fa.icon_svg('circle-question'))
+                            "You can also use variable for a prompt using curly braces. e.g. What is the function of {chemname}?"
                 @module
                 def varContainer(input, output, session, index, content):
 
@@ -357,7 +326,7 @@ def mod_ui(input, output, session):
         if len(validateFields()) > 0: return
 
         model_options = loadModelSettings()
-        test_name = input.txt_test()
+        eval_name = input.txt_test()
         description = input.txt_desc()
         model_list = input.select_models()
         variables = test_vars.get()
@@ -373,7 +342,7 @@ def mod_ui(input, output, session):
                     'config': dict(getFieldValue(in_field, model_config['config']) for in_field in input_fields)
                 }
             )
-            if model_config['id'] == "file://scripts/providers.py": has_toxpipe = True
+            if 'toxpipe' in model_config['id']: has_toxpipe = True
     
         prompt = input.txt_prompt()
 
@@ -387,7 +356,7 @@ def mod_ui(input, output, session):
             }
         }
 
-        prompt_system = Config.loadYML(Config.DIR_TESTS / 'system_prompt.yaml')
+        prompt_system = loadYML(Config.DIR_TESTS / 'config' / 'system_prompt.yaml')
 
         prompts = {
             'system': prompt_system['system'] if prompt_system is not None and 'system' in prompt_system else '',
@@ -405,8 +374,6 @@ def mod_ui(input, output, session):
                         'assert': [ 
                             {
                                 'expected_phrases': list(expected_phrases.get().get(0, [])),
-                                'type': 'python',
-                                'value': 'file://scripts/tests.py'
                             }
                         ]
                     }
@@ -421,8 +388,6 @@ def mod_ui(input, output, session):
                                 'assert': [ 
                                     {
                                         'expected_phrases': list(expected_phrases.get().get(i, [])),
-                                        'type': 'python',
-                                        'value': 'file://scripts/tests.py'
                                     }
                                 ]
                     }
@@ -431,9 +396,9 @@ def mod_ui(input, output, session):
 
         
         if Evaluator.createTest(
-                        Config.DIR_TESTS / test_name,
+                        Config.DIR_TESTS / eval_name,
                         {
-                            'test_name': test_name, 
+                            'eval_name': eval_name, 
                             'description': description, 
                             'defaulttest': defaulttest, 
                             'prompts': prompts, 
@@ -441,6 +406,7 @@ def mod_ui(input, output, session):
                             'tests': tests
                         }, has_toxpipe
         ):
-            ui.notification_show(f'"{test_name}" was created successfully')
+            ui.notification_show(f'"{eval_name}" was created successfully')
+            reload_unrun_evals_flag.set(not reload_unrun_evals_flag.get())
         else:
-            ui.notification_show(f'"{test_name}" was not created successfully')
+            ui.notification_show(f'"{eval_name}" was not created successfully')

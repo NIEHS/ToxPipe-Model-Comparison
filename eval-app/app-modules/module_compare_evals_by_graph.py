@@ -197,49 +197,10 @@ def mod_ui(input, output, session):
             ui.input_select("select_eval", "Evals", choices=[])
         with ui.div(class_="col d-flex pb-1 justify-content-start align-items-end"):
             ui.input_checkbox("chk_hide_no_assertion_evals", "Hide unlabeled evals", value=True)
-        with ui.div(class_="col d-flex pb-3 justify-content-end align-items-end"):
-            @render.download(
-                filename='eval_report.csv',
-                label = 'Download Report'
-            )
-            async def downloadReport():
 
-                d_eval_prompt = {'tox-type-assertion-prompts_human': 'Toxicity type prompts (Human)',
-                                 'tox-type-assertion-prompts_rat': 'Toxicity type prompts (Rat)', 
-                                'abt-qa-assertion-prompts_mixed': 'ABT Q/A prompts'}
-
-                eval_name = input.select_eval()
-                if eval_name == 'Any':
-                    evals = processEvals()
-                else:
-                    evals = [eval_name]
-
-                df_report = {}
-                for eval_name in evals:
-                    if 'assertion' not in eval_name: continue
-                    data = Evaluator.processResults(eval_name)
-                    if data.empty: continue
-                    total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
-                    data_pass_perc = (data
-                                        .groupby('Model')['Result']
-                                        .value_counts()
-                                        .reset_index()
-                                        .pivot(index='Model', columns='Result', values='count'))
-                    
-                    if data_pass_perc.columns.isin(['Pass']).any(): 
-                        data_pass_perc.loc[data_pass_perc['Pass'].isna(), 'Pass'] = 0
-                    else:
-                        data_pass_perc['Pass'] = 0
-                    
-                    data_pass_perc['Assertion'] =  data_pass_perc['Pass'] + data_pass_perc['Fail']
-                    data_pass_perc['Perc'] = data_pass_perc['Pass'] * 100 / data_pass_perc['Assertion']
-                    header = f'{d_eval_prompt['_'.join(eval_name.split('_')[1:])]} ({int(total_assertions.iloc[0])})'
-                    data_pass_perc = data_pass_perc[['Perc']].rename(columns={'Perc': header}).to_dict()
-                    for k, v in data_pass_perc.items():
-                        df_report[k] = {**df_report.get(k, {}), **v}
-                    
-                df_report = pd.DataFrame(df_report)
-                yield df_report.to_csv()
+    @render.express
+    def showPlots():
+        loadResults()
 
     @reactive.calc
     @reactive.event(input.select_level, input.select_eval_set, input.select_species)
@@ -259,8 +220,4 @@ def mod_ui(input, output, session):
         if eval_name == 'Any':
             evals = processEvals()
             return [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals) if not ('basic-prompts' in ev and input.chk_hide_no_assertion_evals())]
-        return module_graph('eval_0', eval_name)
-
-    @render.express
-    def showPlots():
-        loadResults()    
+        return module_graph('eval_0', eval_name)    
