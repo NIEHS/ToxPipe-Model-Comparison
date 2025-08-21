@@ -59,15 +59,18 @@ class EvaluateResponse:
     def getEvaluation(self, response: str, prompt: str) -> Union[bool, float, Dict[str, Any]]:
         
         passed = True
+        score = 0
         component_results = []
-        for res_exp in self.assert_info[0]['expected_phrases']:
+        expected_keyphrases = self.assert_info[0]['expected_phrases']
+        for res_exp in expected_keyphrases:
             res_ = dict(self.evaluation_chain.invoke(input={'query': prompt, 'answer': response, 'phrase': res_exp}))
             passed &= res_['pass_']
+            score += int(res_['pass_'])
             component_results.append({'pass': res_['pass_'], 'reason': res_['reason']})
 
         response = {
             'pass': passed,
-            'score': int(passed),
+            'score': score/len(expected_keyphrases),
             'reason': 'All assertions passed' if passed else 'All assertions did not pass',
             'componentResults': component_results
         }
