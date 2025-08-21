@@ -1,6 +1,6 @@
 from evaluation import runTest
 import sys
-from utils import Config
+from evaluation.utils import Config
 import argparse
 
 if __name__ == '__main__':

@@ -3,7 +3,7 @@ from langchain.prompts import ChatPromptTemplate
 from langsmith import traceable
 import threading
 from pathlib import Path
-from ..utils import Config
+from .utils import Config
 import requests
 
 import httpx

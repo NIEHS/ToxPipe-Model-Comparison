@@ -11,7 +11,7 @@ from datetime import datetime
 from uuid import uuid4
 
 def getModelResponse(model_info, prompt_info, vars_info):
-    
+
     try:
         if model_info['id'] not in ['agentic', 'rag']:
             response = queryBaseModel(model_info, prompt_info, vars_info)
