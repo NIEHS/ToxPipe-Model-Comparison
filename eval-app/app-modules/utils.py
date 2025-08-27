@@ -11,6 +11,7 @@ class Evaluator:
 
     PROMPT_VAR_FORMAT = r'\{(.*?)\}'
     CONFIG_FILE_NAME = 'config.yaml'
+    NUM_NONVARS_COLS = 10
 
     def hasOutput(eval_name):
         return (Config.DIR_TESTS / eval_name / 'output' / 'output_0.json').exists()
@@ -19,13 +20,22 @@ class Evaluator:
         return (Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json').exists()
     
     def loadEvals():
-        return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if Evaluator.hasOutput(eval_name)])
+        try:
+            return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if Evaluator.hasOutput(eval_name)])
+        except:
+            return []
     
     def loadEvalsToRun():
-        return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if (Config.DIR_TESTS / eval_name / 'config.yaml').exists()])
+        try:
+            return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if (Config.DIR_TESTS / eval_name / 'config.yaml').exists()])
+        except:
+            return []
 
     def processConfig(eval_name):
-        return loadYML(Config.DIR_TESTS / eval_name / 'config.yaml')
+        try:
+            return loadYML(Config.DIR_TESTS / eval_name / 'config.yaml')
+        except:
+            return {}
 
     def processResults(eval_name):
             
@@ -76,22 +86,30 @@ class Evaluator:
             results_chunk = []
             for item in data['tests']:
                 try:
-                    results_chunk.append(
-                        {
-                            **{
-                                'Id': f"{data['id']}|{item['provider']['label']}",
-                                'eval_id': data['id'],
-                                'Prompt': item['prompt'], 
-                                'Model': item['provider']['label'], 
-                                'Response': item['response']['output'],
-                                'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail', 
-                                'Reason': getExplanation(item['response']['results']),
-                                'Used Context': ('steps_taken' in item['response']) and (item['response']['steps_taken'][-1] == 'query_with_context'),
-                                'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']]) if 'searched_keyphrases' in item['response'] else ''
-                            },
-                            **item['vars']
+                    content = {
+                        'Id': f"{data['id']}|{item['provider']['label']}",
+                        'eval_id': data['id'],
+                        'Prompt': item['prompt'], 
+                        'Model': item['provider']['label'], 
+                        'Response': item['response']['output'],
+                        'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
+                        'Score':  float(item['response']['results']['score']) if item['response']['results'] else 0,
+                        'Reason': getExplanation(item['response']['results'])
+                    }
+                    if 'steps_taken' in item['response']:
+                        content |= {
+                            'Used Context': (item['response']['steps_taken'][-1] == 'query_with_context')
                         }
-                    )
+                    if 'searched_keyphrases' in item['response']:
+                        content |= {
+                            'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']])
+                        }
+
+                    # Vars columns must be added last to ensure ease of processing.
+                    content |= item['vars']
+                    
+                    results_chunk.append(content)
+
                 except Exception as exp:
                     print(f'Error reading output from {file_path}')
                     print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
@@ -100,6 +118,8 @@ class Evaluator:
             results += results_chunk
 
         results = pd.DataFrame(results)
+
+        Evaluator.NUM_NONVARS_COLS = 10 if 'Used Context' in results.columns and 'Searched Keyphrases' in results.columns else 8
 
         return results
     

@@ -21,7 +21,7 @@ def module_graph(input, output, session, eval_name):
             def showVars():
                 data = loadEvalResults()
                 if data.empty: return
-                for col in data.columns[9:]:
+                for col in data.columns[Evaluator.NUM_NONVARS_COLS:]:
                     with ui.div(class_='col'):
                         mod_vars(col, var_name=col, var_values=['Any'] + list(data[col].values), fn_reactive=selectVar)
 
@@ -76,30 +76,34 @@ def module_graph(input, output, session, eval_name):
 
         if data.empty: return getNoDataPlot(title='Correct Responses')
 
-        df_plot = data.groupby('Model')['Result'].value_counts().reset_index()
 
-        df_missing = []
-        for m in df_plot['Model'].unique():
-            for r in ['Pass', 'Fail']:
-                if df_plot.query('(Model == @m) and (Result == @r)').shape[0] == 0:
-                    df_missing.append({'Model': m, 'Result': r, 'count': 0})
+
+        # breakpoint()
+        # df_plot = data.groupby('Model')['Result'].value_counts().reset_index()
+
+        # df_missing = []
+        # for m in df_plot['Model'].unique():
+        #     for r in ['Pass', 'Fail']:
+        #         if df_plot.query('(Model == @m) and (Result == @r)').shape[0] == 0:
+        #             df_missing.append({'Model': m, 'Result': r, 'count': 0})
         
-        df_plot = pd.concat([df_plot, pd.DataFrame(df_missing)]).sort_values('Model')
+        # df_plot = pd.concat([df_plot, pd.DataFrame(df_missing)]).sort_values('Model')
 
-        category_orders = {'Result':['Pass', 'Fail', 'No assertion']}
-        category_colors = ['#7c8fe6', '#eb8c60', '#dbd8d0']
+        # category_orders = {'Result':['Pass', 'Fail', 'No assertion']}
+        # category_colors = ['#7c8fe6', '#eb8c60', '#dbd8d0']
 
-        fig = px.bar(df_plot, x='count', y='Model', color='Result', orientation='h', 
-                     category_orders=category_orders, 
-                     color_discrete_sequence=category_colors)
+        # fig = px.box(df_plot, x='count', y='Model', color='Result', orientation='h', 
+        #              category_orders=category_orders, 
+        #              color_discrete_sequence=category_colors)
+        
+        df_plot = data.query('Result != "No assertion"')[['Score', 'Model']].sort_values('Model')
+        fig = px.violin(df_plot, x='Score', y='Model', orientation='h', box=True)
 
         fig.update_layout(
             title="Correct Responses",
             barmode='stack',
             **Config.CONFIG_PLOT
         )
-
-        fig.update_xaxes(visible=False)
 
         return fig
     

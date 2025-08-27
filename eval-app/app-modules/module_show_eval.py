@@ -141,7 +141,7 @@ def mod_ui(input, output, session, reload_evals_flag):
         def showVars():
             data, embeddings = loadResults()
             if data.empty: return
-            for col in data.columns[9:]:
+            for col in data.columns[Evaluator.NUM_NONVARS_COLS:]:
                 mod_vars(col, var_name=col, var_values=list(data[col].values), fn_reactive=selectVar)
         ui.input_select("select_model", "Models", choices=[], multiple=True)
 
@@ -150,23 +150,44 @@ def mod_ui(input, output, session, reload_evals_flag):
             "Prompt"
         with ui.div(class_='d-flex border rounded p-3 justify-content-center'):
             with ui.div(class_='prompt'):
-                @render.ui
+                @render.express
                 def showPrompt():
                     prompt = input.select_prompt.get()
+                    if prompt is None: return
                     try:
-                        prompt = prompt.format(**var_selected.get())
+                        if var_selected.get():
+                            prompt = prompt.format(**var_selected.get())
                     except:
                         prompt = ''
-                    return core_ui.markdown(prompt)
+                    
+                    ui.markdown(prompt)
     
     with ui.navset_underline(id="tab", selected="res"):
         with ui.nav_panel(title='Responses', value="res"):
+                
+            @render.express
+            def showPassScoreThresholdInput():
+
+                data = loadResultsByFilters().copy()
+                
+                if not hasAssertion(data): return
+
+                with ui.div(class_='results-top-bar gap-5'):
+
+                    with ui.div(class_='d-flex align-items-center gap-2'):
+                        ui.span('Pass score threshold')
+                        with ui.div():
+                            ui.input_numeric(id='numeric_threshold', label='', min=0, max=1, step=0.1, value=1)
+
+                    with ui.div():
+                        ui.input_switch(id='switch_feedback', label='Add feedback', value=False)
 
             @render.ui
             def showReults():
                 def addReason(x):
                     return core_ui.popover(
-                                core_ui.div(fa.icon_svg("square-check" if x['Result'] == 'Pass' else "square-xmark", "solid", width="30px")),
+                                #core_ui.div(fa.icon_svg("square-check" if x['Result'] == 'Pass' else "square-xmark", "solid", width="30px")),
+                                core_ui.div(core_ui.div(round(x['Score'], 2), class_='score')),
                                 core_ui.HTML(getExplanationHTML(x['Reason'])),
                                 placement="right",
                                 id=f"popover_result_reason_{x.name}",
@@ -188,7 +209,12 @@ def mod_ui(input, output, session, reload_evals_flag):
                 
                 if data.empty: return
 
-                style_dict={'Model': 'justify-content-center', 'Result': 'justify-content-center', 'Feedback': 'justify-content-center'}
+                style_dict = {'Model': 'justify-content-center', 'Score': 'justify-content-center', 'Feedback': 'justify-content-center'}
+
+                if hasAssertion(data):
+                    threshold_pass = input.numeric_threshold()
+                    data['Result'] = data.apply(lambda x: 'Pass' if x['Score'] >= threshold_pass else 'Fail' if x['Result'] != 'No assertion' else x['Result'], axis=1)   
+
                 if not data.empty:
                     for i, row in data.iterrows():
                         match row['Result']:
@@ -204,27 +230,39 @@ def mod_ui(input, output, session, reload_evals_flag):
                 if 'Searched Keyphrases' in data.columns:
                     data['Searched Keyphrases'] = data['Searched Keyphrases'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
 
-                if (data['Result'] == 'No assertion').all():
-                    data = data.drop(columns=['Id', 'eval_id', 'Reason', 'Result', 'Used Context'])
+                if (data['Result'] == 'No assertion').all():        
                     if 'Searched Keyphrases' in data.columns:
+                        data = data[['Model', 'Response', 'Searched Keyphrases']]
                         return prettyTableUI(data, col_widths=[1, 9, 2], style_dict=style_dict)
+                    
+                    data = data[['Model', 'Response']]
                     return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
                 
-                data['Result'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)   
+                data['Score'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)   
 
                 eval_id = data['eval_id'].unique()[0]
                 eval_name = input.select_eval()
 
-                d_feedback = loadFeedbacks()
-                data['Feedback'] = data.apply(lambda x: mod_feedback(f'{x.name}', d_feedback[x['Id']] if x['Id'] in d_feedback else {'eval_id': eval_id, 
-                                                                                                                                     'eval_name': eval_name, 
-                                                                                                                                     'test_id': x['Id']}), axis=1)
-                data = data.drop(columns=['Id', 'eval_id', 'Reason', 'Used Context'])
+                if input.switch_feedback():
+
+                    d_feedback = loadFeedbacks()
+                    data['Feedback'] = data.apply(lambda x: mod_feedback(f'{x.name}', d_feedback[x['Id']] if x['Id'] in d_feedback else {'eval_id': eval_id, 
+                                                                                                                                        'eval_name': eval_name, 
+                                                                                                                                        'test_id': x['Id']}), axis=1)
                 
+                    if 'Searched Keyphrases' in data.columns:
+                        data = data[['Model', 'Response', 'Searched Keyphrases', 'Score', 'Feedback']]
+                        return prettyTableUI(data, col_widths=[1, 7, 2, 1, 1], style_dict=style_dict)
+                    
+                    data = data[['Model', 'Response', 'Score', 'Feedback']]
+                    return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
+
                 if 'Searched Keyphrases' in data.columns:
-                    return prettyTableUI(data, col_widths=[1, 7, 2, 1, 1], style_dict=style_dict)
+                    data = data[['Model', 'Response', 'Searched Keyphrases', 'Score']]
+                    return prettyTableUI(data, col_widths=[1, 8, 2, 1], style_dict=style_dict)
                 
-                return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
+                data = data[['Model', 'Response', 'Score']]
+                return prettyTableUI(data, col_widths=[1, 10, 1], style_dict=style_dict)
 
         with ui.nav_panel(title='Similarity of responses', value="sim"):
 
@@ -255,6 +293,11 @@ def mod_ui(input, output, session, reload_evals_flag):
                     def showSimilarityHeatmap():
                         return loadEmbeddingHeatmapPlot()
 
+    def hasAssertion(data):
+        if data.empty: return False
+        if len(data['Result'].unique()) == 0: return False
+        return not (data['Result'].unique() == ['No assertion']).all()
+
     @reactive.effect
     @reactive.event(reload_evals_flag)
     def loadEvals():
@@ -267,7 +310,6 @@ def mod_ui(input, output, session, reload_evals_flag):
         eval_name = input.select_eval()
         output = Evaluator.processResults(eval_name)
         embeddings = Evaluator.processEmbeddings(eval_name)
-
         return output, embeddings
     
     @reactive.calc
@@ -298,30 +340,30 @@ def mod_ui(input, output, session, reload_evals_flag):
         data, _ = loadResults()
         if data.empty: return data
 
-        indices = None
-        if var_selected.get():
-            for var_name, var_value in var_selected.get().items():
-                if var_name in data.columns:
-                    if indices is None:
-                        indices = set(data[data[var_name] == var_value].index)
-                    else:
-                        indices &= set(data[data[var_name] == var_value].index)
-        if indices is None: indices = []
-        data = data.loc[sorted(indices)]
+        # Check if vars exist for this eval set
+        if data.shape[1] > Evaluator.NUM_NONVARS_COLS:
+
+            indices = None
+            if var_selected.get():
+                for var_name, var_value in var_selected.get().items():
+                    if var_name in data.columns:
+                        if indices is None:
+                            indices = set(data[data[var_name] == var_value].index)
+                        else:
+                            indices &= set(data[data[var_name] == var_value].index)
+            if indices is None: indices = []
+            data = data.loc[sorted(indices)]
 
         prompt, model = input.select_prompt(), input.select_model()
+        if not prompt: return pd.DataFrame()
 
-        eval_name = input.select_eval()
-        if eval_name is not None and eval_name.startswith('rag'):
-            cols = ["Id", "eval_id", "Model", "Response", "Searched Keyphrases", "Result", "Reason", "Used Context"]
-        else:
-            cols = ["Id", "eval_id", "Model", "Response", "Result", "Reason", "Used Context"]
-      
+        cols = [col for col in ["Id", "eval_id", "Model", "Response", "Searched Keyphrases", "Score", "Result", "Reason", "Used Context"] if col in data.columns]
+
         if not model or 'Any' in model:
             res = data.query('Prompt == @prompt')[cols].reset_index(drop=True).sort_values('Model')
         else:
             res = data.query('(Prompt == @prompt) and (Model in @model)')[cols].reset_index(drop=True)
-        
+
         return res
 
     @reactive.calc

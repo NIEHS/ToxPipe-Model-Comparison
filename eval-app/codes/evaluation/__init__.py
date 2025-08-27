@@ -136,8 +136,8 @@ def runTest(config_path, resume=False, skip_run=False):
             for prompt in config['prompts']:
                 prompt_info = {'system': config['system_prompt'], 'user': prompt}
                 for test in config['tests']:
-                    vars_info = test['vars']
-                    assert_info = test['assert'] if 'assert' in test else {}
+                    vars_info = test.get('vars', {})
+                    assert_info = test.get('assert', {})
 
                     output['tests'].append({'provider': model_info, 'prompt': prompt_info['user'], 'vars': vars_info, 'assert': assert_info, 'response': {'output': ''}})
 
