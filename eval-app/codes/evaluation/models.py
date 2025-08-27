@@ -71,13 +71,13 @@ def queryToxpipe(type, prompt, model_config):
     with threading.Lock():
         model_params = '&'.join([f'{k}={v}' for k, v in model_config.items()])
         url = f'{Config.env_config['TOXPIPE_API_HOST']}/agent/create/'
-        response = requests.get(url=f"{url}?{model_params}", verify=cert_path)
+        response = requests.get(url=f"{url}?{model_params}", verify=cert_path, timeout=None)
         if not response.ok: raise Exception(response.text)
         agentid = response.json()['agentid']
         
         url = f'{Config.env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
 
-        response = requests.get(url=url, verify=cert_path)
+        response = requests.get(url=url, verify=cert_path, timeout=None)
         if not response.ok: raise Exception(f'API url: {url}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()['response']
 
