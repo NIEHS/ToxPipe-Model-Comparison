@@ -102,6 +102,19 @@ def mod_ui(input, output, session):
                     except:
                         prompt = ''
                     return core_ui.markdown(prompt)
+
+        @render.express
+        def showTopBar():
+
+            data = loadResultsByFilters().copy()
+            
+            if not hasAssertion(data): return
+
+            with ui.div(class_='results-top-bar gap-4'):
+                with ui.div(class_='d-flex align-items-center gap-2'):
+                    ui.span('Pass score threshold')
+                    with ui.div():
+                        ui.input_numeric(id='numeric_threshold', label='', min=0, max=1, step=0.1, value=1)
     
         @render.ui
         def showResults():
@@ -136,6 +149,14 @@ def mod_ui(input, output, session):
             data['Response (RAG)'] = data.apply(lambda x: formatResponse(x, col_suffix=' (RAG)', type='rag'), axis=1)
             data['Response (Agentic)'] = data.apply(lambda x: formatResponse(x, col_suffix=' (Agentic)', type='agentic'), axis=1)
 
+            if hasAssertion(data):
+                
+                threshold_pass = input.numeric_threshold()
+
+                data['Result'] = data.apply(lambda x: 'Pass' if x['Score'] >= threshold_pass else 'Fail' if not pd.isna(x['Result']) and x['Result'] != 'No assertion' else x['Result'], axis=1) 
+                data['Result (RAG)'] = data.apply(lambda x: 'Pass' if x['Score (RAG)'] >= threshold_pass else 'Fail' if not pd.isna(x['Result (RAG)']) and x['Result (RAG)'] != 'No assertion' else x['Result (RAG)'], axis=1) 
+                data['Result (Agentic)'] = data.apply(lambda x: 'Pass' if x['Score (Agentic)'] >= threshold_pass else 'Fail' if not pd.isna(x['Result (Agentic)']) and x['Result (Agentic)'] != 'No assertion' else x['Result (Agentic)'], axis=1) 
+
             style_dict={}
             if not data.empty:
                 for i, row in data.iterrows():
@@ -152,46 +173,30 @@ def mod_ui(input, output, session):
             table = prettyTableUI(data[["Model", "Response", "Response (RAG)", "Response (Agentic)"]], col_widths=[1, 3, 5, 3], style_dict=style_dict)
 
             return table
-
-            style_dict={'Model': 'justify-content-center', 'Result': 'justify-content-center', 'Feedback': 'justify-content-center'}
-            if not data.empty:
-                for i, row in data.iterrows():
-                    match row['Result']:
-                        case 'Pass':
-                            style_dict[f'row_{i}'] = 'app-table-row-pass'
-                        case 'Fail':
-                            style_dict[f'row_{i}'] = 'app-table-row-fail'
-                        case _:
-                            style_dict[f'row_{i}'] = 'app-table-row-no-assertion'
-        
-            if 'Searched Keyphrases' in data.columns:
-                data['Searched Keyphrases'] = data['Searched Keyphrases'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
-
-            if (data['Result'] == 'No assertion').all():
-                data = data.drop(columns=['Id', 'eval_id', 'Reason', 'Result', 'Used Context'])
-                if 'Searched Keyphrases' in data.columns:
-                    return prettyTableUI(data, col_widths=[1, 9, 2], style_dict=style_dict)
-                return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
-            
-            data['Result'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)               
-            
-            if 'Searched Keyphrases' in data.columns:
-                return prettyTableUI(data, col_widths=[1, 7, 2, 1, 1], style_dict=style_dict)
-            
-            return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
         
     ui.include_js(Config.DIR_HOME / "www" / "js" / "table.js", method='inline')
+
+    def hasAssertion(data):
+        if data.empty: return False
+        if len(data['Result'].unique()) == 0: return False
+        return not (data['Result'].unique() == ['No assertion']).all()
 
     @reactive.effect
     @reactive.event(input.select_eval_set)
     def loadEvals():
-        prompts = loadYML(Config.DIR_TESTS / 'config' / f'{input.select_eval_set()}.yaml')['prompts']
+        try:
+            prompts = loadYML(Config.DIR_TESTS / 'config' / f'{input.select_eval_set()}.yaml')['prompts']
+        except:
+            return
         ui.update_select(id='select_prompt', choices=prompts)
 
     @reactive.calc
     @reactive.event(input.select_eval_set)
     def loadVars():
-        tests = loadYML(Config.DIR_TESTS / 'config' / f'{input.select_eval_set()}_tests.yaml')['tests']    
+        try:
+            tests = loadYML(Config.DIR_TESTS / 'config' / f'{input.select_eval_set()}_tests.yaml')['tests']    
+        except:
+            return {}
         d_vars = {}
         for test in tests:
             for k, v in test['vars'].items():
@@ -205,12 +210,19 @@ def mod_ui(input, output, session):
         eval_set_name = input.select_eval_set()
         output_base = Evaluator.processResults(f'base-model_{eval_set_name}')
         output_rag = Evaluator.processResults(f'rag_{eval_set_name}')
-        output_rag['Model'] = output_rag['Model'].apply(lambda x: re.sub(r'(Toxpipe \(RAG\) \[)(.*)(\])', repl=r'\2', string=x))
         output_agentic = Evaluator.processResults(f'agentic_{eval_set_name}')
+        
+        if output_base.empty or output_rag.empty or output_agentic.empty:
+            return pd.DataFrame()
+        
+        output_rag['Model'] = output_rag['Model'].apply(lambda x: re.sub(r'(Toxpipe \(RAG\) \[)(.*)(\])', repl=r'\2', string=x))
         output_agentic['Model'] = output_agentic['Model'].apply(lambda x: re.sub(r'(Toxpipe \(Agentic\) \[)(.*)(\])', repl=r'\2', string=x))
         output = (pd.merge(left=output_base, right=output_rag, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, ' (RAG)'], how='outer')
                     .merge(right=output_agentic, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, ' (Agentic)'], how='outer'))
-        output[output.isna()] = ''
+        
+        for col in output.columns:
+            if col.startswith('Response'):
+                output.loc[output[col].isna(), col] = ''
         return output
     
     @reactive.calc
@@ -231,11 +243,14 @@ def mod_ui(input, output, session):
         data = data.loc[sorted(indices)]
         
         cols = ["Model", "Response", "Response (RAG)", "Response (Agentic)", 
-                "Result", "Result (RAG)", "Result (Agentic)", "Used Context (RAG)", "Searched Keyphrases (RAG)",
+                "Result", "Result (RAG)", "Result (Agentic)", 
+                "Score", "Score (RAG)", "Score (Agentic)",
+                "Used Context (RAG)", "Searched Keyphrases (RAG)",
                 "Reason", "Reason (RAG)", "Reason (Agentic)"]
 
         prompt = input.select_prompt()
         res = data.query('Prompt == @prompt')[cols].reset_index(drop=True).sort_values('Model')
+
         return res
 
     def selectVar(var_sel):

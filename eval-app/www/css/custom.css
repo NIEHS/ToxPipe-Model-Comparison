@@ -121,6 +121,29 @@ div.cards-container {
     text-align: center !important;
 }
 
+div.score {
+    background-color:#fff; 
+    padding:10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border:#eee;
+    border-radius: 10%;
+    cursor: pointer;
+}
+
+.results-top-bar {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 40px;
+
+    .form-group {
+        width: auto;
+        margin: 0;
+    }
+}
+
 /* .app-table {
   border-collapse: collapse;
   width: 100%;
