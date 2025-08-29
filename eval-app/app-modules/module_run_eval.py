@@ -33,7 +33,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
                                 #     with ui.div(class_="col text-end"):
                                 #           ui.strong('Response similarity:')
                                 #     with ui.div(class_="col text-start"):
-                                #           info['sim']
+                                #           f'{info['sim']}'
             with ui.div(class_="row"):
                 @render.ui
                 def showEvalInfo():
