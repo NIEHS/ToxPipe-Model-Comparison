@@ -161,137 +161,137 @@ def mod_ui(input, output, session, reload_evals_flag):
                         prompt = ''
                     
                     ui.markdown(prompt)
-    
-    with ui.navset_underline(id="tab", selected="res"):
-        with ui.nav_panel(title='Responses', value="res"):
-                
-            @render.express
-            def showPassScoreThresholdInput():
 
-                data = loadResultsByFilters().copy()
-                
-                if not hasAssertion(data): return
+    @render.express
+    def showPassScoreThresholdInput():
 
-                with ui.div(class_='results-top-bar gap-5'):
-
-                    with ui.div(class_='d-flex align-items-center gap-2'):
-                        ui.span('Pass score threshold')
-                        with ui.div():
-                            ui.input_numeric(id='numeric_threshold', label='', min=0, max=1, step=0.1, value=1)
-
-                    with ui.div():
-                        ui.input_switch(id='switch_feedback', label='Add feedback', value=False)
-
-            @render.ui
-            def showReults():
-                def addReason(x):
-                    return core_ui.popover(
-                                #core_ui.div(fa.icon_svg("square-check" if x['Result'] == 'Pass' else "square-xmark", "solid", width="30px")),
-                                core_ui.div(core_ui.div(round(x['Score'], 2), class_='score')),
-                                core_ui.HTML(getExplanationHTML(x['Reason'])),
-                                placement="right",
-                                id=f"popover_result_reason_{x.name}",
-                                options={"trigger": "hover focus"}
-                    )
-                
-                def formatResponse(x):
-                    if 'Searched Keyphrases' in x.index:
-                        return core_ui.div(
-                                    core_ui.div(f'[The following response was taken from {("RAG resources" if x['Used Context'] else "model's training knowledge")}]',
-                                                class_='fst-italic fw-bold mb-4'),
-                                    core_ui.div(core_ui.markdown(x['Response'])),
-                                    class_='app-table-content'
-                                )
-                    
-                    return core_ui.div(core_ui.markdown(x['Response']), class_='app-table-content')
-
-                data = loadResultsByFilters().copy()
-                
-                if data.empty: return
-
-                style_dict = {'Model': 'justify-content-center', 'Score': 'justify-content-center', 'Feedback': 'justify-content-center'}
-
-                if hasAssertion(data):
-                    threshold_pass = input.numeric_threshold()
-                    data['Result'] = data.apply(lambda x: 'Pass' if x['Score'] >= threshold_pass else 'Fail' if x['Result'] != 'No assertion' else x['Result'], axis=1)   
-
-                if not data.empty:
-                    for i, row in data.iterrows():
-                        match row['Result']:
-                            case 'Pass':
-                                style_dict[f'row_{i}'] = 'app-table-row-pass'
-                            case 'Fail':
-                                style_dict[f'row_{i}'] = 'app-table-row-fail'
-                            case _:
-                                style_dict[f'row_{i}'] = 'app-table-row-no-assertion'
+        data = loadResultsByFilters().copy()
         
-                    data['Response'] = data.apply(lambda x: formatResponse(x), axis=1)
+        if not hasAssertion(data): return
+
+        with ui.div(class_='results-top-bar gap-5'):
+
+            with ui.div(class_='d-flex align-items-center gap-2'):
+                ui.span('Pass score threshold')
+                with ui.div():
+                    ui.input_numeric(id='numeric_threshold', label='', min=0, max=1, step=0.1, value=1)
+
+            with ui.div():
+                ui.input_switch(id='switch_feedback', label='Add feedback', value=False)
+
+    @render.ui
+    def showReults():
+        def addReason(x):
+            return core_ui.popover(
+                        #core_ui.div(fa.icon_svg("square-check" if x['Result'] == 'Pass' else "square-xmark", "solid", width="30px")),
+                        core_ui.div(core_ui.div(round(x['Score'], 2), class_='score')),
+                        core_ui.HTML(getExplanationHTML(x['Reason'])),
+                        placement="right",
+                        id=f"popover_result_reason_{x.name}",
+                        options={"trigger": "hover focus"}
+            )
+        
+        def formatResponse(x):
+            if 'Searched Keyphrases' in x.index:
+                return core_ui.div(
+                            core_ui.div(f'[The following response was taken from {("RAG resources" if x['Used Context'] else "model's training knowledge")}]',
+                                        class_='fst-italic fw-bold mb-4'),
+                            core_ui.div(core_ui.markdown(x['Response'])),
+                            class_='app-table-content'
+                        )
             
-                if 'Searched Keyphrases' in data.columns:
-                    data['Searched Keyphrases'] = data['Searched Keyphrases'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
+            return core_ui.div(core_ui.markdown(x['Response']), class_='app-table-content')
 
-                if (data['Result'] == 'No assertion').all():        
-                    if 'Searched Keyphrases' in data.columns:
-                        data = data[['Model', 'Response', 'Searched Keyphrases']]
-                        return prettyTableUI(data, col_widths=[1, 9, 2], style_dict=style_dict)
+        data = loadResultsByFilters().copy()
+        
+        if data.empty: return
+
+        style_dict = {'Model': 'justify-content-center', 'Score': 'justify-content-center', 'Feedback': 'justify-content-center'}
+
+        if hasAssertion(data):
+            threshold_pass = input.numeric_threshold()
+            data['Result'] = data.apply(lambda x: 'Pass' if x['Score'] >= threshold_pass else 'Fail' if x['Result'] != 'No assertion' else x['Result'], axis=1)   
+
+        if not data.empty:
+            for i, row in data.iterrows():
+                match row['Result']:
+                    case 'Pass':
+                        style_dict[f'row_{i}'] = 'app-table-row-pass'
+                    case 'Fail':
+                        style_dict[f'row_{i}'] = 'app-table-row-fail'
+                    case _:
+                        style_dict[f'row_{i}'] = 'app-table-row-no-assertion'
+
+            data['Response'] = data.apply(lambda x: formatResponse(x), axis=1)
+    
+        if 'Searched Keyphrases' in data.columns:
+            data['Searched Keyphrases'] = data['Searched Keyphrases'].apply(lambda x: core_ui.div(core_ui.markdown(x), class_='app-table-content'))
+
+        if (data['Result'] == 'No assertion').all():        
+            if 'Searched Keyphrases' in data.columns:
+                data = data[['Model', 'Response', 'Searched Keyphrases']]
+                return prettyTableUI(data, col_widths=[1, 9, 2], style_dict=style_dict)
+            
+            data = data[['Model', 'Response']]
+            return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
+        
+        data['Score'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)   
+
+        eval_id = data['eval_id'].unique()[0]
+        eval_name = input.select_eval()
+
+        if input.switch_feedback():
+
+            d_feedback = loadFeedbacks()
+            data['Feedback'] = data.apply(lambda x: mod_feedback(f'{x.name}', d_feedback[x['Id']] if x['Id'] in d_feedback else {'eval_id': eval_id, 
+                                                                                                                                'eval_name': eval_name, 
+                                                                                                                                'test_id': x['Id']}), axis=1)
+        
+            if 'Searched Keyphrases' in data.columns:
+                data = data[['Model', 'Response', 'Searched Keyphrases', 'Score', 'Feedback']]
+                return prettyTableUI(data, col_widths=[1, 7, 2, 1, 1], style_dict=style_dict)
+            
+            data = data[['Model', 'Response', 'Score', 'Feedback']]
+            return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
+
+        if 'Searched Keyphrases' in data.columns:
+            data = data[['Model', 'Response', 'Searched Keyphrases', 'Score']]
+            return prettyTableUI(data, col_widths=[1, 8, 2, 1], style_dict=style_dict)
+        
+        data = data[['Model', 'Response', 'Score']]
+        return prettyTableUI(data, col_widths=[1, 10, 1], style_dict=style_dict)
+    
+    # with ui.navset_underline(id="tab", selected="res"):
+    #     with ui.nav_panel(title='Responses', value="res"):
+
+    #     with ui.nav_panel(title='Similarity of responses', value="sim"):
+
+    #         ui.input_select("select_embedding", "Embeddings", choices=[])
+
+    #         with ui.layout_columns(col_widths=[8, 4]):
+    #             with ui.card():
+    #                 with ui.layout_sidebar():
+    #                     with ui.sidebar(title='Settings'):
+    #                         ui.input_select('select_clustering_type', 'Select clustering algorithm', choices={'hierarchical': 'Hierarchical clustering', 'kmeans': 'KMeans'}, selected='hierarchical')
+    #                         ui.input_slider('slide_n_clusters', 'Number of clusters', min=2, max=10, value=2)
+
+    #                         ui.hr()
+
+    #                         ui.input_select('select_projection_type', 'Select projection algorithm', choices={'umap': 'UMAP', 'tsne': 'TSNE'}, selected='umap')
+
+    #                         with ui.panel_conditional("input.select_projection_type === 'tsne'"):
+    #                             with ui.tooltip(placement='right'):
+    #                                 ui.input_slider('slide_tsne_perplexity', 'TSNE perplexity', min=5, max=50, value=30)
+    #                                 'The perplexity is related to the number of nearest neighbors in manifold learning algorithms.'
+
+    #                     @render_plotly
+    #                     def showSimilarityClusters():
+    #                         return loadEmbeddingClusterPlot()
                     
-                    data = data[['Model', 'Response']]
-                    return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
-                
-                data['Score'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)   
-
-                eval_id = data['eval_id'].unique()[0]
-                eval_name = input.select_eval()
-
-                if input.switch_feedback():
-
-                    d_feedback = loadFeedbacks()
-                    data['Feedback'] = data.apply(lambda x: mod_feedback(f'{x.name}', d_feedback[x['Id']] if x['Id'] in d_feedback else {'eval_id': eval_id, 
-                                                                                                                                        'eval_name': eval_name, 
-                                                                                                                                        'test_id': x['Id']}), axis=1)
-                
-                    if 'Searched Keyphrases' in data.columns:
-                        data = data[['Model', 'Response', 'Searched Keyphrases', 'Score', 'Feedback']]
-                        return prettyTableUI(data, col_widths=[1, 7, 2, 1, 1], style_dict=style_dict)
-                    
-                    data = data[['Model', 'Response', 'Score', 'Feedback']]
-                    return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
-
-                if 'Searched Keyphrases' in data.columns:
-                    data = data[['Model', 'Response', 'Searched Keyphrases', 'Score']]
-                    return prettyTableUI(data, col_widths=[1, 8, 2, 1], style_dict=style_dict)
-                
-                data = data[['Model', 'Response', 'Score']]
-                return prettyTableUI(data, col_widths=[1, 10, 1], style_dict=style_dict)
-
-        with ui.nav_panel(title='Similarity of responses', value="sim"):
-
-            ui.input_select("select_embedding", "Embeddings", choices=[])
-
-            with ui.layout_columns(col_widths=[8, 4]):
-                with ui.card():
-                    with ui.layout_sidebar():
-                        with ui.sidebar(title='Settings'):
-                            ui.input_select('select_clustering_type', 'Select clustering algorithm', choices={'hierarchical': 'Hierarchical clustering', 'kmeans': 'KMeans'}, selected='hierarchical')
-                            ui.input_slider('slide_n_clusters', 'Number of clusters', min=2, max=10, value=2)
-
-                            ui.hr()
-
-                            ui.input_select('select_projection_type', 'Select projection algorithm', choices={'umap': 'UMAP', 'tsne': 'TSNE'}, selected='umap')
-
-                            with ui.panel_conditional("input.select_projection_type === 'tsne'"):
-                                with ui.tooltip(placement='right'):
-                                    ui.input_slider('slide_tsne_perplexity', 'TSNE perplexity', min=5, max=50, value=30)
-                                    'The perplexity is related to the number of nearest neighbors in manifold learning algorithms.'
-
-                        @render_plotly
-                        def showSimilarityClusters():
-                            return loadEmbeddingClusterPlot()
-                    
-                with ui.card():
-                    @render_plotly
-                    def showSimilarityHeatmap():
-                        return loadEmbeddingHeatmapPlot()
+    #             with ui.card():
+    #                 @render_plotly
+    #                 def showSimilarityHeatmap():
+    #                     return loadEmbeddingHeatmapPlot()
 
     def hasAssertion(data):
         if data.empty: return False
@@ -366,109 +366,109 @@ def mod_ui(input, output, session, reload_evals_flag):
 
         return res
 
-    @reactive.calc
-    @reactive.event(input.select_eval, input.select_prompt, input.select_model, input.select_embedding)
-    def loadEmbeddings():
-        data, embeddings = loadResults()
-        if data.empty or not embeddings: return None, None
-        prompt, model, embedding = input.select_prompt(), input.select_model(), input.select_embedding()
-        if not model or 'Any' in model:
-            ids = data.query('Prompt == @prompt')['Id'].values
-        else:
-            ids = data.query('(Prompt == @prompt) and (Model in @model)')['Id'].values 
+    # @reactive.calc
+    # @reactive.event(input.select_eval, input.select_prompt, input.select_model, input.select_embedding)
+    # def loadEmbeddings():
+    #     data, embeddings = loadResults()
+    #     if data.empty or not embeddings: return None, None
+    #     prompt, model, embedding = input.select_prompt(), input.select_model(), input.select_embedding()
+    #     if not model or 'Any' in model:
+    #         ids = data.query('Prompt == @prompt')['Id'].values
+    #     else:
+    #         ids = data.query('(Prompt == @prompt) and (Model in @model)')['Id'].values 
         
-        df_embed = pd.DataFrame({k: embeddings[embedding][k] for k in ids})
+    #     df_embed = pd.DataFrame({k: embeddings[embedding][k] for k in ids})
 
-        if df_embed.shape[1] <= 1: return
+    #     if df_embed.shape[1] <= 1: return
 
-        ui.update_slider('slide_n_clusters', min=2, max=df_embed.shape[1], value=2)
-        ui.update_slider('slide_tsne_perplexity', min=1, max=df_embed.shape[1]-1, value=df_embed.shape[1]-1)
-        if df_embed.shape[1] <= 3:
-            ui.update_select('select_projection_type', choices={'tsne': 'TSNE'}, selected='tsne')
+    #     ui.update_slider('slide_n_clusters', min=2, max=df_embed.shape[1], value=2)
+    #     ui.update_slider('slide_tsne_perplexity', min=1, max=df_embed.shape[1]-1, value=df_embed.shape[1]-1)
+    #     if df_embed.shape[1] <= 3:
+    #         ui.update_select('select_projection_type', choices={'tsne': 'TSNE'}, selected='tsne')
 
-        cols = list(map(lambda x: x.split('|')[1], df_embed.columns))
-        df_sim = pd.DataFrame(cosine_similarity(df_embed.T), columns=cols, index=cols)
+    #     cols = list(map(lambda x: x.split('|')[1], df_embed.columns))
+    #     df_sim = pd.DataFrame(cosine_similarity(df_embed.T), columns=cols, index=cols)
         
-        return df_embed, df_sim
+    #     return df_embed, df_sim
 
-    @reactive.calc
-    @reactive.event(input.select_eval, input.select_prompt, input.select_model, input.select_embedding,
-                    input.select_clustering_type, input.slide_n_clusters,
-                    input.select_projection_type, input.slide_tsne_perplexity)
-    def loadEmbeddingClusterPlot():
+    # @reactive.calc
+    # @reactive.event(input.select_eval, input.select_prompt, input.select_model, input.select_embedding,
+    #                 input.select_clustering_type, input.slide_n_clusters,
+    #                 input.select_projection_type, input.slide_tsne_perplexity)
+    # def loadEmbeddingClusterPlot():
 
-        df_embed, df_sim = loadEmbeddings()
+    #     df_embed, df_sim = loadEmbeddings()
 
-        if (df_embed is None) or (df_sim is None): return
+    #     if (df_embed is None) or (df_sim is None): return
         
-        return plotEmbeddingClusters(df_embed = df_embed,
-                                df_sim = df_sim,
-                                clustering=input.select_clustering_type(),
-                                n_clusters=input.slide_n_clusters(),
-                                projection=input.select_projection_type(),
-                                tsne_perplexity=input.slide_tsne_perplexity())
+    #     return plotEmbeddingClusters(df_embed = df_embed,
+    #                             df_sim = df_sim,
+    #                             clustering=input.select_clustering_type(),
+    #                             n_clusters=input.slide_n_clusters(),
+    #                             projection=input.select_projection_type(),
+    #                             tsne_perplexity=input.slide_tsne_perplexity())
 
-    @reactive.calc
-    def loadEmbeddingHeatmapPlot():
+    # @reactive.calc
+    # def loadEmbeddingHeatmapPlot():
 
-        _, df_sim = loadEmbeddings()
+    #     _, df_sim = loadEmbeddings()
 
-        if df_sim is None: return
+    #     if df_sim is None: return
 
-        return plotEmbeddingSimilarityHeatmap(df_sim=df_sim)
+    #     return plotEmbeddingSimilarityHeatmap(df_sim=df_sim)
 
-    def plotEmbeddingClusters(df_embed:pd.DataFrame,
-                        df_sim: pd.DataFrame,
-                        clustering: str,
-                        n_clusters: int,
-                        projection: str,
-                        tsne_perplexity: int,
-    ):
+    # def plotEmbeddingClusters(df_embed:pd.DataFrame,
+    #                     df_sim: pd.DataFrame,
+    #                     clustering: str,
+    #                     n_clusters: int,
+    #                     projection: str,
+    #                     tsne_perplexity: int,
+    # ):
 
-        scaler = StandardScaler()
-        X_t = scaler.fit_transform(df_embed.values.T)
+    #     scaler = StandardScaler()
+    #     X_t = scaler.fit_transform(df_embed.values.T)
         
-        if clustering == 'hierarchical':
-            X_c = AgglomerativeClustering(n_clusters=n_clusters).fit(df_sim)
-        else:
-            X_t = scaler.fit_transform(df_embed.values.T)
-            X_c = KMeans(n_clusters=n_clusters, max_iter=3000, random_state=Config.RANDOM_STATE, verbose=True).fit(X_t)
+    #     if clustering == 'hierarchical':
+    #         X_c = AgglomerativeClustering(n_clusters=n_clusters).fit(df_sim)
+    #     else:
+    #         X_t = scaler.fit_transform(df_embed.values.T)
+    #         X_c = KMeans(n_clusters=n_clusters, max_iter=3000, random_state=Config.RANDOM_STATE, verbose=True).fit(X_t)
 
-        if projection == 'umap':
-            X_p = UMAP(n_neighbors=2, random_state=Config.RANDOM_STATE).fit_transform(X_t)
-        else:
-            X_p = TSNE(n_components=2, perplexity=tsne_perplexity, max_iter=1000, random_state=Config.RANDOM_STATE).fit_transform(X_t)
+    #     if projection == 'umap':
+    #         X_p = UMAP(n_neighbors=2, random_state=Config.RANDOM_STATE).fit_transform(X_t)
+    #     else:
+    #         X_p = TSNE(n_components=2, perplexity=tsne_perplexity, max_iter=1000, random_state=Config.RANDOM_STATE).fit_transform(X_t)
 
-        df_plot = pd.DataFrame(X_p, columns=['X', 'Y'])
-        df_plot['Cluster'] = list(map(str, X_c.labels_))
-        df_plot['Model'] = list(map(lambda x: x.split('|')[1], df_embed.columns))
+    #     df_plot = pd.DataFrame(X_p, columns=['X', 'Y'])
+    #     df_plot['Cluster'] = list(map(str, X_c.labels_))
+    #     df_plot['Model'] = list(map(lambda x: x.split('|')[1], df_embed.columns))
 
-        fig = px.scatter(df_plot, 
-                        x='X', 
-                        y='Y', 
-                        color='Cluster',
-                        symbol='Model',
-                        opacity=0.5,
-                        hover_name='Model'
-        )
-        fig.update_traces(marker={'size': 15})
+    #     fig = px.scatter(df_plot, 
+    #                     x='X', 
+    #                     y='Y', 
+    #                     color='Cluster',
+    #                     symbol='Model',
+    #                     opacity=0.5,
+    #                     hover_name='Model'
+    #     )
+    #     fig.update_traces(marker={'size': 15})
 
-        fig.update_layout(
-            title="Clusters",
-            **Config.CONFIG_PLOT
-        )
+    #     fig.update_layout(
+    #         title="Clusters",
+    #         **Config.CONFIG_PLOT
+    #     )
 
-        return fig
+    #     return fig
 
-    def plotEmbeddingSimilarityHeatmap(df_sim: pd.DataFrame):
+    # def plotEmbeddingSimilarityHeatmap(df_sim: pd.DataFrame):
 
-        df_sim = df_sim.round(2)
+    #     df_sim = df_sim.round(2)
         
-        fig = px.imshow(df_sim, text_auto=True)
+    #     fig = px.imshow(df_sim, text_auto=True)
 
-        fig.update_layout(
-            title="Similarity",
-            **Config.CONFIG_PLOT
-        )
+    #     fig.update_layout(
+    #         title="Similarity",
+    #         **Config.CONFIG_PLOT
+    #     )
 
-        return fig
+    #     return fig

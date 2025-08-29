@@ -132,7 +132,7 @@ def mod_ui(input, output, session):
                 if col_suffix == ' (RAG)':
                     return addReason(x, col_suffix, type, 
                                      core_ui.div(
-                                        core_ui.div(f'[The following response was taken from {("RAG resources" if x[f'Used Context{col_suffix}'] else "model's training knowledge")}]',
+                                        core_ui.div(f'[The following response was taken from {("RAG resources" if x[f'Used Context'] else "model's training knowledge")}]',
                                                     class_='fst-italic fw-bold mb-4'),
                                         core_ui.div(core_ui.markdown(x[f'Response{col_suffix}'])),
                                         class_='app-table-content'
@@ -245,9 +245,9 @@ def mod_ui(input, output, session):
         cols = ["Model", "Response", "Response (RAG)", "Response (Agentic)", 
                 "Result", "Result (RAG)", "Result (Agentic)", 
                 "Score", "Score (RAG)", "Score (Agentic)",
-                "Used Context (RAG)", "Searched Keyphrases (RAG)",
+                "Used Context", "Searched Keyphrases",
                 "Reason", "Reason (RAG)", "Reason (Agentic)"]
-
+        
         prompt = input.select_prompt()
         res = data.query('Prompt == @prompt')[cols].reset_index(drop=True).sort_values('Model')
 

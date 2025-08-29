@@ -3,12 +3,13 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import datetime
 import pandas as pd
+from pymongo import MongoClient
 
 import importlib
 utils = importlib.import_module('utils')
 
 import dotenv
-db_config = dotenv.dotenv_values(utils.Config.DIR_HOME / 'app-modules' / 'db.env')
+db_config = dotenv.dotenv_values(utils.Config.DIR_HOME / 'app-modules' / '.env')
 
 Base = declarative_base()
 
@@ -73,3 +74,36 @@ def getRating(eval_id):
                         WHERE "eval_id" = '{eval_id}'
                     """, con=engine)
     return df
+
+class EvalDB():
+
+    def __init__(self, collection: str|None = None):
+        client = MongoClient(f'mongodb://{db_config['MONGO_HOST']}:{db_config['MONGO_PORT']}')
+        self.db = client[db_config['MONGO_EVAL_DB_NAME']]
+        if collection: self.collection = self.db[collection]
+
+    def exists(self):
+        return self.collection.name in self.listEvals()
+
+    def getTimeStamp(self):
+        return datetime.datetime.fromtimestamp(float(self.collection.find_one({'_id': 0})['event_id']))
+
+    def listEvals(self):
+        return sorted(self.db.list_collection_names())
+
+    def add(self, data: list[dict] | dict):
+        if isinstance(data, list):
+            self.collection.insert_many(data)
+        elif isinstance(data, dict):
+            self.collection.insert_one(data)
+        else:
+            raise Exception('Invalid data type. Data type must be either dict or list of dicts.')
+        
+    def getAll(self):
+        return self.collection.find({})
+        
+    def drop(self):
+        self.collection.drop()
+
+    def update(self, filter: dict, value: dict):
+        self.collection.update_one(filter, {"$set": value})

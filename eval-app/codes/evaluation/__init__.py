@@ -7,8 +7,9 @@ import tqdm
 import traceback
 import json
 import yaml
+from .utils import Config
+from .db import EvalDB
 from datetime import datetime
-from uuid import uuid4
 
 def getModelResponse(model_info, prompt_info, vars_info):
 
@@ -51,87 +52,99 @@ def loadYML(file_path):
             print(exc)
     return data
 
+def readJSON(path):
+    with open(path) as f:
+        return json.load(f)
+
 def writeJSON(output_path, data):
     with open(output_path, 'w') as f:
         json.dump(data, f)
 
-def resumeLastRun(dir_output, skip_run, resume_eval):
+def resumeLastRun(db, skip_run, resume_eval):
 
-    list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.stem.split('_')[-1]))
+    def run(eval_sets, eval_sets_eval):
 
-    for output_partial_path in list_output_file_path:
-
-        output = {}
-        eval_sets, descs, indices = [], [], []
-        eval_sets_eval, descs_eval, indices_eval = [], [], []
-
-        with open(output_partial_path) as f:
-            output = json.load(f)
-
-        if 'tests' not in output: return {}
-    
-        for index, t in enumerate(output['tests']):
-            is_response_error = (not skip_run) and (('error' in t['response'] and len(t['response']['error'].strip()) > 0) or 
-                                (not isinstance(t['response']['output'], str)) or 
-                                t['response']['output'].strip() == '' or
-                                t['response']['output'].lower().startswith('error'))
-                                
-            is_eval_error =  (len(t['assert']) > 0 and ((not resume_eval) or 
-                                                        'results' not in t['response'] or 
-                                                        len(t['response']['results']) == 0 or 
-                                                        'error' in t['response']['results']))
-            
-            if is_response_error or is_eval_error:
-                
-                model_info = t['provider']
-                prompt = t['prompt']
-                prompt_info = {'system': output['system_prompt'], 'user': prompt}
-                vars_info = t['vars']
-                assert_info = t['assert']
-                
-                if is_response_error: 
-                    descs.append(f"{model_info['label']} - {prompt[:30]}")
-                    eval_sets.append([model_info, prompt_info, vars_info, assert_info])
-                    indices.append(index)      
-                elif is_eval_error:
-                    descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
-                    eval_sets_eval.append([assert_info, t['response']['output'], prompt_info['user'].format(**vars_info)])
-                    indices_eval.append(index)
-        
-        if not (len(eval_sets) or len(eval_sets_eval)): continue
-
-        print(f'Processing {output_partial_path.name}')
-        
         with concurrent.futures.ThreadPoolExecutor(10) as pool:
             if eval_sets: 
                 results = pool.map(getResponseAndEvaluate, *zip(*eval_sets))
                 for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                     pbar.set_description(descs[i])
-                    output['tests'][indices[i]]['response'] = res
+                    db.update(filter={'_id': indices[i]}, value={'response': res})
             if eval_sets_eval:
                 results = pool.map(getEvaluationResponse, *zip(*eval_sets_eval))
                 for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                     pbar.set_description(descs_eval[i])
-                    output['tests'][indices_eval[i]]['response']['results'] = res
+                    db.update(filter={'_id': indices_eval[i]}, value={'response.results': res})
 
-        writeJSON(output_path=output_partial_path, data=output)
+    records_db = db.getAll()
 
-def runTest(config_path, resume=False, skip_run=False):
+    first_record = True
+    eval_sets, descs, indices = [], [], []
+    eval_sets_eval, descs_eval, indices_eval = [], [], []
+    threshold = 50
 
-    dir_output = config_path.parent / 'output'
-    dir_output.mkdir(parents=False, exist_ok=True)
+    for record in records_db:
+
+        if first_record: 
+            system_prompt = record['system_prompt']
+            first_record = False
+            continue
+        
+        is_response_error = (not skip_run) and (('error' in record['response'] and len(record['response']['error'].strip()) > 0) or 
+                            (not isinstance(record['response']['output'], str)) or 
+                            record['response']['output'].strip() == '' or
+                            record['response']['output'].lower().startswith('error'))
+                            
+        is_eval_error =  (len(record['assert']) > 0 and ((not resume_eval) or 
+                                                    'results' not in record['response'] or 
+                                                    len(record['response']['results']) == 0 or 
+                                                    'error' in record['response']['results']))
+        
+        if is_response_error or is_eval_error:
+            
+            model_info = record['provider']
+            prompt = record['prompt']
+            vars_info = record['vars']
+            assert_info = record['assert']
+            prompt_info = {'system': system_prompt, 'user': prompt}
+            
+            if is_response_error: 
+                descs.append(f"{model_info['label']} - {prompt[:30]}")
+                eval_sets.append([model_info, prompt_info, vars_info, assert_info])
+                indices.append(record['_id'])      
+            elif is_eval_error:
+                descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
+                eval_sets_eval.append([assert_info, record['response']['output'], prompt_info['user'].format(**vars_info)])
+                indices_eval.append(record['_id'])
+
+        if record['_id'] % threshold: continue
+        if not (len(eval_sets) or len(eval_sets_eval)): continue
+        
+        print(f'Processing from record id {record['_id'] - threshold + 1} to {record['_id']}')
+        run(eval_sets, eval_sets_eval)
+
+    if len(eval_sets) or len(eval_sets_eval): 
+        print(f'Processing upto to record id {record['_id']}')
+        run(eval_sets, eval_sets_eval)
+
+def runTest(eval_name, resume=False, skip_run=False):
+
+    db = EvalDB(eval_name)
+
+    config_path = Config.DIR_TEST / eval_name  / 'config.yaml'
+    assert config_path.exists(), f"Invalid eval name {eval_name}"
 
     if not resume and not skip_run:
 
-        for f in dir_output.glob('output_*.json'):
-            f.unlink()
+        db.drop()
 
         config = loadYML(config_path)
 
-        index = 0
-        eventid = datetime.now().strftime('%Y%m-%d%H-%M%S-') + str(uuid4())
-        output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
-
+        event_id = str(datetime.now().timestamp())
+        init = {'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt']}
+        db.add(init)
+        tests = []
+        index = 1
         for model_info in config['providers']:
             for prompt in config['prompts']:
                 prompt_info = {'system': config['system_prompt'], 'user': prompt}
@@ -139,14 +152,13 @@ def runTest(config_path, resume=False, skip_run=False):
                     vars_info = test.get('vars', {})
                     assert_info = test.get('assert', {})
 
-                    output['tests'].append({'provider': model_info, 'prompt': prompt_info['user'], 'vars': vars_info, 'assert': assert_info, 'response': {'output': ''}})
+                    tests.append({'_id': index, 'provider': model_info, 'prompt': prompt_info['user'], 'vars': vars_info, 'assert': assert_info, 'response': {'output': ''}})
+                    index += 1
 
-                    if len(output['tests']) >= 50:
-                        writeJSON(output_path=dir_output / f'output_{index}.json', data=output)
-                        output = {'id': eventid, 'system_prompt': config['system_prompt'], 'tests': []}
-                        index += 1
+                    if len(tests) >= 50:
+                        db.add(tests)
+                        tests = []
 
-        if len(output['tests']):
-            writeJSON(output_path=dir_output / f'output_{index}.json', data=output)
+        if len(tests): db.add(tests)
 
-    resumeLastRun(dir_output, skip_run=skip_run, resume_eval=resume)
+    resumeLastRun(db, skip_run=skip_run, resume_eval=resume)

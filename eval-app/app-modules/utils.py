@@ -1,10 +1,8 @@
 import json
 import traceback
 import pandas as pd
-import subprocess
 from utils import Config, loadYML, saveYML
-import shutil
-from shiny.express import ui
+from .db import EvalDB
 
 # Custom evaluator
 class Evaluator:
@@ -14,6 +12,7 @@ class Evaluator:
     NUM_NONVARS_COLS = 10
 
     def hasOutput(eval_name):
+        return EvalDB(eval_name).exists()
         return (Config.DIR_TESTS / eval_name / 'output' / 'output_0.json').exists()
     
     def hasEmbedding(eval_name):
@@ -21,8 +20,10 @@ class Evaluator:
     
     def loadEvals():
         try:
+            return EvalDB().listEvals()
             return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if Evaluator.hasOutput(eval_name)])
-        except:
+        except Exception as exp:
+            print(exp)
             return []
     
     def loadEvalsToRun():
@@ -74,7 +75,62 @@ class Evaluator:
         
         if not Evaluator.hasOutput(eval_name): return pd.DataFrame()
 
+        db = EvalDB(eval_name)
+
         results = []
+
+        records_db = db.getAll()
+        first_record = True
+
+        for item in records_db:
+
+            if first_record:
+                event_id = item['event_id']
+                first_record = False
+                continue
+            
+            try:
+                content = {
+                    'Id': f"{event_id}|{item['provider']['label']}",
+                    'eval_id': event_id,
+                    'Prompt': item['prompt'], 
+                    'Model': item['provider']['label'], 
+                    'Response': item['response']['output'],
+                    'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
+                    'Score':  float(item['response']['results']['score']) if item['response']['results'] else 0,
+                    'Reason': getExplanation(item['response']['results'])
+                }
+                if 'steps_taken' in item['response']:
+                    content |= {
+                        'Used Context': (item['response']['steps_taken'][-1] == 'query_with_context')
+                    }
+                if 'searched_keyphrases' in item['response']:
+                    content |= {
+                        'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']])
+                    }
+
+                # Vars columns must be added last to ensure ease of processing.
+                content |= item['vars']
+                
+                results.append(content)
+
+            except Exception as exp:
+                print(f'Error reading output from id={item['_id']}')
+                print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
+                continue
+
+        results = pd.DataFrame(results)
+
+        Evaluator.NUM_NONVARS_COLS = 10 if 'Used Context' in results.columns and 'Searched Keyphrases' in results.columns else 8
+
+        return results
+    
+        if not Evaluator.hasOutput(eval_name): return pd.DataFrame()
+
+        db = EvalDB(eval_name)
+
+        results = []
+
         dir_output = Config.DIR_TESTS / eval_name / 'output'
         list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.stem.split('_')[-1]))
     
@@ -82,7 +138,7 @@ class Evaluator:
 
             with open(file_path) as f:
                 data = json.load(f)
-            
+
             results_chunk = []
             for item in data['tests']:
                 try:
@@ -134,7 +190,7 @@ class Evaluator:
         from codes.evaluation import runTest
 
         try:
-            runTest(Config.DIR_TESTS / eval_name  / 'config.yaml', resume=False, skip_run=False)
+            runTest(eval_name, resume=False, skip_run=False)
         except Exception as exp:
             print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
             return False

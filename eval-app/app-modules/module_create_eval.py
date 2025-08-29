@@ -49,7 +49,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
     def kpContainer(input, output, session, index):
 
         with ui.hold() as content:
-            with ui.div(class_='row gap-2 pt-3'):
+            with ui.div(class_='d-flex flex-column gap-2 pt-3'):
                 with ui.div(class_='d-flex'):
                     with ui.div(class_='d-flex justify-content-start'):
                         ui.input_text(id='text_keywords', label="Response key phrases (optional)")
@@ -155,7 +155,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
 
                 with ui.div(class_='row'):
                     with ui.div(class_='col'):
-                        ui.input_text_area(id='txt_prompt', label='Prompt', rows=5, width='100%', placeholder='What is the function of Aspirin?')
+                        ui.input_text_area(id='txt_prompt', label='Prompt', rows=5, width='100%', placeholder='What is the function of Aspirin?\nor\nWhat is the function of {chemname}?')
                     with ui.div(class_='col-auto'):
                         with ui.tooltip(placement="right"):
                             ui.span(fa.icon_svg('circle-question'))
@@ -182,10 +182,10 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
                                 @render.express
                                 def showKPPerVar():
                                     if not test_vars.get(): return
-                                    with ui.div(class_='row'):
+                                    with ui.div(class_='d-flex gap-2'):
                                         for i, var in test_vars.get().items():
                                             content = ui.HTML(f"<ul>{''.join([f"<li><strong>{k}:</strong><span class='ms-1'>{v}</span></li>" for k, v in var])}</ul>")
-                                            with ui.div(class_="col-3 col-5-sm"):
+                                            with ui.div(style='width:400px'):
                                                 varKpContainer(str(hash(var))[1:], i, content)
 
             with ui.div(class_='row'):
@@ -293,6 +293,9 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
         
         if id_ not in expected_phrases.get():
             expected_phrases.set({**expected_phrases.get(), **{id_: set()}})
+
+        print(test_vars.get())
+        print(expected_phrases.get())
         
     @logexp
     @reactive.effect

@@ -3,6 +3,7 @@ from shiny.express import ui, render, module
 from codes.generate_response_embeddings import generateSimilarity
 from utils import Config
 from .utils import Evaluator
+from .db import EvalDB
 import traceback
 import datetime
 import os
@@ -16,22 +17,23 @@ def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
                 with ui.div(class_="col"):
                     ui.input_select(id='select_eval', label='Name', choices=[])
                 with ui.div(class_="col-auto"):
-                    @render.ui
+                    @render.express
                     def showLastRunInfo():
                         info = loadLastRunTimestamp()
-                        return ui.HTML(f'''<div class="row">
-                                            <div>Last run time</div>
-                                            <div class="col border rounded p-2">
-                                                <div class="row gap-1">
-                                                    <div class="col text-end"><strong>Eval:</strong></div>
-                                                    <div class="col text-start">{info['test']}</div>
-                                                </div>
-                                                <div class="row gap-1">
-                                                    <div class="col text-end"><strong>Response similarity:</strong></div>
-                                                    <div class="col text-start">{info['sim']}</div>
-                                                </div>
-                                            </div>
-                                        </div>''')
+                        with ui.div(class_="row"):
+                            with ui.div():
+                                "Last run time"
+                            with ui.div(class_="col border rounded p-2"):
+                                with ui.div(class_="row gap-1"):
+                                    with ui.div(class_="col text-end"):
+                                        ui.strong('Eval:')
+                                    with ui.div(class_="col text-start"):
+                                        f'{info['test']}'
+                                # with ui.div(class_="row gap-1"):
+                                #     with ui.div(class_="col text-end"):
+                                #           ui.strong('Response similarity:')
+                                #     with ui.div(class_="col text-start"):
+                                #           info['sim']
             with ui.div(class_="row"):
                 @render.ui
                 def showEvalInfo():
@@ -123,8 +125,8 @@ def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
         with ui.div(class_='col-auto d-flex flex-column gap-2'):
             with ui.div():        
                 ui.input_task_button(id="btn_run_eval", label="Run eval")
-            with ui.div():
-                ui.input_task_button(id="btn_run_sim", label="Extract Response Similarity")
+            # with ui.div():
+            #     ui.input_task_button(id="btn_run_sim", label="Extract Response Similarity")
 
     @reactive.effect
     @reactive.event(reload_unrun_evals_flag)
@@ -145,10 +147,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
         timestamp_sim = "Not run yet"
 
         if Evaluator.hasOutput(eval_name):
-            if (dir_eval_output / 'output_0.json').exists():
-                timestamp_test = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'output_0.json'))
-            elif (dir_eval_output / 'output.json').exists():
-                timestamp_test = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'output.json'))
+            timestamp_test = EvalDB(eval_name).getTimeStamp()
         if Evaluator.hasEmbedding(eval_name):
             timestamp_sim = datetime.datetime.fromtimestamp(os.path.getmtime(dir_eval_output / 'response_embeddings.json'))
 
@@ -170,17 +169,17 @@ def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
             ui.notification_show(f'"{eval_name}" did not run successfully', type="error")
 
 
-    @reactive.effect
-    @reactive.event(input.btn_run_sim)
-    def runSimilarityExtraction():
-        eval_name = input.select_eval()
-        if not Evaluator.hasOutput(eval_name):
-            ui.notification_show(f'Please run {eval_name} before similarity extraction', type="error")
-            return
-        try:
-            dir_test = Config.DIR_TESTS / eval_name
-            generateSimilarity(dir_=dir_test)
-            ui.notification_show(f'"{eval_name}" response similarity extracted successfully', type="message")
-        except Exception as exp:
-            print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
-            ui.notification_show(f'"{eval_name}" response similarity extraction did not run successfully', type="error")
+    # @reactive.effect
+    # @reactive.event(input.btn_run_sim)
+    # def runSimilarityExtraction():
+    #     eval_name = input.select_eval()
+    #     if not Evaluator.hasOutput(eval_name):
+    #         ui.notification_show(f'Please run {eval_name} before similarity extraction', type="error")
+    #         return
+    #     try:
+    #         dir_test = Config.DIR_TESTS / eval_name
+    #         generateSimilarity(dir_=dir_test)
+    #         ui.notification_show(f'"{eval_name}" response similarity extracted successfully', type="message")
+    #     except Exception as exp:
+    #         print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
+    #         ui.notification_show(f'"{eval_name}" response similarity extraction did not run successfully', type="error")

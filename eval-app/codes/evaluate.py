@@ -14,5 +14,6 @@ if __name__ == '__main__':
         exit(1)
 
     args = parser.parse_args()
-    runTest(Config.DIR_TEST / args.eval  / 'config.yaml', resume=args.resume, skip_run=args.skip_run)
+    #runTest(Config.DIR_TEST / args.eval  / 'config.yaml', resume=args.resume, skip_run=args.skip_run)
+    runTest(args.eval, resume=args.resume, skip_run=args.skip_run)
         
