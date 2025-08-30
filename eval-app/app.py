@@ -1,15 +1,12 @@
 from shiny import reactive
 from shiny.express import ui
-from pathlib import Path
-from utils import Config
-import importlib
+from src.utils import Config
+from src import module_create_and_run_eval, \
+                module_show_eval, \
+                module_compare_evals_by_prompt, \
+                module_compare_evals_by_graph, \
+                module_compare_evals_by_table
  
-module_create_and_run_eval = importlib.import_module("app-modules.module_create_and_run_eval")
-module_show_eval = importlib.import_module("app-modules.module_show_eval")
-module_compare_evals_by_prompt = importlib.import_module("app-modules.module_compare_evals_by_prompt")
-module_compare_evals_by_graph = importlib.import_module("app-modules.module_compare_evals_by_graph")
-module_compare_evals_by_table = importlib.import_module("app-modules.module_compare_evals_by_table")
-
 ui.include_css(Config.DIR_HOME / "www" / "css" / "bootstrap.css", method='link_files')
 ui.include_css(Config.DIR_HOME / "www" / "css" / "custom.css", method='link_files')
 
