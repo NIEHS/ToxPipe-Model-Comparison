@@ -21,7 +21,7 @@ def mod_ui(input, output, session):
             )
             async def downloadReport():
                 df_report = getReport()
-                yield df_report.to_csv()
+                yield df_report.to_csv(index=None)
 
     with ui.div(class_='row mt-4'):
         with ui.div(class_='col'):
@@ -29,7 +29,7 @@ def mod_ui(input, output, session):
             def renderReport():
                 df = getReport()
                 return render.DataTable(
-                    df.round(2).reset_index().rename(columns={'index': 'Models'}),
+                    df.round(2),
                     width='100%',
                     height='100%',
                     styles=[
@@ -114,5 +114,7 @@ def mod_ui(input, output, session):
 
             for k, v in data_score.items():
                 d_df_report[k] = {**d_df_report.get(k, {}), **v}
+
+        df_report = df_report.reset_index().rename(columns={'index': 'Models'})
 
         return df_report

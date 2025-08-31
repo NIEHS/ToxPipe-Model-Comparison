@@ -1,4 +1,4 @@
-,Toxicity type prompts (Human) (57),Toxicity type prompts (Rat) (12),ABT Q/A prompts (474),Level
+Models,Toxicity type prompts (Human) (57),Toxicity type prompts (Rat) (12),ABT Q/A prompts (474),Level
 Claude 3.7 Sonnet,0.6972013366750208,0.37103174603174605,0.8913502109704642,Base model
 GPT-4o,0.5873851294903927,0.33829365079365076,0.8980309423347398,Base model
 Gemini 2.5 Flash,0.6370648844333054,0.3829365079365079,0.9138537271448665,Base model

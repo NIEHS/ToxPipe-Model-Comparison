@@ -40,15 +40,28 @@ In this level, the RAG level is used as a tool along with various other tools in
 
 ### Query sets
 
-*Basic*
+**Basic**
 
 This query set consists of 27 questions (or prompts) regarding the overall known or predicted functions and toxicological effects of a chemical on human and rat biology.
 
-*Toxicity types*  
+**Toxicity types**  
 
-This query set contains 15 questions (or prompts) regarding the toxicity types (sub acute, chronic, developement) and toxicokinetic parameters of a chemical on human and rat.
+This query set contains the following question for 15 toxicity types (listed below) and toxicokinetic parameters of a chemical on human and rat.
 
-[*ABT Q/A*](abt-question-ocr.qmd)
+*Question*
+```
+List the {effect_type} of {chem_casrn} on human
+```
+
+*Effect Types*
+```{python}
+import pandas as pd
+
+data = pd.read_csv(Path('../eval-app/data/eval_info/tox-type-prompts_human.txt'), sep='\t')
+print(', '.join([k for k in data['Toxicity'].values if not pd.isna(k)]))
+```
+
+[**ABT Q/A**](abt-question-ocr.qmd)
 
 This query set contains the questions from American Board of Toxicology (ABT) certification from the year 2000-2007. These questions have multiple choices of answer. The questions, answer choices and correct answers were extracted from exam sheets of respective years. After filtering ambiguous and unknown answers, the total number of questions (or prompts) is 474. More information about the extraction process of ABT Q/A can be found [here](abt-question-ocr.qmd).
 
