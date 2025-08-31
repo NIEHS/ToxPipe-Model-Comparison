@@ -247,7 +247,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
 
     @reactive.calc
     def loadModelSettings():
-        dir_output = Config.DIR_TESTS
+        dir_output = Config.DIR_DATA / 'eval_info'
         if (dir_output / 'providers.json').exists():
             with open(dir_output / 'providers.json') as f:
                 return json.load(f)
@@ -346,7 +346,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
             }
         }
 
-        prompt_system = loadYML(Config.DIR_TESTS / 'config' / 'system_prompt.yaml')
+        prompt_system = loadYML(Config.DIR_DATA / 'config' / 'system_prompt.yaml')
 
         prompts = {
             'system': prompt_system['system'] if prompt_system is not None and 'system' in prompt_system else '',

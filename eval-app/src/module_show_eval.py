@@ -309,12 +309,13 @@ def mod_ui(input, output, session, reload_evals_flag):
         var_selected.set({})
         eval_name = input.select_eval()
         output = Evaluator.processResults(eval_name)
-        embeddings = Evaluator.processEmbeddings(eval_name)
-        return output, embeddings
+        return output, None
+        #embeddings = Evaluator.processEmbeddings(eval_name)
+        #return output, embeddings
     
     @reactive.calc
     def loadFeedbacks():
-        output, _ = loadResults()
+        output = loadResults()
         eval_id = output['eval_id'].unique()[0]
         feedback = getRating(eval_id=eval_id)
         feedback['id'] = feedback['test_id']
@@ -328,8 +329,8 @@ def mod_ui(input, output, session, reload_evals_flag):
         var_selected.set({})
         ui.update_select(id="select_model", choices=['Any'] + sorted(data['Model'].unique()))
         ui.update_select(id="select_prompt", choices=list(data['Prompt'].unique()))
-        if not embeddings: return
-        ui.update_select(id="select_embedding", choices=sorted(embeddings.keys()))
+        #if not embeddings: return
+        #ui.update_select(id="select_embedding", choices=sorted(embeddings.keys()))
 
     def selectVar(var_sel):
         var_selected.set({**var_selected.get(), **var_sel})

@@ -147,8 +147,8 @@ def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
 
         if Evaluator.hasOutput(eval_name):
             timestamp_test = EvalDB(eval_name).getTimeStamp()
-        if Evaluator.hasEmbedding(eval_name):
-            timestamp_sim = datetime.datetime.fromtimestamp(os.path.getmtime(Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json'))
+        #if Evaluator.hasEmbedding(eval_name):
+        #    timestamp_sim = datetime.datetime.fromtimestamp(os.path.getmtime(Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json'))
 
         return {'test': timestamp_test, 'sim': timestamp_sim}
     

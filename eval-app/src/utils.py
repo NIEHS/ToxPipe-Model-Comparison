@@ -4,7 +4,7 @@ import yaml
 
 class Config:
     DIR_HOME = Path(__file__).parent.parent
-    DIR_TESTS = DIR_HOME /'tests'
+    DIR_DATA = DIR_HOME / 'data'
     RANDOM_STATE = 1000
     CONFIG_PLOT = dict(
                         template = 'simple_white',

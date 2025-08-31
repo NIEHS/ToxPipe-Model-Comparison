@@ -1,0 +1,6 @@
+ ,Human,  ,Rat,   ,Mixed
+,Basic,Toxicity types,Basic,Toxicity types,ABT QA
+# prompts,27,15,27,15,474
+Base model,2700,1500,2700,1500,2370
+RAG,2160,1200,2160,1200,1896
+Agentic,2160,1200,2160,1200,1896

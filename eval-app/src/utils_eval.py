@@ -14,8 +14,8 @@ class Evaluator:
         return EvalDB(eval_name).exists()
         return (Config.DIR_TESTS / eval_name / 'output' / 'output_0.json').exists()
     
-    def hasEmbedding(eval_name):
-        return (Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json').exists()
+    #def hasEmbedding(eval_name):
+    #    return (Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json').exists()
     
     def loadEvals():
         try:
@@ -180,11 +180,11 @@ class Evaluator:
 
         return results
     
-    def processEmbeddings(eval_name):
-        if not Evaluator.hasEmbedding(eval_name): return None
-        with open(Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json') as f:
-            embeddings = json.load(f)
-        return embeddings
+    # def processEmbeddings(eval_name):
+    #     if not Evaluator.hasEmbedding(eval_name): return None
+    #     with open(Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json') as f:
+    #         embeddings = json.load(f)
+    #     return embeddings
     
     def runEval(eval_name):
 
@@ -197,17 +197,17 @@ class Evaluator:
             return False
         return True
     
-    def runSimilarityExtraction(eval_name):
+    # def runSimilarityExtraction(eval_name):
 
-        from .evaluator.src.evaluation.generate_response_embeddings import generateSimilarity
+    #     from .evaluator.src.evaluation.generate_response_embeddings import generateSimilarity
         
-        try:
-            dir_test = Config.DIR_TESTS / eval_name
-            generateSimilarity(dir_=dir_test)
-        except Exception as exp:
-            print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
-            return False
-        return True
+    #     try:
+    #         dir_test = Config.DIR_TESTS / eval_name
+    #         generateSimilarity(dir_=dir_test)
+    #     except Exception as exp:
+    #         print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
+    #         return False
+    #     return True
     
     def createTest(eval_name, info, *args):
 

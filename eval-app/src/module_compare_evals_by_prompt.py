@@ -185,7 +185,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.select_eval_set)
     def loadEvals():
         try:
-            prompts = loadYML(Config.DIR_TESTS / 'config' / f'{input.select_eval_set()}.yaml')['prompts']
+            prompts = loadYML(Config.DIR_DATA / 'config' / f'{input.select_eval_set()}.yaml')['prompts']
         except:
             return
         ui.update_select(id='select_prompt', choices=prompts)
@@ -194,7 +194,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.select_eval_set)
     def loadVars():
         try:
-            tests = loadYML(Config.DIR_TESTS / 'config' / f'{input.select_eval_set()}_tests.yaml')['tests']    
+            tests = loadYML(Config.DIR_DATA / 'config' / f'{input.select_eval_set()}_tests.yaml')['tests']    
         except:
             return {}
         d_vars = {}
