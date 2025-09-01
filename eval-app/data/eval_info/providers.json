@@ -1,0 +1,167 @@
+[
+    {
+        "id": "openai:chat:azure-o3",
+        "label": "o3",
+        "config": {
+            "temperature": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            }
+        }
+    },
+    {
+        "id": "openai:chat:azure-gpt-4o",
+        "label": "GPT-4o",
+        "config": {
+            "temperature": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            }
+        }
+    },
+    {
+        "id": "openai:chat:claude-3-7-sonnet",
+        "label": "Claude 3.7 Sonnet",
+        "config": {
+            "temperature": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            }
+        }
+    },
+    {
+        "id": "openai:chat:gemini-2.5-pro",
+        "label": "Gemini 2.5 Pro",
+        "config": {
+            "temperature": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            }
+        }
+    },
+    {
+        "id": "openai:chat:gemini-2.5-flash",
+        "label": "Gemini 2.5 Flash",
+        "config": {
+            "temperature": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            }
+        }
+    },
+    {
+        "id": "openai:chat:id:llama3-3-70b",
+        "label": "Llama 3.3 70B",
+        "config": {
+            "temperature": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            }
+        }
+    },
+    {
+        "id": "openai:chat:mistral-large-2",
+        "label": "Mistral Large 2",
+        "config": {
+            "temperature": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            }
+        }
+    },
+    {
+        "id": "rag",
+        "label": "Toxpipe (RAG)",
+        "config": {
+            "model": {
+                "label": "LLM",
+                "type": [
+                    "azure-o3",
+                    "azure-gpt-4o",
+                    "claude-3-7-sonnet",
+                    "gemini-2.5-pro",
+                    "gemini-2.5-flash",
+                    "llama3-3-70b",
+                    "mistral-large"
+                ],
+                "default": "azure-gpt-4o"
+            },
+            "temp": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            },
+            "max_iterations": {
+                "label": "Maximum number of Iterations",
+                "type": "int",
+                "default": "10",
+                "min": "1"
+            },
+            "summarize": {
+                "label": "Should summarize the response?",
+                "type": [
+                    "true",
+                    "false"
+                ],
+                "default": "false"
+            }
+        }
+    },
+    {
+        "id": "agentic",
+        "label": "Toxpipe (Agentic)",
+        "config": {
+            "model": {
+                "label": "LLM",
+                "type": [
+                    "azure-gpt-4o"
+                ],
+                "default": "azure-gpt-4o"
+            },
+            "temp": {
+                "label": "Temperature",
+                "type": "int",
+                "default": "0",
+                "min": "0",
+                "max": "1"
+            },
+            "max_iterations": {
+                "label": "Maximum number of Iterations",
+                "type": "int",
+                "default": "10",
+                "min": "1"
+            },
+            "summarize": {
+                "label": "Should summarize the response?",
+                "type": [
+                    "true",
+                    "false"
+                ],
+                "default": "false"
+            }
+        }
+    }
+]

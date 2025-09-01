@@ -1,0 +1,10 @@
+db.env
+.env
+.venv
+
+*.pyc
+
+docs/~*
+
+.posit
+__pycache__

@@ -1,0 +1,106 @@
+---
+title: "Evaluation"
+author: "Amlan Talukder"
+date: "2025/02/19"
+execute:
+  echo: false
+  output: asis
+---
+
+## Description
+
+ToxPipe is evaluated in multiple levels with different sets of queries. The response at each stage was evaluated based on semantic similarity with the expected keywords or phrases.
+
+## Evaluation Sets
+
+### Levels
+
+ToxPipe system is evaluated at three levels.
+
+*Base model*
+
+This level includes the following five foundational models,
+```{python}
+import json
+from pathlib import Path
+with open(Path('../eval-app/data/eval_info/providers.json')) as fp:
+    d = json.load(fp)
+
+for k in d:
+    if 'label' in k and not k['label'].startswith('Toxpipe'):
+        print(f'- {k['label']}')
+```
+*RAG*
+
+In this level, the aforementioned five foundational models are used with an extra RAG (Retrieval Augmented Generation) step.
+
+*Agentic*
+
+In this level, the RAG level is used as a tool along with various other tools including ...
+
+### Query sets
+
+**Basic**
+
+This query set consists of 27 questions (or prompts) regarding the overall known or predicted functions and toxicological effects of a chemical on human and rat biology.
+
+**Toxicity types**  
+
+This query set contains the following question for 15 toxicity types (listed below) and toxicokinetic parameters of a chemical on human and rat.
+
+*Question*
+```
+List the {effect_type} of {chem_casrn} on human
+```
+
+*Effect Types*
+```{python}
+import pandas as pd
+
+data = pd.read_csv(Path('../eval-app/data/eval_info/tox-type-prompts_human.txt'), sep='\t')
+print(', '.join([k for k in data['Toxicity'].values if not pd.isna(k)]))
+```
+
+[**ABT Q/A**](abt-question-ocr.qmd)
+
+This query set contains the questions from American Board of Toxicology (ABT) certification from the year 2000-2007. These questions have multiple choices of answer. The questions, answer choices and correct answers were extracted from exam sheets of respective years. After filtering ambiguous and unknown answers, the total number of questions (or prompts) is 474. More information about the extraction process of ABT Q/A can be found [here](abt-question-ocr.qmd).
+
+### Chemicals
+
+The following 20 chemicals were tested with basic and toxicity types prompts.
+```{python}
+import pandas as pd
+from pathlib import Path
+
+data = pd.read_csv(Path('../eval-app/data/eval_info/chemical_casrn.txt'))
+print(data.to_markdown(index=False))
+```
+
+### Number of queries
+
+The number of queries in an evaluation set is ```# base models x # prompts x # chemicals x # species```. For ABT Q/A, this ```# base models x # prompts```, as the prompts are not applicable for all chemicals or species.
+
+```{python}
+import pandas as pd
+
+data = pd.read_csv(Path('../eval-app/data/eval_info/prompt_counts.csv'))
+data[data.isna()] = ''
+print(data.to_markdown(index=False))
+```
+
+## Evaluation criteria
+
+Not all queries have expected keywords or phrases (or assertions). A response is evaluated by a separate LLM based on semantic similarity with each of the assertions. A response is labeled as "Passed", only if it has semantic similarity with all the assertions.
+
+## Results
+
+Percentage of successful responses to queries in each evaluation sets by each ToxPipe level. For each evaluation the number of queries with assertion are mentioned in parenthesis.
+
+```{python}
+import pandas as pd
+from pathlib import Path
+
+data = pd.read_csv(Path('../eval-app/data/results/eval_report.csv'))
+data = data.set_index('Models').round(2).reset_index()
+print(data.to_markdown(index=False))
+```

@@ -1,0 +1,90 @@
+base-model:
+  providers:
+    - config:
+          temperature: 0
+      id: openai:chat:azure-o3
+      label: 'o3'
+    - config:
+        temperature: 0
+      id: openai:chat:azure-gpt-4o
+      label: GPT-4o
+    - config:
+        temperature: 0
+      id: openai:chat:claude-3-7-sonnet
+      label: Claude 3.7 Sonnet
+    - config:
+        temperature: 0
+      id: openai:chat:gemini-2.5-pro
+      label: Gemini 2.5 Pro
+    - config:
+        temperature: 0
+      id: openai:chat:gemini-2.5-flash
+      label: Gemini 2.5 Flash
+    - config:
+        temperature: 0
+      id: openai:chat:llama3-3-70b
+      label: Llama 3.3 70B
+    - config:
+        temperature: 0
+      id: openai:chat:mistral-large-2
+      label: Mistral Large 2
+rag:
+  providers:
+    - config:
+          max_iterations: 10
+          model: azure-o3
+          summarize: 'false'
+          temp: 0
+      id: rag
+      label: Toxpipe (RAG) [o3]
+    - config:
+        max_iterations: 10
+        model: azure-gpt-4o
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxpipe (RAG) [GPT-4o]
+    - config:
+        max_iterations: 10
+        model: claude-3-7-sonnet
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxpipe (RAG) [Claude 3.7 Sonnet]
+    - config:
+        max_iterations: 10
+        model: gemini-2.5-pro
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxpipe (RAG) [Gemini 2.5 Pro]
+    - config:
+        max_iterations: 10
+        model: gemini-2.5-flash
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxpipe (RAG) [Gemini 2.5 Flash]
+    - config:
+        max_iterations: 10
+        model: llama3-3-70b
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxpipe (RAG) [Llama 3.3 70B]
+    - config:
+        max_iterations: 10
+        model: mistral-large-2
+        summarize: 'false'
+        temp: 0
+      id: rag
+      label: Toxpipe (RAG) [Mistral Large 2]
+agentic:
+  providers:
+    - config:
+        max_iterations: 10
+        model: azure-gpt-4o
+        summarize: 'false'
+        temp: 0
+      id: agentic
+      label: Toxpipe (Agentic) [GPT-4o]
