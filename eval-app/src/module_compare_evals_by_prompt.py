@@ -7,7 +7,7 @@ from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.metrics.pairwise import cosine_similarity
-#from umap import UMAP
+from umap import UMAP
 import plotly.express as px
 from .utils import Config, loadYML
 from .utils_eval import Evaluator
