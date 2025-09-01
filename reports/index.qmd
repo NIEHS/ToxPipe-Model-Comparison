@@ -1,7 +1,0 @@
----
-title: "Reports"
-listing:
-  contents:
-    - "./*.qmd"
-  sort: "date desc"
----
