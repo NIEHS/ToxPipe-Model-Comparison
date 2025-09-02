@@ -67,7 +67,7 @@ pytz==2024.2
 PyYAML==6.0.2
 pyzmq==26.2.1
 regex==2024.11.6
-requests==2.32.3
+requests==2.32.4
 requests-toolbelt==1.0.0
 s3transfer==0.10.4
 setuptools==75.1.0
