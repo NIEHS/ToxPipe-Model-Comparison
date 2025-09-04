@@ -1,0 +1,13 @@
+project:
+  type: website
+
+website:
+  sidebar:
+    search: true
+    contents:
+      - text: "About"
+        href: index.qmd
+      - text: "Evaluation process and results"
+        href: eval.qmd
+      - text: "ABT-questionnaire"
+        href: abt-question-ocr.qmd
