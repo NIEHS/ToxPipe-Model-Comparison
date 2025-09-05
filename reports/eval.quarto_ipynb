@@ -1,0 +1,189 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Toxpipe Evaluation Process and Results\"\n",
+        "author: \"Amlan Talukder\"\n",
+        "date: today\n",
+        "date-format: \"MMM D, YYYY\"\n",
+        "execute:\n",
+        "  echo: false\n",
+        "  output: asis\n",
+        "toc: true\n",
+        "toc-depth: 3\n",
+        "---\n",
+        "\n",
+        "\n",
+        "## Description\n",
+        "\n",
+        "ToxPipe is evaluated in multiple levels with different sets of queries. The response at each stage was evaluated based on semantic similarity with the expected keywords or phrases.\n",
+        "\n",
+        "## Evaluation Sets\n",
+        "\n",
+        "### Levels\n",
+        "\n",
+        "ToxPipe system is evaluated at three levels.\n",
+        "\n",
+        "*Base model*\n",
+        "\n",
+        "This level includes the following foundational models,"
+      ],
+      "id": "794ab19f"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import json\n",
+        "from pathlib import Path\n",
+        "with open(Path('../eval-app/data/eval_info/providers.json')) as fp:\n",
+        "    d = json.load(fp)\n",
+        "\n",
+        "for k in d:\n",
+        "    if 'label' in k and not k['label'].startswith('Toxpipe'):\n",
+        "        print(f'- {k['label']}')"
+      ],
+      "id": "e72f4b98",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "*RAG*\n",
+        "\n",
+        "In this level, the aforementioned foundational models are used with an extra RAG (Retrieval Augmented Generation) step.\n",
+        "\n",
+        "*Agentic*\n",
+        "\n",
+        "In this level, the RAG level is used as a tool along with ChemBioTox API and Literature Search\n",
+        "\n",
+        "### Query sets\n",
+        "\n",
+        "**Basic**\n",
+        "\n",
+        "This query set consists of 27 questions (or prompts) regarding the overall known or predicted functions and toxicological effects of a chemical on human and rat biology.\n",
+        "\n",
+        "**Toxicity types**  \n",
+        "\n",
+        "This query set contains the following question for 15 toxicity types (listed below) and toxicokinetic parameters of a chemical on human and rat.\n",
+        "\n",
+        "*Question*\n",
+        "```\n",
+        "List the {effect_type} of {chem_casrn} on human\n",
+        "```\n",
+        "\n",
+        "*Effect Types*"
+      ],
+      "id": "baae5040"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/data/eval_info/tox-type-prompts_human.txt'), sep='\\t')\n",
+        "print(', '.join([k for k in data['Toxicity'].values if not pd.isna(k)]))"
+      ],
+      "id": "f5f51cfb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "[**ABT Q/A**](abt-question-ocr.qmd)\n",
+        "\n",
+        "This query set contains the questions from American Board of Toxicology (ABT) certification from the year 2000-2007. These questions have multiple choices of answer. The questions, answer choices and correct answers were extracted from exam sheets of respective years. After filtering ambiguous and unknown answers, the total number of questions (or prompts) is 474. More information about the extraction process of ABT Q/A can be found [here](abt-question-ocr.qmd).\n",
+        "\n",
+        "### Chemicals\n",
+        "\n",
+        "The following 20 chemicals were tested with basic and toxicity types prompts."
+      ],
+      "id": "3f0e8da9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "from pathlib import Path\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/data/eval_info/chemical_casrn.txt'))\n",
+        "print(data.to_markdown(index=False))"
+      ],
+      "id": "0b1479f2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Number of queries\n",
+        "\n",
+        "The number of queries in an evaluation set is ```# base models x # prompts x # chemicals x # species```. For ABT Q/A, this ```# base models x # prompts```, as the prompts are not applicable for all chemicals or species.\n"
+      ],
+      "id": "8571d653"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/data/eval_info/prompt_counts.csv'))\n",
+        "data[data.isna()] = ''\n",
+        "print(data.to_markdown(index=False))"
+      ],
+      "id": "c3c2f324",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Evaluation criteria\n",
+        "\n",
+        "Not all queries have expected keywords or phrases (or assertions). A response is evaluated by a separate LLM based on semantic similarity with each of the assertions. A response is labeled as \"Passed\", only if it has semantic similarity with all the assertions.\n",
+        "\n",
+        "## Results\n",
+        "\n",
+        "Percentage of successful responses to queries in each evaluation sets by each ToxPipe level. For each evaluation the number of queries with assertion are mentioned in parenthesis.\n"
+      ],
+      "id": "43f4ed20"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "from pathlib import Path\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/data/results/eval_report.csv'))\n",
+        "data = data.set_index('Models').round(2).reset_index()\n",
+        "print(data.to_markdown(index=False))"
+      ],
+      "id": "bbdf16fd",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/opt/anaconda3/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

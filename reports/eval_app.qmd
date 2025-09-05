@@ -12,4 +12,6 @@ toc-depth: 3
 
 ToxPipe evaluation sets, evaluation results and the responses of the AI models are documented and compared in this [link](https://rstudio.niehs.nih.gov/tox-eval/){target="_blank"}
 
-![Evaluation responses](assets/app_show_eval.png "AI responses")
+## AI Model responses on the evaluation sets
+
+!(assets/app_show_eval.png "AI responses")
