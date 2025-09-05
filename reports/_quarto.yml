@@ -2,12 +2,20 @@ project:
   type: website
 
 website:
-  sidebar:
+  title: "ToxPipe Evaluation"
+  navbar:
+    background: "#62707f"
     search: true
-    contents:
+    left:
       - text: "About"
         href: index.qmd
       - text: "Evaluation process and results"
         href: eval.qmd
+      - text: "Evaluation application"
+        href: eval_app.qmd
       - text: "ABT-questionnaire"
         href: abt-question-ocr.qmd
+    right:
+      - icon: github
+        href: https://github.com/NIEHS/ToxPipe-Model-Comparison
+        target: "_blank"

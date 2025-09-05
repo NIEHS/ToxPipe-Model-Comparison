@@ -5,6 +5,8 @@ date: today
 date-format: "MMM D, YYYY"
 ---
 
+<a href="https://github.com/quarto-dev/quarto-cli" title="Quarto GitHub" class="quarto-navigation-tool px-1" aria-label="Quarto GitHub" data-original-href="https://github.com/quarto-dev/quarto-cli"><i class="bi bi-github"></i></a>
+
 ## Introduction
 
 Questions from American Board of Toxicology (ABT) certification exams (2000-20007) were extracted. For a few exams (2005-2007), the answers were provided in tabulated format within a non-pdf file (e.g. MS Excel and MS Word). For the rest, both the questions and answers were provided as scanned pdf format. These pdf files were processed using [Amazon Textract](https://aws.amazon.com/textract/) which has OCR capability and "Azure GPT-4o" model.
@@ -23,8 +25,7 @@ The questions and the answers were processed using the following steps:
   **Command**
 
   ```python
-  pip install -r requirements.txt
-  python abt-question-ocr/codes/extraction_questions.py
+  python abt-question-ocr/src/extraction_questions.py
   ```
 
 ### Step 2:
@@ -34,7 +35,7 @@ The questions and the answers were processed using the following steps:
   **Notebook**
 
   ```
-  codes/combine_pdfs.ipynb
+  abt-question-ocr/notebooks/combine_pdfs.ipynb
   ```
 
 # Output format

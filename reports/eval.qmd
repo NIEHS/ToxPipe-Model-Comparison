@@ -107,7 +107,3 @@ data = pd.read_csv(Path('../eval-app/data/results/eval_report.csv'))
 data = data.set_index('Models').round(2).reset_index()
 print(data.to_markdown(index=False))
 ```
-
-### Access AI Responses
-
-The responses of the AI models to the evaluation sets are documented and compared in this [link](https://rstudio.niehs.nih.gov/tox-eval/)
