@@ -11,8 +11,15 @@ from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_community.document_loaders import AmazonTextractPDFLoader
 
+import httpx
+import truststore
+from pathlib import Path
+truststore.inject_into_ssl()
+cert_path = str(Path(Config.DIR_HOME / 'certs/NIH-FULL.pem'))
+http_client = httpx.Client(verify=cert_path)
+
 # --------------------------------------------------------------------------------------------
-def getOpenAIModel(model_name: str, temperature: int = 0, is_litellm_available: bool = False) -> ChatOpenAI:
+def getOpenAIModel(model_name: str, temperature: int = 0) -> ChatOpenAI:
     """
     Initializes the OpenAI Chat LLM object based on the LLM name and temperature
 
@@ -21,17 +28,7 @@ def getOpenAIModel(model_name: str, temperature: int = 0, is_litellm_available: 
     :param is_litellm_available: Boolean flag to indicate if the litellm proxy is accessible
     :return: OpenAI Chat LLM
     """
-
-    if not is_litellm_available:
-        return ChatOpenAI(
-            model=model_name,
-            temperature=temperature,
-            max_tokens=None,
-            timeout=None,
-            max_retries=2,
-            seed=1000
-        )
-
+    
     return ChatOpenAI(
         model=model_name,
         base_url=Config.env_config['AI_BASE_URL'],
@@ -39,8 +36,9 @@ def getOpenAIModel(model_name: str, temperature: int = 0, is_litellm_available: 
         temperature=temperature,
         max_tokens=None,
         timeout=None,
-        max_retries=2,
-        seed=1000
+        max_retries=10,
+        seed=1000,
+        http_client=http_client
     )
 
 # --------------------------------------------------------------------------------------------
@@ -87,7 +85,7 @@ class CustomOutputParser(JsonOutputParser):
     
 # --------------------------------------------------------------------------------------------
 replace = False
-model = getOpenAIModel('azure-gpt-4o', is_litellm_available=True)
+model = getOpenAIModel('azure-gpt-4o')
 
 prompt_template_question_user = '''
 Find questions from the text provided below. Each question has multiple choice options. Return the questions with the list of options in JSON format. Always follow the rules below.

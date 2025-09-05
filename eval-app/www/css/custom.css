@@ -1,0 +1,188 @@
+.app-container {
+    width:90vw;
+    margin-right: auto;
+    margin-left: auto;
+
+    * {
+        font-family: inherit !important;
+    }
+}
+
+.prompt {
+    width:fit-content;
+    font-size: 1.2rem !important; 
+}
+
+.app-table {
+    color: #333;
+}
+
+.app-table {
+    h1 {
+        font-size: 1.5em !important;
+    }
+
+    h2 {
+        font-size: 1.25em !important;
+    }
+
+    h3 {
+        font-size: 1.15em !important;
+    }
+
+    h4 {
+        font-size: 1.1em !important;
+    }
+
+    h5 {
+        font-size: 1.05em !important;
+    }
+
+    h6 {
+        font-size: 1em !important;
+    }
+}
+
+.app-table .form-group {
+    margin: 0;
+}
+
+.app-table > * > * > th,
+.app-table > * > * > td {
+    padding: 1rem;
+}
+
+.app-table-header {
+    background-color: #eee;
+}
+
+.app-table-row-fail {
+    background-color: #ffe9e9;
+}
+
+.app-table-row-pass {
+    background-color: #ddf6db;
+}
+
+.app-table-row-no-assertion {
+    background-color: #f8f8f8;
+}
+
+.app-table-col {
+    border: 2px solid#fff;
+}
+
+.app-table-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-height:500px;
+    overflow-y:auto;
+}
+
+.popover{
+    max-width: 600px;
+}
+
+span.passed {
+    color: #15970b;
+}
+
+span.failed {
+    color: #d41616;
+}
+
+.error {
+    color: #e53232;
+}
+
+div.cards-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.d-contents {
+    display:contents;
+}
+
+.app-ico {
+    color: #000;
+}
+
+.app-ico-passed {
+    color: #15970b;
+}
+
+.app-ico-failed {
+    color: #d41616;
+}
+
+.shiny-data-grid-table > table > thead > tr:last-child > th {
+    text-align: center !important;
+}
+
+div.score {
+    background-color:#fff; 
+    padding:10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    border:#eee;
+    border-radius: 10%;
+    cursor: pointer;
+}
+
+.results-top-bar {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 40px;
+
+    .form-group {
+        width: auto;
+        margin: 0;
+    }
+}
+
+/* .app-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.app-table,
+.app-table th,
+.app-table td {
+  border: 1px solid #ccc;
+}
+
+.app-table th,
+.app-table td {
+  padding: 0.5rem;
+}
+
+.app-table th {
+    position: relative;
+    cursor: grab;
+    user-select: none;
+}   
+.app-table th:active {
+    cursor: grabbing;
+}
+
+.resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 5px;
+  cursor: col-resize;
+  user-select: none;
+}
+
+.resizer:hover,
+.resizing {
+  border-right: 2px solid blue;
+}
+
+.dragging {
+  background-color: #f0f0f0;
+} */

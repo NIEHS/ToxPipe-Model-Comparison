@@ -1,0 +1,48 @@
+tests:
+- vars:
+    chemical_and_CASRN: Aspirin or its synonyms with CAS number 50-78-2
+- vars:
+    chemical_and_CASRN: Paracetamol or its synonyms with CAS number 103-90-2
+- vars:
+    chemical_and_CASRN: Metformin or its synonyms with CAS number 657-24-9
+- vars:
+    chemical_and_CASRN: Atorvastatin or its synonyms with CAS number 134523-00-5
+- vars:
+    chemical_and_CASRN: Prednisone or its synonyms with CAS number 53-03-2
+- vars:
+    chemical_and_CASRN: Dioxin or its synonyms with CAS number 1746-01-6
+- vars:
+    chemical_and_CASRN: Benzene or its synonyms with CAS number 71-43-2
+- vars:
+    chemical_and_CASRN: Arsenite or its synonyms with CAS number 15502-74-6
+- vars:
+    chemical_and_CASRN: Methylmercury or its synonyms with CAS number 16056-34-1
+- vars:
+    chemical_and_CASRN: Vinylchloride or its synonyms with CAS number 75-01-4
+- vars:
+    chemical_and_CASRN: 6PPQ (N-(1,3-dimethylbutyl)-N'-phenyl-p-phenylenediamine)
+      or its synonyms with CAS number 2754428-18-5
+- vars:
+    chemical_and_CASRN: Phenanthrene or its synonyms with CAS number 85-01-8
+- vars:
+    chemical_and_CASRN: TPHP (triphenylphosphate) or its synonyms with CAS number
+      115-86-6
+- vars:
+    chemical_and_CASRN: Lanthanum or its synonyms with CAS number 7439-91-0
+- vars:
+    chemical_and_CASRN: Galaxolide or its synonyms with CAS number 1222-05-5
+- vars:
+    chemical_and_CASRN: 1,6-Dimethyl-3,4-dihydroisoquinoline or its synonyms with
+      CAS number 91753-09-2
+- vars:
+    chemical_and_CASRN: 2-Methyl-4-(4-methylphenyl)-2,3-dihydro-1,5-benzothiazepine
+      or its synonyms with CAS number 74148-62-2
+- vars:
+    chemical_and_CASRN: N-Cyclopropylmethyl-10,11-dihydro-5H-dibenzo-(a,d)-cyclohepten-5-imine
+      or its synonyms with CAS number 59864-46-9
+- vars:
+    chemical_and_CASRN: 4-Methyl-1,2-dihydrobenzo[f]isoquinoline or its synonyms with
+      CAS number 29248-42-8
+- vars:
+    chemical_and_CASRN: 6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine or its synonyms
+      with CAS number 62625-70-1
