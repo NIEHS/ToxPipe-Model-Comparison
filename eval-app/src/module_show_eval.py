@@ -192,6 +192,13 @@ def mod_ui(input, output, session, reload_evals_flag):
             )
         
         def formatResponse(x):
+            def getResponseSourceForRAG(use_context: bool):
+                if pd.isna(use_context):
+                    return ''
+                if use_context:
+                    return '[The following response was taken from RAG resources]'
+                return "[The following response was taken from model's training knowledge]"
+
             if 'Searched Keyphrases' in x.index:
                 return core_ui.div(
                             core_ui.div(f'[The following response was taken from {("RAG resources" if x['Used Context'] else "model's training knowledge")}]',
