@@ -51,7 +51,7 @@ def module_graph(input, output, session, eval_name):
     @reactive.calc
     def loadEvalResults():
         return Evaluator.processResults(eval_name)
-
+    
     def selectVar(var_sel):
         var_selected.set({**var_selected.get(), **var_sel})
 
@@ -75,8 +75,6 @@ def module_graph(input, output, session, eval_name):
         data = filterDataByVars(data, var_selected.get())
 
         if data.empty: return getNoDataPlot(title='Correct Responses')
-
-
 
         # breakpoint()
         # df_plot = data.groupby('Model')['Result'].value_counts().reset_index()
@@ -221,6 +219,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.select_level, input.select_eval_set, input.select_species, input.select_eval, input.chk_hide_no_assertion_evals)
     def loadResults():
         eval_name = input.select_eval()
+        if not eval_name: return
         if eval_name == 'Any':
             evals = processEvals()
             modules = [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals) if not ('basic-prompts' in ev and input.chk_hide_no_assertion_evals())]

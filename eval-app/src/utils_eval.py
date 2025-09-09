@@ -11,6 +11,7 @@ class Evaluator:
     NUM_NONVARS_COLS = 10
 
     def hasOutput(eval_name):
+        if not eval_name: return False
         return EvalDB(eval_name).exists()
         return (Config.DIR_TESTS / eval_name / 'output' / 'output_0.json').exists()
     
@@ -39,8 +40,34 @@ class Evaluator:
             return loadYML(Config.DIR_TESTS / eval_name / 'config.yaml')
         except:
             return {}
+        
+    def getAllPrompts(eval_name: str):
+        print(f'getAllPrompts, eval_name: {eval_name}')
+        db = EvalDB(eval_name)
+        return db.collection.distinct('prompt')
+    
+    def getProvidersByPrompt(eval_name: str, prompt: str):
+        print(f'getProvidersByPrompt, eval_name: {eval_name}, prompt: {prompt}')
+        db = EvalDB(eval_name)
+        return sorted([item['provider']['label'] for item in db.collection.find({'prompt': prompt})])
+    
+    def getVarsByPrompt(eval_name: str, prompt: str):
+        print(f'getVarsByPrompt, eval_name: {eval_name}, prompt: {prompt}')
+        db = EvalDB(eval_name)
+        d_vars = {}
+        for record in db.collection.find({'prompt': prompt}):
+            if 'vars' not in record: return {}
+            for k, v in record['vars'].items():
+                d_vars[k] = d_vars.get(k, []) + [v]
+        d_vars = {k: list(pd.unique(pd.Series(v))) for k, v in d_vars.items()}
+        return d_vars
+    
+    def getEvalInfo(eval_name: str):
+        print(f'getEvalInfo, eval_name: {eval_name}')
+        db = EvalDB(eval_name)
+        return db.collection.find_one()
 
-    def processResults(eval_name):
+    def processResults(eval_name: str, prompt: str = None, provider: str = None, d_vars: dict = None):
             
         def getExplanation(result):
 
@@ -79,16 +106,25 @@ class Evaluator:
 
         results = []
 
+        eval_info = Evaluator.getEvalInfo(eval_name)
+        event_id = eval_info['event_id']
+
         db = EvalDB(eval_name)
-        records_db = db.getAll()
-        first_record = True
+        query = {}
+        if prompt:
+            query = {'prompt': prompt}
+        if provider:
+            query |= {'provider.label': provider}
+        if d_vars:
+            query |= {f'vars.{k}': v for k, v in d_vars.items()}
+        if query:
+            records_db = db.collection.find(query)
+        else:
+            records_db = db.getAll().to_list()
+            if not records_db: return pd.DataFrame()
+            records_db = records_db[1:]
 
         for item in records_db:
-
-            if first_record:
-                event_id = item['event_id']
-                first_record = False
-                continue
             
             try:
                 content = {
@@ -101,7 +137,7 @@ class Evaluator:
                     'Score':  float(item['response']['results']['score']) if item['response']['results'] else 0,
                     'Reason': getExplanation(item['response']['results'])
                 }
-                if 'steps_taken' in item['response']:
+                if 'steps_taken' in item['response'] and item['response']['steps_taken']:
                     content |= {
                         'Used Context': (item['response']['steps_taken'][-1] == 'query_with_context')
                     }

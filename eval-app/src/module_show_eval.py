@@ -139,10 +139,9 @@ def mod_ui(input, output, session, reload_evals_flag):
         ui.input_select("select_prompt", "Prompts", choices=[])
         @render.express
         def showVars():
-            data, embeddings = loadResults()
-            if data.empty: return
-            for col in data.columns[Evaluator.NUM_NONVARS_COLS:]:
-                mod_vars(col, var_name=col, var_values=list(data[col].values), fn_reactive=selectVar)
+            d_vars = loadVars()
+            for k, v in d_vars.items():
+                mod_vars(k, var_name=k, var_values=v, fn_reactive=selectVar)
         ui.input_select("select_model", "Models", choices=[], multiple=True)
 
     with ui.div(class_='d-flex flex-column gap-2'):
@@ -152,15 +151,7 @@ def mod_ui(input, output, session, reload_evals_flag):
             with ui.div(class_='prompt'):
                 @render.express
                 def showPrompt():
-                    prompt = input.select_prompt.get()
-                    if prompt is None: return
-                    try:
-                        if var_selected.get():
-                            prompt = prompt.format(**var_selected.get())
-                    except:
-                        prompt = ''
-                    
-                    ui.markdown(prompt)
+                    ui.markdown(getPrompt())
 
     @render.express
     def showPassScoreThresholdInput():
@@ -310,67 +301,88 @@ def mod_ui(input, output, session, reload_evals_flag):
     def loadEvals():
         ui.update_select(id='select_eval', choices=Evaluator.loadEvals())
 
-    @reactive.calc
+    @reactive.effect
     @reactive.event(input.select_eval)
-    def loadResults():
-        var_selected.set({})
+    def loadPrompts():
         eval_name = input.select_eval()
-        output = Evaluator.processResults(eval_name)
-        return output, None
+        prompts = Evaluator.getAllPrompts(eval_name)
+        ui.update_select(id="select_prompt", choices=prompts)
         #embeddings = Evaluator.processEmbeddings(eval_name)
         #return output, embeddings
-    
+
+    @reactive.calc
+    @reactive.event(input.select_prompt, var_selected)
+    def getPrompt():
+        
+        prompt = input.select_prompt.get()
+        d_vars = loadVars()
+        var_sel = var_selected.get()
+
+        if not prompt or (d_vars and len(d_vars) != len(var_sel)): return ''
+
+        try:
+            prompt = prompt.format(**var_sel)
+        except:
+            prompt = ''
+
+        return prompt
+
     @reactive.calc
     def loadFeedbacks():
-        output = loadResults()
-        eval_id = output['eval_id'].unique()[0]
+        eval_id = Evaluator.getEvalInfo()['id']
         feedback = getRating(eval_id=eval_id)
         feedback['id'] = feedback['test_id']
         return feedback.set_index('id').to_dict(orient='index')
 
     @reactive.effect
-    @reactive.event(input.select_eval)
-    def loadModelsAndVars():
-        data, embeddings = loadResults()
-        if data.empty: return
+    @reactive.event(input.select_eval, input.select_prompt)
+    def loadModels():
+        eval_name = input.select_eval()
+        prompt = input.select_prompt()
+        if not (eval_name and prompt): return
         var_selected.set({})
-        ui.update_select(id="select_model", choices=['Any'] + sorted(data['Model'].unique()))
-        ui.update_select(id="select_prompt", choices=list(data['Prompt'].unique()))
+        models = Evaluator.getProvidersByPrompt(eval_name, prompt)
+        ui.update_select(id="select_model", choices=['Any'] + models)
         #if not embeddings: return
         #ui.update_select(id="select_embedding", choices=sorted(embeddings.keys()))
 
+    @reactive.calc
+    @reactive.event(input.select_eval, input.select_prompt)
+    def loadVars():
+        eval_name = input.select_eval()
+        prompt = input.select_prompt()
+        if not (eval_name and prompt): return {}
+        data = Evaluator.getVarsByPrompt(eval_name, prompt)
+
+        return data
+
     def selectVar(var_sel):
         var_selected.set({**var_selected.get(), **var_sel})
-        
+
     @reactive.calc
     @reactive.event(input.select_eval, input.select_prompt, var_selected, input.select_model)
     def loadResultsByFilters():
-        data, _ = loadResults()
+
+        eval_name = input.select_eval()
+        prompt = input.select_prompt()
+        model = input.select_model()
+        d_vars = loadVars()
+        var_sel = var_selected.get()
+
+        if not (eval_name and prompt and (not d_vars or var_sel)): return pd.DataFrame()
+
+        data = Evaluator.processResults(eval_name=eval_name, 
+                                           prompt=prompt, 
+                                           provider=None if model == 'Any' else model,
+                                           d_vars=var_sel)
         if data.empty: return data
-
-        # Check if vars exist for this eval set
-        if data.shape[1] > Evaluator.NUM_NONVARS_COLS:
-
-            indices = None
-            if var_selected.get():
-                for var_name, var_value in var_selected.get().items():
-                    if var_name in data.columns:
-                        if indices is None:
-                            indices = set(data[data[var_name] == var_value].index)
-                        else:
-                            indices &= set(data[data[var_name] == var_value].index)
-            if indices is None: indices = []
-            data = data.loc[sorted(indices)]
-
-        prompt, model = input.select_prompt(), input.select_model()
-        if not prompt: return pd.DataFrame()
 
         cols = [col for col in ["Id", "eval_id", "Model", "Response", "Searched Keyphrases", "Score", "Result", "Reason", "Used Context"] if col in data.columns]
 
         if not model or 'Any' in model:
-            res = data.query('Prompt == @prompt')[cols].reset_index(drop=True).sort_values('Model')
+            res = data[cols].reset_index(drop=True).sort_values('Model')
         else:
-            res = data.query('(Prompt == @prompt) and (Model in @model)')[cols].reset_index(drop=True)
+            res = data[cols].reset_index(drop=True)
 
         return res
 

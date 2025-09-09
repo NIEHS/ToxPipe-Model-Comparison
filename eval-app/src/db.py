@@ -105,7 +105,7 @@ class MongoDB():
 class EvalDB(MongoDB):
 
     def __init__(self, collection: str|None = None):
-        super().__init__(db_config['MONGO_EVAL_DB_NAME'], collection)
+        super().__init__(db_name=db_config['MONGO_EVAL_DB_NAME'], collection=collection)
 
     def getTimeStamp(self):
         return datetime.datetime.fromtimestamp(float(self.collection.find_one({'_id': 0})['event_id']))
@@ -113,4 +113,4 @@ class EvalDB(MongoDB):
 class EvalConfigDB(MongoDB):
 
     def __init__(self, collection: str|None = None):
-        super().__init__(db_config['MONGO_EVAL_CONFIG_DB_NAME'], collection)
+        super().__init__(db_name=db_config['MONGO_EVAL_CONFIG_DB_NAME'], collection=collection)

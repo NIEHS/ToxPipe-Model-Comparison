@@ -14,4 +14,4 @@ ToxPipe evaluation sets, evaluation results and the responses of the AI models a
 
 ## AI Model responses on the evaluation sets
 
-!(assets/app_show_eval.png "AI responses")
+![](assets/app_show_eval.png "AI responses")

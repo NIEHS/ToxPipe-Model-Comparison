@@ -74,6 +74,13 @@
     "href": "eval_app.html",
     "title": "Toxpipe Evaluation Application",
     "section": "",
-    "text": "ToxPipe evaluation sets, evaluation results and the responses of the AI models are documented and compared in this link\n\n\n\nEvaluation responses"
+    "text": "ToxPipe evaluation sets, evaluation results and the responses of the AI models are documented and compared in this link"
+  },
+  {
+    "objectID": "eval_app.html#ai-model-responses-on-the-evaluation-sets",
+    "href": "eval_app.html#ai-model-responses-on-the-evaluation-sets",
+    "title": "Toxpipe Evaluation Application",
+    "section": "AI Model responses on the evaluation sets",
+    "text": "AI Model responses on the evaluation sets"
   }
 ]

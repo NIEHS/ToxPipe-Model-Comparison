@@ -50,7 +50,7 @@ def prettyTableUI(df, col_widths, style_dict={}):
 @module
 def mod_ui(input, output, session):
 
-    var_selected = reactive.value(None)
+    var_selected = reactive.value({})
 
     def getExplanationHTML(result):
 
@@ -86,7 +86,7 @@ def mod_ui(input, output, session):
         def showVars():
             d_vars = loadVars()
             for k, v in d_vars.items():
-                mod_vars(f'vars_{k}', var_name=k, var_values=v, fn_reactive=selectVar)
+                mod_vars(f'vars_{k}', var_name=k, var_values=list(v), fn_reactive=selectVar)
 
     with ui.div(class_='d-flex flex-column gap-2'):
         with ui.div():
@@ -95,18 +95,12 @@ def mod_ui(input, output, session):
             with ui.div(class_='prompt'):
                 @render.ui
                 def showPrompt():
-                    prompt = input.select_prompt()
-                    vars = {} if var_selected.get() is None else var_selected.get()
-                    try:
-                        prompt = prompt.format(**vars)
-                    except:
-                        prompt = ''
-                    return core_ui.markdown(prompt)
+                    return core_ui.markdown(getPrompt())
 
         @render.express
         def showTopBar():
 
-            data = loadResultsByFilters().copy()
+            data = loadResults().copy()
             
             if not hasAssertion(data): return
 
@@ -141,7 +135,7 @@ def mod_ui(input, output, session):
                 #data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)
                 return addReason(x, col_suffix, type, core_ui.div(core_ui.markdown(x[f'Response{col_suffix}']), class_='app-table-content'))
             
-            data = loadResultsByFilters().copy()
+            data = loadResults().copy()
             
             if data.empty: return
             
@@ -188,6 +182,7 @@ def mod_ui(input, output, session):
             prompts = loadYML(Config.DIR_DATA / 'config' / f'{input.select_eval_set()}.yaml')['prompts']
         except:
             return
+        
         ui.update_select(id='select_prompt', choices=prompts)
 
     @reactive.calc
@@ -197,62 +192,67 @@ def mod_ui(input, output, session):
             tests = loadYML(Config.DIR_DATA / 'config' / f'{input.select_eval_set()}_tests.yaml')['tests']    
         except:
             return {}
+        
         d_vars = {}
         for test in tests:
             for k, v in test['vars'].items():
                 d_vars[k] = d_vars.get(k, []) + [v]
+        d_vars = {k: pd.unique(pd.Series(v)) for k, v in d_vars.items()}
         return d_vars
+    
+    @reactive.calc
+    @reactive.event(input.select_prompt, var_selected)
+    def getPrompt():
+        
+        prompt = input.select_prompt.get()
+        d_vars = loadVars()
+        var_sel = var_selected.get()
+
+        if not prompt or (d_vars and len(d_vars) != len(var_sel)): return ''
+
+        try:
+            prompt = prompt.format(**var_sel)
+        except:
+            prompt = ''
+
+        return prompt
 
     @reactive.calc
-    @reactive.event(input.select_eval_set)
+    @reactive.event(input.select_eval_set, input.select_prompt, var_selected)
     def loadResults():
-        d_vars = loadVars()
-        eval_set_name = input.select_eval_set()
-        output_base = Evaluator.processResults(f'base-model_{eval_set_name}')
-        output_rag = Evaluator.processResults(f'rag_{eval_set_name}')
-        output_agentic = Evaluator.processResults(f'agentic_{eval_set_name}')
         
+        eval_set_name = input.select_eval_set()
+        prompt = input.select_prompt()
+        d_vars = loadVars()
+        var_sel = var_selected.get()
+
+        if not eval_set_name or not prompt or (d_vars and len(d_vars) != len(var_sel)): return pd.DataFrame()
+        
+        output_base = Evaluator.processResults(eval_name=f'base-model_{eval_set_name}', prompt=prompt, d_vars=var_sel)
+        output_rag = Evaluator.processResults(eval_name=f'rag_{eval_set_name}', prompt=prompt, d_vars=var_sel)
+        output_agentic = Evaluator.processResults(eval_name=f'agentic_{eval_set_name}', prompt=prompt, d_vars=var_sel)
+
         if output_base.empty or output_rag.empty or output_agentic.empty:
             return pd.DataFrame()
         
         output_rag['Model'] = output_rag['Model'].apply(lambda x: re.sub(r'(Toxpipe \(RAG\) \[)(.*)(\])', repl=r'\2', string=x))
         output_agentic['Model'] = output_agentic['Model'].apply(lambda x: re.sub(r'(Toxpipe \(Agentic\) \[)(.*)(\])', repl=r'\2', string=x))
-        output = (pd.merge(left=output_base, right=output_rag, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, ' (RAG)'], how='outer')
+        data = (pd.merge(left=output_base, right=output_rag, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, ' (RAG)'], how='outer')
                     .merge(right=output_agentic, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, ' (Agentic)'], how='outer'))
         
-        for col in output.columns:
+        for col in data.columns:
             if col.startswith('Response'):
-                output.loc[output[col].isna(), col] = ''
-        return output
-    
-    @reactive.calc
-    @reactive.event(input.select_eval_set, input.select_prompt, var_selected, ignore_none=True)
-    def loadResultsByFilters():
-        data = loadResults()
-        if data.empty: return data
-        if not var_selected.get(): return pd.DataFrame()
-
-        indices = None
-        for var_name, var_value in var_selected.get().items():
-            if var_name in data.columns:
-                if indices is None:
-                    indices = set(data[data[var_name] == var_value].index)
-                else:
-                    indices &= set(data[data[var_name] == var_value].index)
-        if indices is None: indices = []
-        data = data.loc[sorted(indices)]
+                data.loc[data[col].isna(), col] = ''
         
         cols = ["Model", "Response", "Response (RAG)", "Response (Agentic)", 
                 "Result", "Result (RAG)", "Result (Agentic)", 
                 "Score", "Score (RAG)", "Score (Agentic)",
                 "Used Context", "Searched Keyphrases",
                 "Reason", "Reason (RAG)", "Reason (Agentic)"]
-        
-        prompt = input.select_prompt()
-        res = data.query('Prompt == @prompt')[cols].reset_index(drop=True).sort_values('Model')
+    
+        res = data[cols].reset_index(drop=True).sort_values('Model')
 
         return res
 
     def selectVar(var_sel):
-        vars = {} if var_selected.get() is None else var_selected.get()
-        var_selected.set({**vars, **var_sel})
+        var_selected.set({**var_selected.get(), **var_sel})
