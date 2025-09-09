@@ -333,6 +333,7 @@ def mod_ui(input, output, session, reload_evals_flag):
         eval_name = input.select_eval()
         eval_id = Evaluator.getEvalInfo(eval_name)['event_id']
         feedback = getRating(eval_id=eval_id)
+        if feedback.empty: return feedback
         feedback['id'] = feedback['test_id']
         return feedback.set_index('id').to_dict(orient='index')
 

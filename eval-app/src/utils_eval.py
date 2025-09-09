@@ -42,17 +42,14 @@ class Evaluator:
             return {}
         
     def getAllPrompts(eval_name: str):
-        print(f'getAllPrompts, eval_name: {eval_name}')
         db = EvalDB(eval_name)
         return db.collection.distinct('prompt')
     
     def getProvidersByPrompt(eval_name: str, prompt: str):
-        print(f'getProvidersByPrompt, eval_name: {eval_name}, prompt: {prompt}')
         db = EvalDB(eval_name)
         return sorted([item['provider']['label'] for item in db.collection.find({'prompt': prompt})])
     
     def getVarsByPrompt(eval_name: str, prompt: str):
-        print(f'getVarsByPrompt, eval_name: {eval_name}, prompt: {prompt}')
         db = EvalDB(eval_name)
         d_vars = {}
         for record in db.collection.find({'prompt': prompt}):
@@ -63,7 +60,6 @@ class Evaluator:
         return d_vars
     
     def getEvalInfo(eval_name: str):
-        print(f'getEvalInfo, eval_name: {eval_name}')
         db = EvalDB(eval_name)
         return db.collection.find_one()
 
@@ -128,7 +124,7 @@ class Evaluator:
             
             try:
                 content = {
-                    'Id': f"{event_id}|{item['provider']['label']}",
+                    'Id': f"{event_id}|{item['_id']}",
                     'eval_id': event_id,
                     'Prompt': item['prompt'], 
                     'Model': item['provider']['label'], 
