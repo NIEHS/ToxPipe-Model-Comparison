@@ -82,5 +82,19 @@
     "title": "Toxpipe Evaluation Application",
     "section": "AI Model responses on the evaluation sets",
     "text": "AI Model responses on the evaluation sets"
+  },
+  {
+    "objectID": "eval_app.html#comparison-between-responses-from-different-ai-models",
+    "href": "eval_app.html#comparison-between-responses-from-different-ai-models",
+    "title": "Toxpipe Evaluation Application",
+    "section": "Comparison between responses from different AI Models",
+    "text": "Comparison between responses from different AI Models"
+  },
+  {
+    "objectID": "eval_app.html#performance-comparison",
+    "href": "eval_app.html#performance-comparison",
+    "title": "Toxpipe Evaluation Application",
+    "section": "Performance comparison",
+    "text": "Performance comparison"
   }
 ]

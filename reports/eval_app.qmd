@@ -15,3 +15,13 @@ ToxPipe evaluation sets, evaluation results and the responses of the AI models a
 ## AI Model responses on the evaluation sets
 
 ![](assets/app_show_eval.png "AI responses")
+
+
+## Comparison between responses from different AI Models
+
+![](assets/app_compare_responses_eval.png "Comparision between AI responses")
+
+
+## Performance comparison
+
+![](assets/app_model_performance.png "AI models performance comparison")
