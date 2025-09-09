@@ -1,5 +1,5 @@
 # ToxPipe evaluation
 
-Please follow this for the details
+Please follow the website below for details
 
-<https://rstudio.niehs.nih.gov/tox-eval-info/>
+<https://niehs.github.io/ToxPipe-Model-Comparison/eval_app.html>
