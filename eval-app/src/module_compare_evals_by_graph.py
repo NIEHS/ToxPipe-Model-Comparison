@@ -2,9 +2,9 @@ from shiny import reactive
 from shiny.express import ui, module, render
 from shinywidgets import render_widget
 import plotly.express as px
-from .utils import Config
+from .utils import Config, loadYML
 from .utils_eval import Evaluator
-from .module_common import mod_vars, getEvals, getNoDataPlot
+from .module_common import mod_vars, getNoDataPlot
 import pandas as pd
 import asyncio
 
@@ -76,24 +76,6 @@ def module_graph(input, output, session, eval_name):
 
         if data.empty: return getNoDataPlot(title='Correct Responses')
 
-        # breakpoint()
-        # df_plot = data.groupby('Model')['Result'].value_counts().reset_index()
-
-        # df_missing = []
-        # for m in df_plot['Model'].unique():
-        #     for r in ['Pass', 'Fail']:
-        #         if df_plot.query('(Model == @m) and (Result == @r)').shape[0] == 0:
-        #             df_missing.append({'Model': m, 'Result': r, 'count': 0})
-        
-        # df_plot = pd.concat([df_plot, pd.DataFrame(df_missing)]).sort_values('Model')
-
-        # category_orders = {'Result':['Pass', 'Fail', 'No assertion']}
-        # category_colors = ['#7c8fe6', '#eb8c60', '#dbd8d0']
-
-        # fig = px.box(df_plot, x='count', y='Model', color='Result', orientation='h', 
-        #              category_orders=category_orders, 
-        #              color_discrete_sequence=category_colors)
-        
         df_plot = data.query('Result != "No assertion"')[['Score', 'Model']].sort_values('Model')
         fig = px.violin(df_plot, x='Score', y='Model', orientation='h', box=True)
 
@@ -193,10 +175,7 @@ def mod_ui(input, output, session):
 
     with ui.div(class_="row gap-5"):
         with ui.div(class_="col d-flex justify-content-start align-items-center gap-2"):
-            ui.input_select("select_level", "Levels", choices={'any': 'Any', 'base-model': 'Base model', 'rag': 'RAG', 'agentic': 'Agentic'})
-            ui.input_select("select_eval_set", "Eval set", choices={'any': 'Any', 'basic-prompts': 'Basic prompts', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
-            ui.input_select("select_species", "Species", choices={'any': 'Any', 'human': 'Human', 'rat': 'Rat'})
-            ui.input_select("select_eval", "Evals", choices=[])
+            ui.input_select("select_eval_set", "Eval sets", choices=[])
         with ui.div(class_="col d-flex pb-1 justify-content-start align-items-end"):
             ui.input_checkbox("chk_hide_no_assertion_evals", "Hide unlabeled evals", value=True)
 
@@ -205,25 +184,48 @@ def mod_ui(input, output, session):
         loadResults()
 
     @reactive.calc
-    @reactive.event(input.select_level, input.select_eval_set, input.select_species)
-    def processEvals():
-        return getEvals(level=input.select_level(), eval_set=input.select_eval_set(), species=input.select_species())
-
+    def getEvalSetToCompare():
+        try:
+            eval_sets = loadYML(Config.DIR_DATA / 'compare' / f'compare.yaml')
+        except:
+            return {}
+        return eval_sets
+    
     @reactive.effect
-    @reactive.event(input.select_level, input.select_eval_set, input.select_species)
-    def loadEvalMenu():
-        evals = processEvals()
-        ui.update_select(id='select_eval', choices=['Any'] + evals)
+    def loadEvalSets():
+        eval_sets = getEvalSetToCompare()
+        ui.update_select(id='select_eval_set', choices={'any': 'Any'} | {k: v['Name'] for k, v in eval_sets.items()})
+
+    def hasAssertion(data, col_result):
+        if data.empty: return False
+        if len(data[col_result].unique()) == 0: return False
+        return not (data[col_result].unique() == ['No assertion']).all()
 
     @reactive.calc
-    @reactive.event(input.select_level, input.select_eval_set, input.select_species, input.select_eval, input.chk_hide_no_assertion_evals)
+    @reactive.event(input.select_eval_set, input.chk_hide_no_assertion_evals)
     def loadResults():
-        eval_name = input.select_eval()
-        if not eval_name: return
-        if eval_name == 'Any':
-            evals = processEvals()
-            modules = [module_graph(f'eval_{i}', ev) for i, ev in enumerate(evals) if not ('basic-prompts' in ev and input.chk_hide_no_assertion_evals())]
-            if not modules: 
-                ui.notification_show('Selected evals do not have any assertions', type='message')
-            return modules
-        return module_graph('eval_0', eval_name)    
+        eval_set_name = input.select_eval_set()
+
+        eval_sets = getEvalSetToCompare()
+
+        if input.select_eval_set() != 'any':
+            eval_sets = {eval_set_name: eval_sets[eval_set_name]}
+
+        modules, evals = [], []
+        
+        with ui.Progress(min=1, max=len(eval_sets)) as p:
+        
+            for i, eval_set_name in enumerate(eval_sets.keys()):
+
+                if input.chk_hide_no_assertion_evals() and 'assertion' not in eval_set_name: continue
+                
+                if len(eval_sets) > 1:
+                    p.set(i+1, message=f"Processing {eval_set_name}")
+                else:
+                    p.set(message=f"Processing {eval_set_name}")
+
+                evals += [eval_name for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']]
+        
+        modules = [module_graph(f'eval_{i}', eval_name) for i, eval_name in enumerate(evals)]
+            
+        return modules

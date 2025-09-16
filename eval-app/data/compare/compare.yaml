@@ -1,0 +1,48 @@
+basic-prompts_human:
+  Name: "Basic prompts (Human)"
+  Evals to compare:
+    - - Base
+      - base-model_basic-prompts_human
+    - - RAG
+      - rag_basic-prompts_human
+    - - Agentic
+      - agentic_basic-prompts_human
+basic-prompts_rat:
+  Name: "Basic prompts (Rat)"
+  Evals to compare:
+    - - Base
+      - base-model_basic-prompts_rat
+    - - RAG
+      - rag_basic-prompts_rat
+    - - Agentic
+      - agentic_basic-prompts_rat
+
+tox-type-assertion-prompts_human:
+  Name: "Tox type prompts (Human)"
+  Evals to compare:
+    - - Base
+      - base-model_tox-type-assertion-prompts_human
+    - - RAG
+      - rag_tox-type-assertion-prompts_human
+    - - Agentic
+      - agentic_tox-type-assertion-prompts_human
+
+tox-type-assertion-prompts_rat:
+  Name: "Tox type prompts (Rat)"
+  Evals to compare:
+    - - Base
+      - base-model_tox-type-assertion-prompts_rat
+    - - RAG
+      - rag_tox-type-assertion-prompts_rat
+    - - Agentic
+      - agentic_tox-type-assertion-prompts_rat
+
+abt-qa-assertion-prompts_mixed:
+  Name: "ABT Q/A"
+  Evals to compare:
+    - - Base
+      - base-model_abt-qa-assertion-prompts_mixed
+    - - RAG
+      - rag_abt-qa-assertion-prompts_mixed
+    - - Agentic
+      - agentic_abt-qa-assertion-prompts_mixed

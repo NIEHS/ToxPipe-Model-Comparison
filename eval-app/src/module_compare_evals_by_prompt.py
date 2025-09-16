@@ -16,15 +16,6 @@ from .db import getRating, saveRating
 import re
 import asyncio
 
-ico_check = """<span class='passed'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-</svg></span>"""
-
-ico_cross = """<span class='failed'><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
-  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z"/>
-</svg></span>
-"""
-
 # -----------------------------------------------------------------------
 def prettyTableUI(df, col_widths, style_dict={}):
     def format(text, col_name):
@@ -55,7 +46,7 @@ def mod_ui(input, output, session):
     def getExplanationHTML(result):
 
         def resultStr(res):
-            return ico_check if res else ico_cross
+            return f"<span class='passed'>{fa.icon_svg('circle-check')}</span>" if res else f"<span class='failed'>{fa.icon_svg('circle-xmark')}</span>"
 
         def getComponentExplanation(results):
             text = ''
@@ -76,11 +67,7 @@ def mod_ui(input, output, session):
         return getComponentExplanation(result)
 
     with ui.div(class_="d-flex gap-5"):
-        ui.input_select("select_eval_set", "Eval set", choices={'basic-prompts_human': 'Basic prompts (Human)', 
-                                                                'basic-prompts_rat': 'Basic prompts (Rat)',
-                                                                'tox-type-assertion-prompts_human': 'Tox type prompts (Human)', 
-                                                                'tox-type-assertion-prompts_rat': 'Tox type prompts (Rat)',
-                                                                'abt-qa-assertion-prompts_mixed': 'ABT Q/A'})
+        ui.input_select("select_eval_set", "Eval sets", choices=[])
         ui.input_select("select_prompt", "Prompts", choices=[])
         @render.express
         def showVars():
@@ -102,7 +89,13 @@ def mod_ui(input, output, session):
 
             data = loadResults().copy()
             
-            if not hasAssertion(data): return
+            eval_set_name = input.select_eval_set()
+            eval_sets = getEvalSetToCompare()
+
+            for eval_name_key, _ in eval_sets[eval_set_name]['Evals to compare']:
+                if hasAssertion(data, f'Result ({eval_name_key})'): break
+            else:
+                return
 
             with ui.div(class_='results-top-bar gap-4'):
                 with ui.div(class_='d-flex align-items-center gap-2'):
@@ -135,51 +128,76 @@ def mod_ui(input, output, session):
                 #data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)
                 return addReason(x, col_suffix, type, core_ui.div(core_ui.markdown(x[f'Response{col_suffix}']), class_='app-table-content'))
             
+            def getResultBasedOnScoreThreshold(score_val, result_val, threshold_pass):
+                if score_val >= threshold_pass: return 'Pass'
+                if not pd.isna(result_val) and result_val != 'No assertion': return 'Fail'
+                return result_val
+            
             data = loadResults().copy()
             
             if data.empty: return
+
+            eval_set_name = input.select_eval_set()
+            eval_sets = getEvalSetToCompare()
             
-            data['Response'] = data.apply(lambda x: formatResponse(x, col_suffix='', type='base'), axis=1)
-            data['Response (RAG)'] = data.apply(lambda x: formatResponse(x, col_suffix=' (RAG)', type='rag'), axis=1)
-            data['Response (Agentic)'] = data.apply(lambda x: formatResponse(x, col_suffix=' (Agentic)', type='agentic'), axis=1)
-
-            if hasAssertion(data):
+            eval_name_keys = []
+            
+            for eval_name_key, _ in eval_sets[eval_set_name]['Evals to compare']:
+                data[f'Response ({eval_name_key})'] = data.apply(lambda x: formatResponse(x, col_suffix=f' ({eval_name_key})', type=eval_name_key.lower()), axis=1)
                 
-                threshold_pass = input.numeric_threshold()
+                col_result = f'Result ({eval_name_key})'
 
-                data['Result'] = data.apply(lambda x: 'Pass' if x['Score'] >= threshold_pass else 'Fail' if not pd.isna(x['Result']) and x['Result'] != 'No assertion' else x['Result'], axis=1) 
-                data['Result (RAG)'] = data.apply(lambda x: 'Pass' if x['Score (RAG)'] >= threshold_pass else 'Fail' if not pd.isna(x['Result (RAG)']) and x['Result (RAG)'] != 'No assertion' else x['Result (RAG)'], axis=1) 
-                data['Result (Agentic)'] = data.apply(lambda x: 'Pass' if x['Score (Agentic)'] >= threshold_pass else 'Fail' if not pd.isna(x['Result (Agentic)']) and x['Result (Agentic)'] != 'No assertion' else x['Result (Agentic)'], axis=1) 
+                if hasAssertion(data, col_result):
+                    threshold_pass = input.numeric_threshold()
+                    data[col_result] = data.apply(lambda x: getResultBasedOnScoreThreshold(x[f'Score ({eval_name_key})'], x[f'Result ({eval_name_key})'], threshold_pass), axis=1)
 
+                eval_name_keys.append(eval_name_key)
+                    
             style_dict={}
             if not data.empty:
                 for i, row in data.iterrows():
                     style_dict[f'row_{i}_col_0'] = 'app-table-row-no-assertion'
-                    for j, col_name in [(1, 'Result'), (2, 'Result (RAG)'), (3, 'Result (Agentic)')]:
+                    for j, eval_name_key in enumerate(eval_name_keys):
+                        col_name = f'Result ({eval_name_key})'
                         match row[col_name]:
                             case 'Pass':
-                                style_dict[f'row_{i}_col_{j}'] = 'app-table-row-pass'
+                                style_dict[f'row_{i}_col_{j+1}'] = 'app-table-row-pass'
                             case 'Fail':
-                                style_dict[f'row_{i}_col_{j}'] = 'app-table-row-fail'
+                                style_dict[f'row_{i}_col_{j+1}'] = 'app-table-row-fail'
                             case _:
-                                style_dict[f'row_{i}_col_{j}'] = 'app-table-row-no-assertion'
+                                style_dict[f'row_{i}_col_{j+1}'] = 'app-table-row-no-assertion'
 
-            table = prettyTableUI(data[["Model", "Response", "Response (RAG)", "Response (Agentic)"]], col_widths=[1, 3, 5, 3], style_dict=style_dict)
+            table = prettyTableUI(data[["Model"] + [f"Response ({eval_name_key})" for eval_name_key in eval_name_keys]], 
+                                  col_widths=[1, 3, 5, 3], 
+                                  style_dict=style_dict)
 
             return table
         
     ui.include_js(Config.DIR_HOME / "www" / "js" / "table.js", method='inline')
 
-    def hasAssertion(data):
+    def hasAssertion(data, col_result):
         if data.empty: return False
-        if len(data['Result'].unique()) == 0: return False
-        return not (data['Result'].unique() == ['No assertion']).all()
+        if len(data[col_result].unique()) == 0: return False
+        return not (data[col_result].unique() == ['No assertion']).all()
+    
+    @reactive.calc
+    def getEvalSetToCompare():
+        try:
+            eval_sets = loadYML(Config.DIR_DATA / 'compare' / f'compare.yaml')
+        except:
+            return {}
+        return eval_sets
+    
+    @reactive.effect
+    def loadEvalSets():
+        eval_sets = getEvalSetToCompare()
+        ui.update_select(id='select_eval_set', choices={k: v['Name'] for k, v in eval_sets.items()})
 
     @reactive.effect
     @reactive.event(input.select_eval_set)
     def loadEvals():
         try:
-            prompts = loadYML(Config.DIR_DATA / 'config' / f'{input.select_eval_set()}.yaml')['prompts']
+            prompts = loadYML(Config.DIR_DATA / 'compare' / f'{input.select_eval_set()}.yaml')['prompts']
         except:
             return
         
@@ -189,7 +207,7 @@ def mod_ui(input, output, session):
     @reactive.event(input.select_eval_set)
     def loadVars():
         try:
-            tests = loadYML(Config.DIR_DATA / 'config' / f'{input.select_eval_set()}_tests.yaml')['tests']    
+            tests = loadYML(Config.DIR_DATA / 'compare' / f'{input.select_eval_set()}_tests.yaml')['tests']    
         except:
             return {}
         
@@ -227,32 +245,26 @@ def mod_ui(input, output, session):
         var_sel = var_selected.get()
 
         if not eval_set_name or not prompt or (d_vars and len(d_vars) != len(var_sel)): return pd.DataFrame()
-        
-        output_base = Evaluator.processResults(eval_name=f'base-model_{eval_set_name}', prompt=prompt, d_vars=var_sel)
-        output_rag = Evaluator.processResults(eval_name=f'rag_{eval_set_name}', prompt=prompt, d_vars=var_sel)
-        output_agentic = Evaluator.processResults(eval_name=f'agentic_{eval_set_name}', prompt=prompt, d_vars=var_sel)
 
-        if output_base.empty or output_rag.empty or output_agentic.empty:
-            return pd.DataFrame()
+        eval_sets = getEvalSetToCompare()
         
-        output_rag['Model'] = output_rag['Model'].apply(lambda x: re.sub(r'(Toxpipe \(RAG\) \[)(.*)(\])', repl=r'\2', string=x))
-        output_agentic['Model'] = output_agentic['Model'].apply(lambda x: re.sub(r'(Toxpipe \(Agentic\) \[)(.*)(\])', repl=r'\2', string=x))
-        data = (pd.merge(left=output_base, right=output_rag, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, ' (RAG)'], how='outer')
-                    .merge(right=output_agentic, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, ' (Agentic)'], how='outer'))
+        eval_outputs_to_compare = pd.DataFrame(columns=['Prompt', *list(d_vars.keys()), 'Model', 
+                                                        'Response', 'Result', 'Score', 'Used Context', 
+                                                        'Searched Keyphrases', 'Reason'])
+        for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+            eval_output= Evaluator.processResults(eval_name=eval_name, prompt=prompt, d_vars=var_sel)
+            
+            if eval_output.empty:
+                return pd.DataFrame()
+            
+            eval_output['Model'] = eval_output['Model'].apply(lambda x: re.sub(r'(.* \[)(.*)(\])', repl=r'\2', string=x))
+            eval_outputs_to_compare = pd.merge(left=eval_outputs_to_compare, right=eval_output, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, f' ({eval_name_key})'], how='outer')
         
-        for col in data.columns:
+        for col in eval_outputs_to_compare.columns:
             if col.startswith('Response'):
-                data.loc[data[col].isna(), col] = ''
+                eval_outputs_to_compare.loc[eval_outputs_to_compare[col].isna(), col] = ''
         
-        cols = ["Model", "Response", "Response (RAG)", "Response (Agentic)", 
-                "Result", "Result (RAG)", "Result (Agentic)", 
-                "Score", "Score (RAG)", "Score (Agentic)",
-                "Used Context", "Searched Keyphrases",
-                "Reason", "Reason (RAG)", "Reason (Agentic)"]
-    
-        res = data[cols].reset_index(drop=True).sort_values('Model')
-
-        return res
+        return eval_outputs_to_compare.sort_values('Model')
 
     def selectVar(var_sel):
         var_selected.set({**var_selected.get(), **var_sel})

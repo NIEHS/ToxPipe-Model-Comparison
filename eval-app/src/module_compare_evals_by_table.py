@@ -1,18 +1,16 @@
 from shiny import reactive
 from shiny.express import ui, module, render
+from .utils import Config, loadYML
 from .utils_eval import Evaluator
-from .module_common import getEvals
 import pandas as pd
+import re
 
 @module
 def mod_ui(input, output, session):
 
     with ui.div(class_="row gap-5"):
         with ui.div(class_="col d-flex justify-content-start align-items-center gap-2"):
-            ui.input_select("select_level", "Levels", choices={'any': 'Any', 'base-model': 'Base model', 'rag': 'RAG', 'agentic': 'Agentic'})
-            ui.input_select("select_eval_set", "Eval set", choices={'any': 'Any', 'tox-type-assertion-prompt': 'Tox type prompts', 'abt-qa-assertion-prompts': 'ABT Q/A'})
-            ui.input_select("select_species", "Species", choices={'any': 'Any', 'human': 'Human', 'rat': 'Rat'})
-            ui.input_select("select_eval", "Evals", choices=[])
+            ui.input_select("select_eval_set", "Eval sets", choices=[])
 
         with ui.div(class_="col d-flex pb-3 justify-content-end align-items-end"):
             @render.download(
@@ -39,82 +37,76 @@ def mod_ui(input, output, session):
                             {'cols': None, 'style': {'text-align': 'center'}}
                     ]
                 )
-
+            
     @reactive.calc
-    @reactive.event(input.select_level, input.select_eval_set, input.select_species)
-    def processEvals():
-        return getEvals(level=input.select_level(), eval_set=input.select_eval_set(), species=input.select_species())
-
+    def getEvalSetToCompare():
+        try:
+            eval_sets = loadYML(Config.DIR_DATA / 'compare' / f'compare.yaml')
+        except:
+            return {}
+        return eval_sets
+    
     @reactive.effect
-    @reactive.event(input.select_level, input.select_eval_set, input.select_species)
-    def loadEvalMenu():
-        evals = processEvals()
-        ui.update_select(id='select_eval', choices=['Any'] + evals)
+    def loadEvalSets():
+        eval_sets = getEvalSetToCompare()
+        ui.update_select(id='select_eval_set', choices={'any': 'Any'} | {k: v['Name'] for k, v in eval_sets.items()})
+
+    def hasAssertion(data, col_result):
+        if data.empty: return False
+        if len(data[col_result].unique()) == 0: return False
+        return not (data[col_result].unique() == ['No assertion']).all()
 
     @reactive.calc
-    @reactive.event(input.select_level, input.select_eval_set, input.select_species)
+    @reactive.event(input.select_eval_set)
     def getReport():
-
-        d_eval_prompt = {'tox-type-assertion-prompts_human': 'Toxicity type prompts (Human)',
-                         'tox-type-assertion-prompts_rat': 'Toxicity type prompts (Rat)', 
-                         'abt-qa-assertion-prompts_mixed': 'ABT Q/A prompts'}
         
-        level_names = {'base-model': 'Base model', 'rag': 'RAG', 'agentic': 'Agentic'}
+        eval_set_name = input.select_eval_set()
 
-        eval_name = input.select_eval()
-        if eval_name == 'Any':
-            evals = processEvals()
-        else:
-            evals = [eval_name]
+        eval_sets = getEvalSetToCompare()
 
-        level = ''
+        if input.select_eval_set() != 'any':
+            eval_sets = {eval_set_name: eval_sets[eval_set_name]}
 
         df_report = pd.DataFrame()
-        d_df_report = {}
-        for eval_name in evals + ['dummy_assertion']:
-            if 'assertion' not in eval_name: continue
 
-            if level != '':
-                if level != eval_name.split('_')[0]:
-                    df_report_eval = pd.DataFrame(d_df_report)
-                    df_report_eval['Level'] = level_names[level]
-                    df_report = pd.concat([df_report, df_report_eval])
-                    if eval_name == 'dummy_assertion': continue
-                    level = eval_name.split('_')[0]
-                    d_df_report = {}
-            else:
-                level = eval_name.split('_')[0]
-
-            data = Evaluator.processResults(eval_name)
-            if data.empty: continue
+        with ui.Progress(min=1, max=len(eval_sets)) as p:
             
-            total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
-            header = f'{d_eval_prompt['_'.join(eval_name.split('_')[1:])]} ({int(total_assertions.iloc[0])})'
-            
-            # data_pass_perc = (data
-            #                     .groupby('Model')['Result']
-            #                     .value_counts()
-            #                     .reset_index()
-            #                     .pivot(index='Model', columns='Result', values='count'))
-            
-            # if data_pass_perc.columns.isin(['Pass']).any(): 
-            #     data_pass_perc.loc[data_pass_perc['Pass'].isna(), 'Pass'] = 0
-            # else:
-            #     data_pass_perc['Pass'] = 0
+            for i, eval_set_name in enumerate(eval_sets.keys()):
+                
+                if len(eval_sets) > 1:
+                    p.set(i+1, message=f"Processing {eval_set_name}")
+                else:
+                    p.set(message=f"Processing {eval_set_name}")
 
-            # data_pass_perc['Assertion'] =  data_pass_perc['Pass'] + data_pass_perc['Fail']
-            # data_pass_perc['Perc'] = data_pass_perc['Pass'] * 100 / data_pass_perc['Assertion']
-            # data_score = data_pass_perc[['Perc']].rename(columns={'Perc': header}).to_dict()
+                if 'assertion' not in eval_set_name: continue
 
-            data_score = (data.query('Result != "No assertion"')
-                          .groupby('Model')['Score']
-                          .mean()
-                          .reset_index(name=header)
-                          .set_index('Model'))
+                df_report_eval = pd.DataFrame()
 
-            for k, v in data_score.items():
-                d_df_report[k] = {**d_df_report.get(k, {}), **v}
+                for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
 
-        df_report = df_report.reset_index().rename(columns={'index': 'Models'})
+                    data = Evaluator.processResults(eval_name=eval_name)
 
-        return df_report
+                    if data.empty: continue
+
+                    if not hasAssertion(data, 'Result'): 
+                        df_report['Models'] = data['Models'].unique().sort()
+                        df_report[eval_name_key] = 'No assertion'
+                        continue
+
+                    total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
+                    header = f'{eval_sets[eval_set_name]['Name']} ({int(total_assertions.iloc[0])})'
+
+                    df_data_score = (data.query('Result != "No assertion"')
+                                .groupby('Model')['Score']
+                                .mean()
+                                .reset_index(name=header)
+                                .set_index('Model'))
+                    
+                    df_data_score['Level'] = eval_name_key
+                    
+                    df_report_eval = pd.concat([df_report_eval, df_data_score])
+                
+                if not df_report.empty and (df_report['Level'] == df_report_eval['Level']).all(): df_report = df_report.drop(columns='Level')
+                df_report = pd.concat([df_report, df_report_eval], axis=1)
+
+        return df_report.reset_index()
