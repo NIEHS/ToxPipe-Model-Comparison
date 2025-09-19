@@ -27,6 +27,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
 
     expected_phrases = reactive.value({})
     test_vars = reactive.value({})
+    errors = reactive.value([])
 
     @module
     def keywordContainer(input, output, session, index, keyphrase):
@@ -114,14 +115,13 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
     with ui.div(class_="row error m-2"):
         @render.ui
         def showError():
-            errors = validateFields()
-            return ui.HTML(f'<ui>{"".join(["<li>" + e_text + "</li>" for e_text in errors])}</ui>')
+            return ui.HTML(f'<ui>{"".join(["<li>" + e_text + "</li>" for e_text in errors.get()])}</ui>')
 
     with ui.div(class_="row"):
         with ui.div(class_="d-flex flex-column col gap-2 border rounded p-5"):
             with ui.div(class_="row gap-2"):
-                ui.input_text(id='txt_test', label='Name')
-                ui.input_text_area(id='txt_desc', label='Description')
+                ui.input_text(id='txt_eval_name', label='Eval ID')
+                ui.input_text_area(id='txt_desc', label='Eval Description')
 
             with ui.div(class_="row gap-2"):
 
@@ -130,7 +130,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
                     def showModels():
                         model_options = loadModelSettings()
                         model_list = {i: item['label'] for i, item in enumerate(model_options)}
-                        ui.input_select(id='select_models', label='Model list', choices=model_list, multiple=True)
+                        ui.input_select(id='select_models', label='Model list', choices=model_list, multiple=True, size=10)
 
                 with ui.div(class_="col-9"):
                     @render.express
@@ -207,24 +207,25 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
             if not bool(p.fullmatch(val)): return []
         return variables
 
-    @reactive.calc
-    @reactive.event(input.txt_test, input.txt_desc, input.select_models, input.txt_prompt, input.btn_create_eval, ignore_init=True)
-    def validateFields():
-        errors = []
+    def validateFields(ignore_empty=True):
 
-        val = input.txt_test()
-        p = regex.compile(r'[A-Za-z0-9\-\_]+')
-        if not bool(p.fullmatch(val)): errors.append('Name can only contain alphanumeric characters, "-" and "_"')
-        elif val and EvalConfigDB(val).exists(): errors.append('Name already exists')
+        errors_ = []
+
+        val = input.txt_eval_name()
+        if not (ignore_empty and not val):
+            p = regex.compile(r'[A-Za-z0-9\-\_]+')
+            if not bool(p.fullmatch(val)): errors_.append('ID can only contain alphanumeric characters, "-" and "_"')
+            elif val and EvalConfigDB(val).exists(): errors_.append('ID already exists')
 
         val = input.txt_desc()
-        p = regex.compile(r'[A-Za-z0-9 \-\_\,\;\(\)]+')
-        if not bool(p.fullmatch(val)): errors.append('Description can only contain alphanumeric characters, space, "-", "_", ",", ";" and "()"')
+        if not (ignore_empty and not val):
+            p = regex.compile(r'[A-Za-z0-9 \-\_\,\;\(\)]+')
+            if not bool(p.fullmatch(val)): errors_.append('Description can only contain alphanumeric characters, space, "-", "_", ",", ";" and "()"')
 
         p = regex.compile(r'\d*')
         model_options = loadModelSettings()
         model_list = input.select_models()
-        if len(model_list) == 0: errors.append('At least one model must be selected')
+        if not ignore_empty and len(model_list) == 0: errors_.append('At least one model must be selected')
         for model_id in model_list:
             model_config = model_options[int(model_id)]['config']
 
@@ -233,17 +234,21 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
             for in_field in input_fields:
                 field_name = '_'.join(in_field.split('_')[4:])
                 field_value = str(input[in_field.split('-')[-1]]()).strip()
-
-                if model_config[field_name]['type'] == 'int' and not bool(p.fullmatch(field_value)): errors.append(f'{field_name} can only contain numeric values')
+                if model_config[field_name]['type'] == 'int' and not bool(p.fullmatch(field_value)): errors_.append(f'{field_name} can only contain numeric values')
         
         val = input.txt_prompt()
-        if len(val.strip()) == 0:
-            errors.append('Prompt cannot be empty')
+        if not ignore_empty and len(val.strip()) == 0:
+            errors_.append('Prompt cannot be empty')
 
         prompt_vars = extractPromptVars()
-        if prompt_vars and len(validatePromptVars(prompt_vars)) == 0: errors.append('Prompt variable can only contain alphanumeric characters, "-" and "_"') 
+        if prompt_vars and len(validatePromptVars(prompt_vars)) == 0: errors_.append('Prompt variable can only contain alphanumeric characters, "-" and "_"') 
 
-        return errors
+        return errors_
+
+    @reactive.effect
+    @reactive.event(input.txt_eval_name, input.txt_desc, input.select_models, input.txt_prompt, ignore_init=True)
+    def getValidationErrors():
+        errors.set(validateFields())
 
     @reactive.calc
     def loadModelSettings():
@@ -315,10 +320,11 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
 
             return (field_name, field_value)
         
-        if len(validateFields()) > 0: return
+        errors.set(validateFields(ignore_empty=False))
+        if errors.get(): return
 
         model_options = loadModelSettings()
-        eval_name = input.txt_test()
+        eval_name = input.txt_eval_name()
         description = input.txt_desc()
         model_list = input.select_models()
         variables = test_vars.get()

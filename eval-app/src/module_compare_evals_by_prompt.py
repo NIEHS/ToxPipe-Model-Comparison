@@ -87,7 +87,7 @@ def mod_ui(input, output, session):
         @render.express
         def showTopBar():
 
-            data = loadResults().copy()
+            data = loadResultsTask.result().copy()
             
             eval_set_name = input.select_eval_set()
             eval_sets = getEvalSetToCompare()
@@ -96,7 +96,7 @@ def mod_ui(input, output, session):
                 if hasAssertion(data, f'Result ({eval_name_key})'): break
             else:
                 return
-
+            
             with ui.div(class_='results-top-bar gap-4'):
                 with ui.div(class_='d-flex align-items-center gap-2'):
                     ui.span('Pass score threshold')
@@ -133,8 +133,13 @@ def mod_ui(input, output, session):
                 if not pd.isna(result_val) and result_val != 'No assertion': return 'Fail'
                 return result_val
             
-            data = loadResults().copy()
-            
+            match loadResultsTask.status():
+                case 'initial':
+                    return ui.div(ui.strong("Responses will show up here"))
+                case 'running':
+                    return ui.div(ui.strong("Extracting responses..."))
+
+            data = loadResultsTask.result().copy()
             if data.empty: return
 
             eval_set_name = input.select_eval_set()
@@ -227,15 +232,39 @@ def mod_ui(input, output, session):
         var_sel = var_selected.get()
 
         if not prompt or (d_vars and len(d_vars) != len(var_sel)): return ''
-
+        
         try:
             prompt = prompt.format(**var_sel)
         except:
             prompt = ''
-
+    
         return prompt
+    
+    @reactive.extended_task
+    async def loadResultsTask(eval_set_name, prompt, d_vars, var_sel, eval_sets):
 
-    @reactive.calc
+        async def run():
+
+            eval_outputs_to_compare = pd.DataFrame(columns=['Prompt', *list(d_vars.keys()), 'Model', 
+                                                            'Response', 'Result', 'Score', 'Used Context', 
+                                                            'Searched Keyphrases', 'Reason'])
+            for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+                eval_output= Evaluator.processResults(eval_name=eval_name, prompt=prompt, d_vars=var_sel)
+                
+                if eval_output.empty: return pd.DataFrame()
+                
+                eval_output['Model'] = eval_output['Model'].apply(lambda x: re.sub(r'(.* \[)(.*)(\])', repl=r'\2', string=x))
+                eval_outputs_to_compare = pd.merge(left=eval_outputs_to_compare, right=eval_output, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, f' ({eval_name_key})'], how='outer')
+            
+            for col in eval_outputs_to_compare.columns:
+                if col.startswith('Response'):
+                    eval_outputs_to_compare.loc[eval_outputs_to_compare[col].isna(), col] = ''
+
+            return eval_outputs_to_compare.sort_values('Model')
+        
+        return await run()
+        
+    @reactive.effect
     @reactive.event(input.select_eval_set, input.select_prompt, var_selected)
     def loadResults():
         
@@ -243,28 +272,11 @@ def mod_ui(input, output, session):
         prompt = input.select_prompt()
         d_vars = loadVars()
         var_sel = var_selected.get()
-
-        if not eval_set_name or not prompt or (d_vars and len(d_vars) != len(var_sel)): return pd.DataFrame()
-
         eval_sets = getEvalSetToCompare()
-        
-        eval_outputs_to_compare = pd.DataFrame(columns=['Prompt', *list(d_vars.keys()), 'Model', 
-                                                        'Response', 'Result', 'Score', 'Used Context', 
-                                                        'Searched Keyphrases', 'Reason'])
-        for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
-            eval_output= Evaluator.processResults(eval_name=eval_name, prompt=prompt, d_vars=var_sel)
-            
-            if eval_output.empty:
-                return pd.DataFrame()
-            
-            eval_output['Model'] = eval_output['Model'].apply(lambda x: re.sub(r'(.* \[)(.*)(\])', repl=r'\2', string=x))
-            eval_outputs_to_compare = pd.merge(left=eval_outputs_to_compare, right=eval_output, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, f' ({eval_name_key})'], how='outer')
-        
-        for col in eval_outputs_to_compare.columns:
-            if col.startswith('Response'):
-                eval_outputs_to_compare.loc[eval_outputs_to_compare[col].isna(), col] = ''
-        
-        return eval_outputs_to_compare.sort_values('Model')
+
+        if not eval_set_name or not prompt or (d_vars and len(d_vars) != len(var_sel)): return
+
+        loadResultsTask(eval_set_name, prompt, d_vars, var_sel, eval_sets)
 
     def selectVar(var_sel):
         var_selected.set({**var_selected.get(), **var_sel})

@@ -11,6 +11,8 @@ def mod_ui(input, output, session):
     with ui.div(class_="row gap-5"):
         with ui.div(class_="col d-flex justify-content-start align-items-center gap-2"):
             ui.input_select("select_eval_set", "Eval sets", choices=[])
+        with ui.div(class_="col d-flex pb-1 justify-content-start align-items-end"):
+            ui.input_checkbox("chk_hide_no_assertion_evals", "Hide unlabeled evals", value=True)
 
         with ui.div(class_="col d-flex pb-3 justify-content-end align-items-end"):
             @render.download(
@@ -57,7 +59,7 @@ def mod_ui(input, output, session):
         return not (data[col_result].unique() == ['No assertion']).all()
 
     @reactive.calc
-    @reactive.event(input.select_eval_set)
+    @reactive.event(input.select_eval_set, input.chk_hide_no_assertion_evals)
     def getReport():
         
         eval_set_name = input.select_eval_set()
@@ -78,7 +80,7 @@ def mod_ui(input, output, session):
                 else:
                     p.set(message=f"Processing {eval_set_name}")
 
-                if 'assertion' not in eval_set_name: continue
+                if input.chk_hide_no_assertion_evals() and 'assertion' not in eval_set_name: continue
 
                 df_report_eval = pd.DataFrame()
 
@@ -88,9 +90,14 @@ def mod_ui(input, output, session):
 
                     if data.empty: continue
 
-                    if not hasAssertion(data, 'Result'): 
-                        df_report['Models'] = data['Models'].unique().sort()
-                        df_report[eval_name_key] = 'No assertion'
+                    if not hasAssertion(data, 'Result'):
+                        header = f'{eval_sets[eval_set_name]['Name']} (0)'
+                        df_data_score = pd.DataFrame() 
+                        df_data_score['Model'] = sorted(data['Model'].unique())
+                        df_data_score[header] = 'No assertion'
+                        df_data_score = df_data_score.set_index('Model')
+                        df_data_score['Level'] = eval_name_key
+                        df_report_eval = pd.concat([df_report_eval, df_data_score])
                         continue
 
                     total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()

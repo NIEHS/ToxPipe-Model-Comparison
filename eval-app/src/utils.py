@@ -19,9 +19,18 @@ class Config:
 
 def loadYML(file_path):
     data = None
-    with open(file_path) as stream:
-        try:
+    try:
+        with open(file_path) as stream:
             data = yaml.safe_load(stream)
-        except yaml.YAMLError as exc:
-            print(exc)
+    except yaml.YAMLError as exc:
+        print(exc)
     return data
+
+def saveYML(data, file_path):
+
+    class MyDumper(yaml.Dumper):
+        def increase_indent(self, flow=False, indentless=False):
+            return super(MyDumper, self).increase_indent(flow, False)
+
+    with open(file_path, mode='w') as fp:
+        yaml.dump(data, fp, Dumper=MyDumper, default_flow_style=False)

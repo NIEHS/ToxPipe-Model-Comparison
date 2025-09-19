@@ -147,7 +147,7 @@ def mod_ui(input, output, session, reload_evals_flag):
     @render.express
     def showPassScoreThresholdInput():
 
-        data = loadResultsByFilters().copy()
+        data = loadResultsTask.result().copy()
         
         if not hasAssertion(data): return
 
@@ -161,6 +161,8 @@ def mod_ui(input, output, session, reload_evals_flag):
             with ui.div():
                 ui.input_switch(id='switch_feedback', label='Add feedback', value=False)
 
+    ui.busy_indicators.use(spinners=True, pulse=False, fade=False)
+    
     @render.ui
     def showReults():
         def addReason(x):
@@ -191,8 +193,13 @@ def mod_ui(input, output, session, reload_evals_flag):
             
             return core_ui.div(core_ui.markdown(x['Response']), class_='app-table-content')
 
-        data = loadResultsByFilters().copy()
-        
+        match loadResultsTask.status():
+            case 'initial':
+                return ui.div(ui.strong("Responses will show up here"))
+            case 'running':
+                return ui.div(ui.strong("Extracting responses..."))
+
+        data = loadResultsTask.result().copy()
         if data.empty: return
 
         style_dict = {'Model': 'justify-content-center', 'Score': 'justify-content-center', 'Feedback': 'justify-content-center'}
@@ -353,7 +360,29 @@ def mod_ui(input, output, session, reload_evals_flag):
     def selectVar(var_sel):
         var_selected.set({**var_selected.get(), **var_sel})
 
-    @reactive.calc
+    @reactive.extended_task
+    async def loadResultsTask(eval_name, prompt, model, var_sel):
+
+        async def run():
+
+            data = Evaluator.processResults(eval_name=eval_name, 
+                                            prompt=prompt, 
+                                            provider=None if model == 'Any' else model,
+                                            d_vars=var_sel)
+            if data.empty: return data
+
+            cols = [col for col in ["Id", "eval_id", "Model", "Response", "Searched Keyphrases", "Score", "Result", "Reason", "Used Context"] if col in data.columns]
+
+            if not model or 'Any' in model:
+                res = data[cols].reset_index(drop=True).sort_values('Model')
+            else:
+                res = data[cols].reset_index(drop=True)
+
+            return res
+        
+        return await run()
+
+    @reactive.effect
     @reactive.event(input.select_eval, input.select_prompt, var_selected, input.select_model)
     def loadResultsByFilters():
 
@@ -365,20 +394,7 @@ def mod_ui(input, output, session, reload_evals_flag):
 
         if not (eval_name and prompt and (not d_vars or var_sel)): return pd.DataFrame()
 
-        data = Evaluator.processResults(eval_name=eval_name, 
-                                           prompt=prompt, 
-                                           provider=None if model == 'Any' else model,
-                                           d_vars=var_sel)
-        if data.empty: return data
-
-        cols = [col for col in ["Id", "eval_id", "Model", "Response", "Searched Keyphrases", "Score", "Result", "Reason", "Used Context"] if col in data.columns]
-
-        if not model or 'Any' in model:
-            res = data[cols].reset_index(drop=True).sort_values('Model')
-        else:
-            res = data[cols].reset_index(drop=True)
-
-        return res
+        loadResultsTask(eval_name, prompt, model, var_sel)
 
     # @reactive.calc
     # @reactive.event(input.select_eval, input.select_prompt, input.select_model, input.select_embedding)

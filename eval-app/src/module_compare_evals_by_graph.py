@@ -26,21 +26,21 @@ def module_graph(input, output, session, eval_name):
                         mod_vars(col, var_name=col, var_values=['Any'] + list(data[col].values), fn_reactive=selectVar)
 
         with ui.div(class_='row gap-1'):
+    
+            with ui.div(class_='col'):
+                with ui.card(fill=True):
+                    @render_widget
+                    def showPassFailStatPlot():
+                        return plotPassFailStat()
+                    
+            with ui.div(class_='col'):
+                with ui.card(fill=True):
+                    @render_widget
+                    def showAssertionStatPlot():
+                        return plotAssertionStat()
+                    
             @render.express
             def showPlots():
-            
-                with ui.div(class_='col'):
-                    with ui.card(fill=True):
-                        @render_widget
-                        def showPassFailStatPlot():
-                            return plotPassFailStat()
-                        
-                with ui.div(class_='col'):
-                    with ui.card(fill=True):
-                        @render_widget
-                        def showAssertionStatPlot():
-                            return plotAssertionStat()
-                        
                 if eval_name.startswith('rag'):
                     with ui.div(class_='col'):
                         with ui.card(fill=True):
@@ -71,6 +71,8 @@ def module_graph(input, output, session, eval_name):
     @reactive.event(var_selected)
     def plotPassFailStat():
 
+        if not var_selected.get(): return
+
         data = loadEvalResults()
         data = filterDataByVars(data, var_selected.get())
 
@@ -90,6 +92,8 @@ def module_graph(input, output, session, eval_name):
     @reactive.calc
     @reactive.event(var_selected)
     def plotAssertionStat():
+
+        if not var_selected.get(): return
 
         data = loadEvalResults()
         data = filterDataByVars(data, var_selected.get())
@@ -144,6 +148,8 @@ def module_graph(input, output, session, eval_name):
     @reactive.calc
     @reactive.event(var_selected)
     def plotContextSearchStat():
+
+        if not var_selected.get(): return
 
         data = loadEvalResults()
         data = filterDataByVars(data, var_selected.get())
@@ -211,21 +217,9 @@ def mod_ui(input, output, session):
         if input.select_eval_set() != 'any':
             eval_sets = {eval_set_name: eval_sets[eval_set_name]}
 
-        modules, evals = [], []
+        evals = []
+        for eval_set_name in eval_sets:
+            if input.chk_hide_no_assertion_evals() and 'assertion' not in eval_set_name: continue
+            evals += [eval_name for [_, eval_name] in eval_sets[eval_set_name]['Evals to compare']]
         
-        with ui.Progress(min=1, max=len(eval_sets)) as p:
-        
-            for i, eval_set_name in enumerate(eval_sets.keys()):
-
-                if input.chk_hide_no_assertion_evals() and 'assertion' not in eval_set_name: continue
-                
-                if len(eval_sets) > 1:
-                    p.set(i+1, message=f"Processing {eval_set_name}")
-                else:
-                    p.set(message=f"Processing {eval_set_name}")
-
-                evals += [eval_name for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']]
-        
-        modules = [module_graph(f'eval_{i}', eval_name) for i, eval_name in enumerate(evals)]
-            
-        return modules
+        return [module_graph(f'eval_{i}', eval_name) for i, eval_name in enumerate(evals)]
