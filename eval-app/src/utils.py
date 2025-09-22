@@ -4,7 +4,7 @@ import yaml
 
 class Config:
     DIR_HOME = Path(__file__).parent.parent
-    DIR_DATA = DIR_HOME / 'data'
+    DIR_CONFIG = DIR_HOME / 'config'
     RANDOM_STATE = 1000
     CONFIG_PLOT = dict(
                         template = 'simple_white',
@@ -18,12 +18,8 @@ class Config:
     env_config = dotenv.dotenv_values(DIR_HOME / '.env')
 
 def loadYML(file_path):
-    data = None
-    try:
-        with open(file_path) as stream:
-            data = yaml.safe_load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
+    with open(file_path) as fp:
+        data = yaml.safe_load(fp)
     return data
 
 def saveYML(data, file_path):

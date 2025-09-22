@@ -88,12 +88,9 @@ def mod_ui(input, output, session):
         def showTopBar():
 
             data = loadResultsTask.result().copy()
-            
-            eval_set_name = input.select_eval_set()
-            eval_sets = getEvalSetToCompare()
-
-            for eval_name_key, _ in eval_sets[eval_set_name]['Evals to compare']:
-                if hasAssertion(data, f'Result ({eval_name_key})'): break
+            if data.empty: return
+            for col in list(data.columns[data.columns.str.startswith('Result')]):
+                if hasAssertion(data, col): break
             else:
                 return
             
@@ -108,7 +105,7 @@ def mod_ui(input, output, session):
             def addReason(x, col_suffix, type, content):
                 return core_ui.popover(
                             content,
-                            core_ui.HTML(getExplanationHTML(x[f'Reason{col_suffix}']) if x['Result'] != 'No assertion' else 'No assertion'),
+                            core_ui.HTML(getExplanationHTML(x[f'Reason{col_suffix}']) if x[f'Result{col_suffix}'] != 'No assertion' else 'No assertion'),
                             placement="right",
                             id=f"popover_result_reason_{type}_{x.name}",
                             options={"trigger": "hover focus"}
@@ -119,13 +116,13 @@ def mod_ui(input, output, session):
                 if col_suffix == ' (RAG)':
                     return addReason(x, col_suffix, type, 
                                      core_ui.div(
-                                        core_ui.div(f'[The following response was taken from {("RAG resources" if x[f'Used Context'] else "model's training knowledge")}]',
+                                        core_ui.div(f'[The following response was taken from {("RAG resources" if x[f'Used Context{col_suffix}'] else "model's training knowledge")}]',
                                                     class_='fst-italic fw-bold mb-4'),
                                         core_ui.div(core_ui.markdown(x[f'Response{col_suffix}'])),
                                         class_='app-table-content'
                                     )
                     )
-                #data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)
+                
                 return addReason(x, col_suffix, type, core_ui.div(core_ui.markdown(x[f'Response{col_suffix}']), class_='app-table-content'))
             
             def getResultBasedOnScoreThreshold(score_val, result_val, threshold_pass):
@@ -188,10 +185,9 @@ def mod_ui(input, output, session):
     @reactive.calc
     def getEvalSetToCompare():
         try:
-            eval_sets = loadYML(Config.DIR_DATA / 'compare' / f'compare.yaml')
+            return loadYML(Config.DIR_CONFIG / 'compare.yaml')
         except:
             return {}
-        return eval_sets
     
     @reactive.effect
     def loadEvalSets():
@@ -200,38 +196,53 @@ def mod_ui(input, output, session):
 
     @reactive.effect
     @reactive.event(input.select_eval_set)
-    def loadEvals():
+    def loadPrompts():
+        eval_set_name = input.select_eval_set()
+        eval_sets = getEvalSetToCompare()
+        prompts = []
         try:
-            prompts = loadYML(Config.DIR_DATA / 'compare' / f'{input.select_eval_set()}.yaml')['prompts']
+            for [_, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+                prompts += Evaluator.getPrompts(eval_name=eval_name)
+            prompts = sorted(set(prompts))
         except:
             return
         
         ui.update_select(id='select_prompt', choices=prompts)
 
     @reactive.calc
-    @reactive.event(input.select_eval_set)
+    @reactive.event(input.select_eval_set, input.select_prompt)
     def loadVars():
-        try:
-            tests = loadYML(Config.DIR_DATA / 'compare' / f'{input.select_eval_set()}_tests.yaml')['tests']    
-        except:
-            return {}
+        eval_set_name = input.select_eval_set()
+        prompt = input.select_prompt()
+
+        if not (eval_set_name and prompt): return {}
+        
+        eval_sets = getEvalSetToCompare()
+        
+        var_selected.set({}) 
         
         d_vars = {}
-        for test in tests:
-            for k, v in test['vars'].items():
-                d_vars[k] = d_vars.get(k, []) + [v]
-        d_vars = {k: pd.unique(pd.Series(v)) for k, v in d_vars.items()}
-        return d_vars
+        try:
+            for [_, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+                d_vars |= Evaluator.getVars(eval_name=eval_name)
+        except:
+            return
+        
+        data = Evaluator.filterVarsByPrompt(d_vars, prompt)
+        
+        return data
     
     @reactive.calc
     @reactive.event(input.select_prompt, var_selected)
     def getPrompt():
         
         prompt = input.select_prompt.get()
-        d_vars = loadVars()
+        if not prompt: return ''
+        
+        vars_prompt = set(re.findall(r"{(\w+)}", prompt))
         var_sel = var_selected.get()
 
-        if not prompt or (d_vars and len(d_vars) != len(var_sel)): return ''
+        if len(vars_prompt) != len(var_sel): return ''
         
         try:
             prompt = prompt.format(**var_sel)
@@ -245,22 +256,27 @@ def mod_ui(input, output, session):
 
         async def run():
 
-            eval_outputs_to_compare = pd.DataFrame(columns=['Prompt', *list(d_vars.keys()), 'Model', 
-                                                            'Response', 'Result', 'Score', 'Used Context', 
-                                                            'Searched Keyphrases', 'Reason'])
+            req_cols = ['Prompt', *list(d_vars.keys()), 'Model']
+            extra_cols = ['Response', 'Result', 'Score', 'Used Context', 'Searched Keyphrases', 'Reason']
+            columns = req_cols + extra_cols
+
+            eval_outputs_to_compare = pd.DataFrame(columns=columns)
             for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
                 eval_output= Evaluator.processResults(eval_name=eval_name, prompt=prompt, d_vars=var_sel)
-                
+
                 if eval_output.empty: return pd.DataFrame()
                 
                 eval_output['Model'] = eval_output['Model'].apply(lambda x: re.sub(r'(.* \[)(.*)(\])', repl=r'\2', string=x))
+                
                 eval_outputs_to_compare = pd.merge(left=eval_outputs_to_compare, right=eval_output, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, f' ({eval_name_key})'], how='outer')
             
             for col in eval_outputs_to_compare.columns:
                 if col.startswith('Response'):
                     eval_outputs_to_compare.loc[eval_outputs_to_compare[col].isna(), col] = ''
 
-            return eval_outputs_to_compare.sort_values('Model')
+            eval_outputs_to_compare = eval_outputs_to_compare.drop(columns=extra_cols).sort_values('Model')
+
+            return eval_outputs_to_compare
         
         return await run()
         

@@ -43,10 +43,9 @@ def mod_ui(input, output, session):
     @reactive.calc
     def getEvalSetToCompare():
         try:
-            eval_sets = loadYML(Config.DIR_DATA / 'compare' / f'compare.yaml')
+            return loadYML(Config.DIR_CONFIG / 'compare.yaml')
         except:
             return {}
-        return eval_sets
     
     @reactive.effect
     def loadEvalSets():

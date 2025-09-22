@@ -78,7 +78,7 @@ def mod_ui(input, output, session, reload_evals_flag):
     @reactive.event(reload_eval_set_flag)
     def getEvalSetToCompare():
         try:
-            eval_sets = loadYML(Config.DIR_DATA / 'compare' / f'compare.yaml')
+            eval_sets = loadYML(Config.DIR_CONFIG / 'compare.yaml')
         except:
             return {}
         return eval_sets
@@ -131,7 +131,7 @@ def mod_ui(input, output, session, reload_evals_flag):
         eval_sets |= {eval_set_id: {'Name': eval_set_name, 'Evals to compare': [[v, k] for k, v in eval_info.get().items()]}}
 
         try:
-            saveYML(data=eval_sets, file_path=Config.DIR_DATA / 'compare' / f'compare.yaml')
+            saveYML(data=eval_sets, file_path=Config.DIR_CONFIG / 'compare.yaml')
             ui.notification_show(f'Comparison was set up successfully', type="message")
             reload_eval_set_flag.set(not reload_eval_set_flag.get())
         except Exception as exp:

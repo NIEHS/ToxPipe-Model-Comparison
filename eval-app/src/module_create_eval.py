@@ -128,7 +128,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
                 with ui.div(class_='col-2'):
                     @render.express
                     def showModels():
-                        model_options = loadModelSettings()
+                        model_options = loadConfig().get('providers', [])
                         model_list = {i: item['label'] for i, item in enumerate(model_options)}
                         ui.input_select(id='select_models', label='Model list', choices=model_list, multiple=True, size=10)
 
@@ -223,7 +223,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
             if not bool(p.fullmatch(val)): errors_.append('Description can only contain alphanumeric characters, space, "-", "_", ",", ";" and "()"')
 
         p = regex.compile(r'\d*')
-        model_options = loadModelSettings()
+        model_options = loadConfig().get('providers', [])
         model_list = input.select_models()
         if not ignore_empty and len(model_list) == 0: errors_.append('At least one model must be selected')
         for model_id in model_list:
@@ -251,17 +251,16 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
         errors.set(validateFields())
 
     @reactive.calc
-    def loadModelSettings():
-        dir_output = Config.DIR_DATA / 'eval_info'
-        if (dir_output / 'providers.json').exists():
-            with open(dir_output / 'providers.json') as f:
-                return json.load(f)
-        return []
+    def loadConfig():
+        try:
+            return loadYML(Config.DIR_CONFIG / 'config.yaml')
+        except:
+            return {}
 
     @reactive.calc
     @reactive.event(input.select_models)
     def loadModelConfig():
-        model_options = loadModelSettings()
+        model_options = loadConfig().get('providers', [])
         if not model_options: return {}
         return [(i, model_options[int(i)]) for i in input.select_models()]
     
@@ -323,7 +322,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
         errors.set(validateFields(ignore_empty=False))
         if errors.get(): return
 
-        model_options = loadModelSettings()
+        model_options = loadConfig().get('providers', [])
         eval_name = input.txt_eval_name()
         description = input.txt_desc()
         model_list = input.select_models()
@@ -352,7 +351,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
             }
         }
 
-        prompt_system = loadYML(Config.DIR_DATA / 'config' / 'system_prompt.yaml')
+        prompt_system = loadConfig().get('system_prompt', '')
 
         prompts = {
             'system': prompt_system['system'] if prompt_system is not None and 'system' in prompt_system else '',

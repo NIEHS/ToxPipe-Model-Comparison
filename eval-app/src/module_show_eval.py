@@ -13,6 +13,7 @@ from .utils import Config
 from .module_common import mod_vars
 from .utils_eval import Evaluator
 from .db import getRating, saveRating
+import re
 
 # -----------------------------------------------------------------------
 def prettyTableUI(df, col_widths, style_dict={}):
@@ -293,38 +294,7 @@ def mod_ui(input, output, session, reload_evals_flag):
         if data.empty: return False
         if len(data['Result'].unique()) == 0: return False
         return not (data['Result'].unique() == ['No assertion']).all()
-
-    @reactive.effect
-    @reactive.event(reload_evals_flag)
-    def loadEvals():
-        ui.update_select(id='select_eval', choices=Evaluator.loadEvals())
-
-    @reactive.effect
-    @reactive.event(input.select_eval)
-    def loadPrompts():
-        eval_name = input.select_eval()
-        prompts = Evaluator.getAllPrompts(eval_name)
-        ui.update_select(id="select_prompt", choices=prompts)
-        #embeddings = Evaluator.processEmbeddings(eval_name)
-        #return output, embeddings
-
-    @reactive.calc
-    @reactive.event(input.select_prompt, var_selected)
-    def getPrompt():
-        
-        prompt = input.select_prompt.get()
-        d_vars = loadVars()
-        var_sel = var_selected.get()
-
-        if not prompt or (d_vars and len(d_vars) != len(var_sel)): return ''
-
-        try:
-            prompt = prompt.format(**var_sel)
-        except:
-            prompt = ''
-
-        return prompt
-
+    
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadFeedbacks():
@@ -336,16 +306,21 @@ def mod_ui(input, output, session, reload_evals_flag):
         return feedback.set_index('id').to_dict(orient='index')
 
     @reactive.effect
-    @reactive.event(input.select_eval, input.select_prompt)
-    def loadModels():
+    @reactive.event(reload_evals_flag)
+    def loadEvals():
+        ui.update_select(id='select_eval', choices=Evaluator.loadEvals())
+
+    @reactive.effect
+    @reactive.event(input.select_eval)
+    def loadPromptsAndModels():
         eval_name = input.select_eval()
-        prompt = input.select_prompt()
-        if not (eval_name and prompt): return
-        var_selected.set({})
-        models = Evaluator.getProvidersByPrompt(eval_name, prompt)
+        var_selected.set({}) 
+        prompts = Evaluator.getPrompts(eval_name)
+        models = Evaluator.getProviders(eval_name)
+        ui.update_select(id="select_prompt", choices=prompts)
         ui.update_select(id="select_model", choices=['Any'] + models)
-        #if not embeddings: return
-        #ui.update_select(id="select_embedding", choices=sorted(embeddings.keys()))
+        #embeddings = Evaluator.processEmbeddings(eval_name)
+        #return output, embeddings
 
     @reactive.calc
     @reactive.event(input.select_eval, input.select_prompt)
@@ -353,12 +328,34 @@ def mod_ui(input, output, session, reload_evals_flag):
         eval_name = input.select_eval()
         prompt = input.select_prompt()
         if not (eval_name and prompt): return {}
-        data = Evaluator.getVarsByPrompt(eval_name, prompt)
+        var_selected.set({}) 
+        d_vars = Evaluator.getVars(eval_name)
+        data = Evaluator.filterVarsByPrompt(d_vars, prompt)
 
         return data
 
     def selectVar(var_sel):
         var_selected.set({**var_selected.get(), **var_sel})
+
+    @reactive.calc
+    @reactive.event(input.select_prompt, var_selected)
+    def getPrompt():
+
+        prompt = input.select_prompt()
+        
+        if not prompt: return ''
+        
+        vars_prompt = set(re.findall(r"{(\w+)}", prompt))
+        var_sel = var_selected.get()
+
+        if len(vars_prompt) != len(var_sel): return ''
+
+        try:
+            prompt = prompt.format(**var_sel)
+        except:
+            prompt = ''
+
+        return prompt
 
     @reactive.extended_task
     async def loadResultsTask(eval_name, prompt, model, var_sel):

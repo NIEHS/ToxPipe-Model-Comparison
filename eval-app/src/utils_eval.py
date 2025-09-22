@@ -3,6 +3,7 @@ from .db import EvalDB, EvalConfigDB
 import json
 import traceback
 import pandas as pd
+import re
 
 # Custom evaluator
 class Evaluator:
@@ -41,23 +42,26 @@ class Evaluator:
         except:
             return {}
         
-    def getAllPrompts(eval_name: str):
-        db = EvalDB(eval_name)
-        return db.collection.distinct('prompt')
+    def getPrompts(eval_name: str):
+        db = EvalConfigDB(eval_name)
+        return db.collection.distinct('prompts')
     
-    def getProvidersByPrompt(eval_name: str, prompt: str):
-        db = EvalDB(eval_name)
-        return sorted([item['provider']['label'] for item in db.collection.find({'prompt': prompt})])
+    def getProviders(eval_name: str):
+        db = EvalConfigDB(eval_name)
+        return sorted(map(lambda x: x['label'], db.collection.distinct('providers')))
     
-    def getVarsByPrompt(eval_name: str, prompt: str):
-        db = EvalDB(eval_name)
+    def getVars(eval_name: str):
+        db = EvalConfigDB(eval_name)
+        var_list = [item['vars'] for item in db.collection.distinct('tests') if 'vars' in item]
         d_vars = {}
-        for record in db.collection.find({'prompt': prompt}):
-            if 'vars' not in record: return {}
-            for k, v in record['vars'].items():
+        for d in var_list:
+            for k, v in d.items():
                 d_vars[k] = d_vars.get(k, []) + [v]
-        d_vars = {k: list(pd.unique(pd.Series(v))) for k, v in d_vars.items()}
         return d_vars
+    
+    def filterVarsByPrompt(d_vars, prompt):
+        vars_prompt = set(re.findall(r"{(\w+)}", prompt))
+        return {k: v for k, v in d_vars.items() if k in vars_prompt}
     
     def getEvalInfo(eval_name: str):
         db = EvalDB(eval_name)
