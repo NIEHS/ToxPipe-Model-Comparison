@@ -266,14 +266,17 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
     @reactive.calc
     def loadConfig():
         try:
-            return loadYML(Config.DIR_CONFIG / 'config.yaml')
+            config = loadYML(Config.DIR_CONFIG / 'config.yaml')
+            assert isinstance(config, dict), "Config was not set up"
+            return config
         except:
             return {}
 
     @reactive.calc
     @reactive.event(input.select_models)
     def loadModelConfig():
-        model_options = loadConfig().get('providers', [])
+        config = loadConfig()
+        model_options = config.get('providers', [])
         if not model_options: return {}
         return [(i, model_options[int(i)]) for i in input.select_models()]
     
