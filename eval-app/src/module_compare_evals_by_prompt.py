@@ -185,7 +185,9 @@ def mod_ui(input, output, session):
     @reactive.calc
     def getEvalSetToCompare():
         try:
-            return loadYML(Config.DIR_CONFIG / 'compare.yaml')
+            eval_sets = loadYML(Config.DIR_CONFIG / 'compare.yaml')
+            assert isinstance(eval_sets, dict), "No eval sets were not set up for comparison"
+            return eval_sets
         except:
             return {}
     
