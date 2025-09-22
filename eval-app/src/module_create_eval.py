@@ -153,6 +153,15 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
                                                     ui.input_text(id=f'txt_model_config_{index}_{k}', label=v['label'], value=int(v['default']))
             
             with ui.div(class_='row gap-2'):
+                with ui.div(class_='row'):
+                    with ui.div(class_='col'):
+                        with ui.accordion(open=False):
+                            with ui.accordion_panel('System Prompt'):
+                                @render.express
+                                def showSystemPrompt():
+                                    config = loadConfig()
+                                    system_prompt = config.get('system_prompt', '')
+                                    ui.input_text_area(id='txt_prompt_system', label='', value=system_prompt, rows=5, width='100%')
 
                 with ui.div(class_='row'):
                     with ui.div(class_='col'):
@@ -239,6 +248,10 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
         val = input.txt_prompt()
         if not ignore_empty and len(val.strip()) == 0:
             errors_.append('Prompt cannot be empty')
+
+        val = input.txt_prompt_system()
+        if not ignore_empty and len(val.strip()) == 0:
+            errors_.append('System prompt cannot be empty')
 
         prompt_vars = extractPromptVars()
         if prompt_vars and len(validatePromptVars(prompt_vars)) == 0: errors_.append('Prompt variable can only contain alphanumeric characters, "-" and "_"') 
@@ -351,7 +364,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
             }
         }
 
-        prompt_system = loadConfig().get('system_prompt', '')
+        prompt_system = input.txt_prompt_system()
 
         prompts = {
             'system': prompt_system['system'] if prompt_system is not None and 'system' in prompt_system else '',
