@@ -26,7 +26,7 @@ This level includes the following foundational models,
 ```{python}
 import json
 from pathlib import Path
-with open(Path('../eval-app/data/eval_info/providers.json')) as fp:
+with open(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/providers.json')) as fp:
     d = json.load(fp)
 
 for k in d:
@@ -60,7 +60,7 @@ List the {effect_type} of {chem_casrn} on human
 ```{python}
 import pandas as pd
 
-data = pd.read_csv(Path('../eval-app/data/eval_info/tox-type-prompts_human.txt'), sep='\t')
+data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/tox-type-prompts_human.txt'), sep='\t')
 print(', '.join([k for k in data['Toxicity'].values if not pd.isna(k)]))
 ```
 
@@ -75,7 +75,7 @@ The following 20 chemicals were tested with basic and toxicity types prompts.
 import pandas as pd
 from pathlib import Path
 
-data = pd.read_csv(Path('../eval-app/data/eval_info/chemical_casrn.txt'))
+data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/chemical_casrn.txt'))
 print(data.to_markdown(index=False))
 ```
 
@@ -86,7 +86,7 @@ The number of queries in an evaluation set is ```# base models x # prompts x # c
 ```{python}
 import pandas as pd
 
-data = pd.read_csv(Path('../eval-app/data/eval_info/prompt_counts.csv'))
+data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/prompt_counts.csv'))
 data[data.isna()] = ''
 print(data.to_markdown(index=False))
 ```
@@ -103,7 +103,7 @@ Percentage of successful responses to queries in each evaluation sets by each To
 import pandas as pd
 from pathlib import Path
 
-data = pd.read_csv(Path('../eval-app/data/results/eval_report.csv'))
+data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/results/eval_report.csv'))
 data = data.set_index('Models').round(2).reset_index()
 print(data.to_markdown(index=False))
 ```
