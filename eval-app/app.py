@@ -10,7 +10,7 @@ from src import module_create_and_run_eval, \
 ui.include_css(Config.DIR_HOME / "www" / "css" / "bootstrap.css", method='link_files')
 ui.include_css(Config.DIR_HOME / "www" / "css" / "custom.css", method='link_files')
 
-ui.page_opts(title="ToxPipe Evaluation", fillable=True)
+ui.page_opts(title=Config.env_config["APP_NAME"], fillable=True)
 
 reload_evals_flag = reactive.value(True)
 
