@@ -24,14 +24,13 @@ ToxPipe system is evaluated at three levels.
 
 This level includes the following foundational models,
 ```{python}
-import json
+import yaml
 from pathlib import Path
-with open(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/providers.json')) as fp:
-    d = json.load(fp)
+with open(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/providers.yaml')) as fp:
+    d = yaml.safe_load(fp)
 
-for k in d:
-    if 'label' in k and not k['label'].startswith('Toxpipe'):
-        print(f'- {k['label']}')
+for model in d['base-model']['providers']:
+    print(f'- {model['label']}')
 ```
 *RAG*
 

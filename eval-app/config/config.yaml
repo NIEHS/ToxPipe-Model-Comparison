@@ -11,7 +11,7 @@
 #   Adhere to ethical standards in toxicology and maintain scientific objectivity in your assessments.
 
 # providers:
-#   - id: "llm:azure-o3"
+#   - id: "llm:openai:chat:azure-o3"
 #     label: "o3"
 #     config:
 #       temperature:
@@ -64,7 +64,7 @@ system_prompt: >
 
 
 providers:
-  - id: "llm:azure-o3"
+  - id: "llm:openai:chat:azure-o3"
     label: "o3"
     config:
       temperature:
@@ -74,7 +74,7 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:azure-gpt-4o"
+  - id: "llm:openai:chat:azure-gpt-4o"
     label: "GPT-4o"
     config:
       temperature:
@@ -84,7 +84,7 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:claude-3-7-sonnet"
+  - id: "llm:openai:chat:claude-3-7-sonnet"
     label: "Claude 3.7 Sonnet"
     config:
       temperature:
@@ -94,7 +94,7 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:gemini-2.5-pro"
+  - id: "llm:openai:chat:gemini-2.5-pro"
     label: "Gemini 2.5 Pro"
     config:
       temperature:
@@ -104,7 +104,7 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:gemini-2.5-flash"
+  - id: "llm:openai:chat:gemini-2.5-flash"
     label: "Gemini 2.5 Flash"
     config:
       temperature:
@@ -114,7 +114,7 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:id:llama3-3-70b"
+  - id: "llm:openai:chat:id:llama3-3-70b"
     label: "Llama 3.3 70B"
     config:
       temperature:
@@ -124,7 +124,7 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:mistral-large-2"
+  - id: "llm:openai:chat:mistral-large-2"
     label: "Mistral Large 2"
     config:
       temperature:
@@ -134,7 +134,7 @@ providers:
         min: 0
         max: 1
 
-  - id: "rag"
+  - id: "ToxPipeRAG"
     label: "Toxpipe (RAG)"
     config:
       model:
@@ -166,8 +166,8 @@ providers:
           - "false"
         default: "false"
 
-  - id: "agentic"
-    label: "Toxpipe (Agentic)"
+  - id: "ToxPipeAgentic"
+    label: "ToxPipe (Agentic)"
     config:
       model:
         label: "LLM"
@@ -185,8 +185,8 @@ providers:
       max_iterations:
         label: "Maximum number of Iterations"
         type: "int"
-        default: 10",
-        min: "1"
+        default: 10
+        min: 1
 
       "summarize":
         label: "Should summarize the response?"

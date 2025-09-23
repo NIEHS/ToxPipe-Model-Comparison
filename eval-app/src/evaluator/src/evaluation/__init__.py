@@ -1,6 +1,6 @@
 
 from langsmith import traceable
-from .models import queryBaseModel, queryToxpipe
+from .executor import Executor
 from .evaluator import EvaluateResponse
 import concurrent.futures
 import tqdm
@@ -14,11 +14,7 @@ from datetime import datetime
 def getModelResponse(model_info, prompt_info, vars_info):
 
     try:
-        if model_info['id'] not in ['agentic', 'rag']:
-            response = queryBaseModel(model_info, prompt_info, vars_info)
-        else:
-            response = queryToxpipe(type=model_info['id'], model_config=model_info['config'], prompt=prompt_info['user'].format(**vars_info))
-        
+        response = Executor(model_info, prompt_info, vars_info).execute()
     except Exception as exp:
         error = f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}'
         print(error)
@@ -123,7 +119,7 @@ def resumeLastRun(db, skip_run, resume_eval):
         run(eval_sets, eval_sets_eval)
 
     if len(eval_sets) or len(eval_sets_eval): 
-        print(f'Processing upto to record id {record['_id']}')
+        print(f'Processing upto record id {record['_id']}')
         run(eval_sets, eval_sets_eval)
 
 def runTest(eval_name, resume=False, skip_run=False):
@@ -149,7 +145,12 @@ def runTest(eval_name, resume=False, skip_run=False):
                     vars_info = test.get('vars', {})
                     assert_info = test.get('assert', {})
 
-                    tests.append({'_id': index, 'provider': model_info, 'prompt': prompt_info['user'], 'vars': vars_info, 'assert': assert_info, 'response': {'output': ''}})
+                    tests.append({'_id': index, 
+                                  'provider': model_info, 
+                                  'prompt': prompt_info['user'], 
+                                  'vars': vars_info, 
+                                  'assert': assert_info, 
+                                  'response': {'output': '', 'results': {}}})
                     index += 1
 
                     if len(tests) >= 50:

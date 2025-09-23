@@ -2,7 +2,7 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain.output_parsers.fix import OutputFixingParser
-from .models import createBaseModel
+from .models import createOpenAIModel
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Union
     
@@ -47,7 +47,7 @@ class EvaluateResponse:
 
     def __init__(self, assert_info):
         self.assert_info = assert_info
-        llm = createBaseModel({'id': 'openai:chat:azure-gpt-4o', 'config': {'temperature': 0}})
+        llm = createOpenAIModel(model_name='azure-gpt-4o', temperature=0)
         parser = OutputFixingParser.from_llm(parser=PydanticOutputParser(pydantic_object=EvaluateResponseSchema), 
                                              llm=llm,
                                              max_retries=2)

@@ -155,13 +155,11 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
             with ui.div(class_='row gap-2'):
                 with ui.div(class_='row'):
                     with ui.div(class_='col'):
-                        with ui.accordion(open=False):
-                            with ui.accordion_panel('System Prompt'):
-                                @render.express
-                                def showSystemPrompt():
-                                    config = loadConfig()
-                                    system_prompt = config.get('system_prompt', '')
-                                    ui.input_text_area(id='txt_prompt_system', label='', value=system_prompt, rows=5, width='100%')
+                        @render.express
+                        def showSystemPrompt():
+                            config = loadConfig()
+                            system_prompt = config.get('system_prompt', '')
+                            ui.input_text_area(id='txt_prompt_system', label='System prompt', value=system_prompt, rows=5, width='100%')
 
                 with ui.div(class_='row'):
                     with ui.div(class_='col'):
@@ -314,9 +312,6 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
         
         if id_ not in expected_phrases.get():
             expected_phrases.set({**expected_phrases.get(), **{id_: set()}})
-
-        print(test_vars.get())
-        print(expected_phrases.get())
         
     @logexp
     @reactive.effect
@@ -370,7 +365,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag):
         prompt_system = input.txt_prompt_system()
 
         prompts = {
-            'system': prompt_system['system'] if prompt_system is not None and 'system' in prompt_system else '',
+            'system': f'''{prompt_system}''',
             'user': [f'''{prompt}''']
         }
         
