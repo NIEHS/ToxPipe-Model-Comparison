@@ -57,6 +57,8 @@ def module_graph(input, output, session, eval_name):
 
     def filterDataByVars(data, var_info):
 
+        if not var_info: return data
+
         indices = None
         for var_name, var_value in var_info.items():
             if var_name in data.columns:
@@ -71,7 +73,7 @@ def module_graph(input, output, session, eval_name):
     @reactive.event(var_selected)
     def plotPassFailStat():
 
-        if not var_selected.get(): return
+        #if not var_selected.get(): return
 
         data = loadEvalResults()
         data = filterDataByVars(data, var_selected.get())
@@ -93,7 +95,7 @@ def module_graph(input, output, session, eval_name):
     @reactive.event(var_selected)
     def plotAssertionStat():
 
-        if not var_selected.get(): return
+        #if not var_selected.get(): return
 
         data = loadEvalResults()
         data = filterDataByVars(data, var_selected.get())
@@ -149,7 +151,7 @@ def module_graph(input, output, session, eval_name):
     @reactive.event(var_selected)
     def plotContextSearchStat():
 
-        if not var_selected.get(): return
+        #if not var_selected.get(): return
 
         data = loadEvalResults()
         data = filterDataByVars(data, var_selected.get())
@@ -220,7 +222,8 @@ def mod_ui(input, output, session):
 
         evals = []
         for eval_set_name in eval_sets:
-            if input.chk_hide_no_assertion_evals() and 'assertion' not in eval_set_name: continue
-            evals += [eval_name for [_, eval_name] in eval_sets[eval_set_name]['Evals to compare']]
-        
+            for [_, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+                if input.chk_hide_no_assertion_evals() and not Evaluator.hasAssertion(eval_name): continue
+                evals.append(eval_name)
+
         return [module_graph(f'eval_{i}', eval_name) for i, eval_name in enumerate(evals)]

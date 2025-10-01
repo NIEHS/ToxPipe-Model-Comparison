@@ -139,15 +139,14 @@ def runTest(eval_name, resume=False, skip_run=False):
         tests = []
         index = 1
         for model_info in config['providers']:
-            for prompt in config['prompts']:
-                prompt_info = {'system': config['system_prompt'], 'user': prompt}
-                for test in config['tests']:
+            for pva in config['prompts_vars_asserts']:
+                for test in pva['tests']:
                     vars_info = test.get('vars', {})
                     assert_info = test.get('assert', {})
 
                     tests.append({'_id': index, 
                                   'provider': model_info, 
-                                  'prompt': prompt_info['user'], 
+                                  'prompt': pva['prompt'], 
                                   'vars': vars_info, 
                                   'assert': assert_info, 
                                   'response': {'output': '', 'results': {}}})

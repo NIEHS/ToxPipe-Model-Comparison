@@ -1,6 +1,7 @@
 from pathlib import Path
 import dotenv
 import yaml
+import uuid
 
 class Config:
     DIR_HOME = Path(__file__).parent.parent
@@ -30,3 +31,6 @@ def saveYML(data, file_path):
 
     with open(file_path, mode='w') as fp:
         yaml.dump(data, fp, Dumper=MyDumper, default_flow_style=False)
+
+def getUIID(prefix):
+    return f'{prefix}_{str(uuid.uuid4()).replace('-', '_')}'

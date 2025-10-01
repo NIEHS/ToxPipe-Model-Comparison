@@ -44,7 +44,7 @@ class Evaluator:
         
     def getPrompts(eval_name: str):
         db = EvalConfigDB(eval_name)
-        return db.collection.distinct('prompts')
+        return db.collection.distinct('prompts_vars_asserts.prompt')
     
     def getProviders(eval_name: str):
         db = EvalConfigDB(eval_name)
@@ -52,7 +52,7 @@ class Evaluator:
     
     def getVars(eval_name: str):
         db = EvalConfigDB(eval_name)
-        var_list = [item['vars'] for item in db.collection.distinct('tests') if 'vars' in item]
+        var_list = [item['vars'] for item in db.collection.distinct('prompts_vars_asserts.tests') if 'vars' in item]
         d_vars = {}
         for d in var_list:
             for k, v in d.items():
@@ -66,6 +66,10 @@ class Evaluator:
     def getEvalInfo(eval_name: str):
         db = EvalDB(eval_name)
         return db.collection.find_one()
+    
+    def hasAssertion(eval_name: str):
+        db = EvalDB(eval_name)
+        return bool(len([f for f in db.collection.find({"assert": {"$exists": True}})]))
 
     def processResults(eval_name: str, prompt: str = None, provider: str = None, d_vars: dict = None):
             
@@ -103,7 +107,7 @@ class Evaluator:
             return d_results
         
         if not Evaluator.hasOutput(eval_name): return pd.DataFrame()
-
+        breakpoint()
         results = []
 
         eval_info = Evaluator.getEvalInfo(eval_name)
@@ -245,17 +249,9 @@ class Evaluator:
     #         return False
     #     return True
     
-    def createTest(eval_name, info, *args):
+    def createTest(eval_name, config):
 
         try:
-            config = {
-                'defaultTest': info['defaulttest'],
-                'description': info['description'],
-                'system_prompt': info['prompts']['system'],
-                'prompts': info['prompts']['user'],
-                'providers': info['providers'],
-                'tests': info['tests']
-            }
             EvalConfigDB(eval_name).add(config)
             #dir_eval = Config.DIR_TESTS / eval_name
             #dir_eval.mkdir(parents=True, exist_ok=True)

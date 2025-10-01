@@ -6,6 +6,10 @@ base-model:
       label: "o3"
     - config:
         temperature: 0
+      id: llm:openai:chat:azure-gpt-5-nano
+      label: GPT-5 nano
+    - config:
+        temperature: 0
       id: llm:openai:chat:azure-gpt-4o
       label: GPT-4o
     - config:
@@ -37,6 +41,13 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [o3]
+    - config:
+        max_iterations: 10
+        model: azure-gpt-5-nano
+        summarize: "false"
+        temp: 0
+      id: ToxPipeRAG
+      label: Toxpipe (RAG) [GPT-5 nano]
     - config:
         max_iterations: 10
         model: azure-gpt-4o
@@ -82,7 +93,14 @@ rag:
 agentic:
   providers:
     - config:
-        max_iterations: 10
+        max_iterations: 20
+        model: azure-gpt-5-nano
+        summarize: "false"
+        temp: 0
+      id: ToxPipeAgentic
+      label: Toxpipe (Agentic) [GPT-5 nano]
+    - config:
+        max_iterations: 20
         model: azure-gpt-4o
         summarize: "false"
         temp: 0

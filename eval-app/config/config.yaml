@@ -11,7 +11,8 @@
 #   Adhere to ethical standards in toxicology and maintain scientific objectivity in your assessments.
 
 # providers:
-#   - id: "llm:openai:chat:azure-o3"
+#   o3:
+#     funcSuffix: "BaseLLM"
 #     label: "o3"
 #     config:
 #       temperature:
@@ -20,7 +21,8 @@
 #         default: 0
 #         min: 0
 #         max: 1
-#   - id: "rag"
+#   ToxPipeRAG:
+#     funcSuffix: "ToxPipeRAG"
 #     label: "Toxpipe (RAG)"
 #     config:
 #       model:
@@ -64,7 +66,8 @@ system_prompt: >
 
 
 providers:
-  - id: "llm:openai:chat:azure-o3"
+  o3:
+    funcSuffix: "BaseLLM"
     label: "o3"
     config:
       temperature:
@@ -74,7 +77,19 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:openai:chat:azure-gpt-4o"
+  azure_gpt_5_nano:
+    funcSuffix: "BaseLLM"
+    label: "GPT-5 nano"
+    config:
+      temperature:
+        label: "Temperature"
+        type: "int"
+        default: 0
+        min: 0
+        max: 1
+
+  azure_gpt_4o:
+    funcSuffix: "BaseLLM"
     label: "GPT-4o"
     config:
       temperature:
@@ -84,7 +99,8 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:openai:chat:claude-3-7-sonnet"
+  claude_3_7_sonnet:
+    funcSuffix: "BaseLLM"
     label: "Claude 3.7 Sonnet"
     config:
       temperature:
@@ -94,7 +110,8 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:openai:chat:gemini-2.5-pro"
+  gemini_2_5_pro:
+    funcSuffix: "BaseLLM"
     label: "Gemini 2.5 Pro"
     config:
       temperature:
@@ -104,7 +121,8 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:openai:chat:gemini-2.5-flash"
+  gemini_2_5_flash:
+    funcSuffix: "BaseLLM"
     label: "Gemini 2.5 Flash"
     config:
       temperature:
@@ -114,7 +132,8 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:openai:chat:id:llama3-3-70b"
+  llama3_3_70b:
+    funcSuffix: "BaseLLM"
     label: "Llama 3.3 70B"
     config:
       temperature:
@@ -124,7 +143,8 @@ providers:
         min: 0
         max: 1
 
-  - id: "llm:openai:chat:mistral-large-2"
+  mistral_large_2:
+    funcSuffix: "BaseLLM"
     label: "Mistral Large 2"
     config:
       temperature:
@@ -134,13 +154,15 @@ providers:
         min: 0
         max: 1
 
-  - id: "ToxPipeRAG"
+  ToxPipeRAG:
+    funcSuffix: "ToxPipeRAG"
     label: "Toxpipe (RAG)"
     config:
       model:
         label: "LLM"
         type:
           - "azure-o3"
+          - "azure-gpt-5-nano"
           - "azure-gpt-4o"
           - "claude-3-7-sonnet"
           - "gemini-2.5-pro"
@@ -166,12 +188,14 @@ providers:
           - "false"
         default: "false"
 
-  - id: "ToxPipeAgentic"
+  ToxPipeAgentic:
+    funcSuffix: "ToxPipeAgentic"
     label: "ToxPipe (Agentic)"
     config:
       model:
         label: "LLM"
         type:
+          - "azure-gpt-5-nano"
           - "azure-gpt-4o"
         default: "azure-gpt-4o"
 

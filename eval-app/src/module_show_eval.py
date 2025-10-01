@@ -361,7 +361,6 @@ def mod_ui(input, output, session, reload_evals_flag):
     async def loadResultsTask(eval_name, prompt, model, var_sel):
 
         async def run():
-
             data = Evaluator.processResults(eval_name=eval_name, 
                                             prompt=prompt, 
                                             provider=None if model == 'Any' else model,
@@ -376,7 +375,7 @@ def mod_ui(input, output, session, reload_evals_flag):
                 res = data[cols].reset_index(drop=True)
 
             return res
-        
+    
         return await run()
 
     @reactive.effect
@@ -386,11 +385,11 @@ def mod_ui(input, output, session, reload_evals_flag):
         eval_name = input.select_eval()
         prompt = input.select_prompt()
         model = input.select_model()
-        d_vars = loadVars()
         var_sel = var_selected.get()
 
-        if not (eval_name and prompt and (not d_vars or var_sel)): return pd.DataFrame()
+        vars_prompt = list(set(re.findall(r"{(\w+)}", prompt))) if prompt else []
 
+        if not (eval_name and prompt and (len(vars_prompt) == len(var_sel))): return pd.DataFrame()
         loadResultsTask(eval_name, prompt, model, var_sel)
 
     # @reactive.calc

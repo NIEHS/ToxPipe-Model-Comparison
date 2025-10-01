@@ -1,5 +1,5 @@
 from shiny import reactive, ui as core_ui
-from shiny.express import ui, render, module
+from shiny.express import ui, render, module, expressify
 from .utils import Config
 from .utils_eval import Evaluator
 from .db import EvalDB
@@ -34,93 +34,58 @@ def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
                                 #     with ui.div(class_="col text-start"):
                                 #           f'{info['sim']}'
             with ui.div(class_="row"):
-                @render.ui
+                @render.express
                 def showEvalInfo():
 
                     def showKeyVal(k, v):
                         return f"<strong>{k}:</strong><span class='ms-1'>{v}</span>"
 
+                    @expressify
                     def getModelInfo(model_list):
-                        ui_elements = []
-                        for model in model_list:
-                            html = f'<ul>{''.join([f'<li>{showKeyVal(k, v)}</li>' for k, v in model['config'].items()])}</ul>'
-                            ui_elements.append(core_ui.div(
-                                                    core_ui.card(
-                                                        core_ui.card_header(model['label']), 
-                                                        core_ui.HTML(html)
-                                                    ),
-                                                    class_='col-3 col-4-sm'
-                                                )
-                            )
-                        return core_ui.div(
-                                    *ui_elements,
-                                    class_='row'
-                                )
+                        with ui.div(class_='row'):
+                            for model in model_list:
+                                html = f'<ul>{''.join([f'<li>{showKeyVal(k, v)}</li>' for k, v in model['config'].items()])}</ul>'
+                                with ui.div(class_='col-3 col-4-sm'):
+                                    with ui.card():
+                                        ui.card_header(model['label']) 
+                                        ui.HTML(html)
                     
+                    @expressify
                     def getTestInfo(test_list):
-                        ui_elements = []
-                        for test in test_list:
-                            if 'vars' in test and 'dummy' in test['vars']: continue
-                            html = f'''<ul>
-                                        {''.join([f'<li>{showKeyVal(k, v)}</li>' for k, v in test['vars'].items()]) if 'vars' in test else ''}
-                                        {f'<li>{showKeyVal('Response key phrases', ', '.join(test['assert'][0]['expected_phrases']))}</li>' if 'assert' in test else ''}
-                                    </ul>'''
-                            ui_elements.append(core_ui.div(
-                                                    core_ui.card(
-                                                        core_ui.HTML(html)
-                                                    ),
-                                                    class_='col-3 col-4-sm'
-                                                )
-                            )
-                        return core_ui.div(
-                                    *ui_elements,
-                                    class_='row'
-                                )
+                        with ui.div(class_='row'):
+                            for test in test_list:
+                                html = f'''<ul>
+                                            {''.join([f'<li>{showKeyVal(k, v)}</li>' for k, v in test['vars'].items()]) if 'vars' in test else ''}
+                                            {f'<li>{showKeyVal('Expected phrases', ', '.join(test['assert'][0]['expected_phrases']))}</li>' if 'assert' in test else ''}
+                                        </ul>'''
+                                with ui.div(class_='col-3 col-4-sm'):
+                                    with ui.card():
+                                        ui.HTML(html)
                     
-                    info = loadEvalInfo()
+                    config = loadEvalConfig()
                     
-                    ui_elements = [
-                        core_ui.div(
-                            core_ui.div(
+                    with ui.div(class_="col d-flex flex-column gap-3 p-3"):
+                        with ui.div(class_='row gap-2'):
+                            with ui.div():
                                 'Description'
-                            ),
-                            core_ui.div(
-                                info['description'],
-                                class_='border rounded p-3'
-                            ),
-                            class_='row gap-2'
-                        ),
-                        core_ui.div(
-                            core_ui.div(
-                                'Model list'
-                            ),
-                            core_ui.div(
-                                getModelInfo(info['providers']),
-                                class_='border rounded pt-4 cards-container'
-                            ), 
-                            class_='row gap-2'
-                        ),
-                        core_ui.div(
-                            core_ui.div(
-                                'Prompts'
-                            ),
-                            core_ui.div(
-                                core_ui.HTML(f"<ul>{''.join([f'<li>{p}</li>' for p in info['prompts']])}</ul>"),
-                                class_='border rounded pt-3'
-                            ), 
-                            class_='row gap-2'
-                        ),
-                        core_ui.div(
-                            core_ui.div(
-                                'Tests'
-                            ),
-                            core_ui.div(
-                                getTestInfo(info['tests']),
-                                class_='border rounded pt-4 cards-container'
-                            ),
-                            class_='row gap-2'
-                        )]
-                    return core_ui.div(*ui_elements, class_="col d-flex flex-column gap-3 p-3")
+                                with ui.div(class_='border rounded p-3'):
+                                    config['description']
+                                    
+                            with ui.div(class_='row gap-2'):
+                                with ui.div():
+                                    'Model list'
+                                with ui.div(class_='border rounded pt-4 cards-container'):
+                                    getModelInfo(config['providers'])
+
+                            with ui.div(class_='row gap-2'):
+                                with ui.div():
+                                    'Prompts'    
+                                with ui.div(class_='border rounded pt-3'):
+                                    for pva in config['prompts_vars_asserts']:
+                                        ui.HTML(f"<ul><li>{pva['prompt']}</li></ul>")
+                                        if 'tests' in pva:
+                                            with ui.div(class_='row gap-2 m-2'):
+                                                getTestInfo(pva['tests'])
             
         with ui.div(class_='col-auto d-flex flex-column gap-2'):
             with ui.div():        
@@ -135,7 +100,7 @@ def mod_ui(input, output, session, reload_unrun_evals_flag, reload_evals_flag):
 
     @reactive.calc
     @reactive.event(input.select_eval)
-    def loadEvalInfo():
+    def loadEvalConfig():
         return Evaluator.processConfig(input.select_eval())
     
     @reactive.calc

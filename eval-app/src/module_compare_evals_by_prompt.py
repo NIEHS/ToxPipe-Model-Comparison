@@ -113,6 +113,8 @@ def mod_ui(input, output, session):
             
             def formatResponse(x, col_suffix, type):
                 
+                if pd.isna(x[f'Response{col_suffix}']): return ''
+                
                 if col_suffix == ' (RAG)':
                     return addReason(x, col_suffix, type, 
                                      core_ui.div(
@@ -271,10 +273,6 @@ def mod_ui(input, output, session):
                 eval_output['Model'] = eval_output['Model'].apply(lambda x: re.sub(r'(.* \[)(.*)(\])', repl=r'\2', string=x))
                 
                 eval_outputs_to_compare = pd.merge(left=eval_outputs_to_compare, right=eval_output, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, f' ({eval_name_key})'], how='outer')
-            
-            for col in eval_outputs_to_compare.columns:
-                if col.startswith('Response'):
-                    eval_outputs_to_compare.loc[eval_outputs_to_compare[col].isna(), col] = ''
 
             eval_outputs_to_compare = eval_outputs_to_compare.drop(columns=extra_cols).sort_values('Model')
 

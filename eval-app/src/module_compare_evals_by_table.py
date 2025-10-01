@@ -81,8 +81,6 @@ def mod_ui(input, output, session):
                 else:
                     p.set(message=f"Processing {eval_set_name}")
 
-                if input.chk_hide_no_assertion_evals() and 'assertion' not in eval_set_name: continue
-
                 df_report_eval = pd.DataFrame()
 
                 for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
@@ -92,6 +90,7 @@ def mod_ui(input, output, session):
                     if data.empty: continue
 
                     if not hasAssertion(data, 'Result'):
+                        if input.chk_hide_no_assertion_evals(): continue
                         header = f'{eval_sets[eval_set_name]['Name']} (0)'
                         df_data_score = pd.DataFrame() 
                         df_data_score['Model'] = sorted(data['Model'].unique())

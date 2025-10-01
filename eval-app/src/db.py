@@ -1,6 +1,7 @@
 import sqlalchemy as sa
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.exc import OperationalError
 import datetime
 import pandas as pd
 from pymongo import MongoClient
@@ -34,7 +35,10 @@ class Feedback(Base):
         return f'({self.eval_id}, {self.eval_name}, {self.test_id}, {self.passed}, {self.comments}, {self.timestamp})'
 
 engine = sa.create_engine(f'postgresql://{db_config["USER"]}:{db_config["PASSWORD"]}@{db_config["HOST"]}/{db_config["DATABASE"]}')
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except OperationalError as exp:
+    print(exp)
 
 def saveRating(rating_dict):
 
