@@ -12,7 +12,7 @@ langchain-core==0.3.25
     # via toxpipe-model-comparison (pyproject.toml)
 langchain-openai==0.2.12
     # via toxpipe-model-comparison (pyproject.toml)
-langchain-text-splitters==0.3.3
+langchain-text-splitters==1.0.0a1
     # via toxpipe-model-comparison (pyproject.toml)
 langsmith==0.2.3
     # via toxpipe-model-comparison (pyproject.toml)
