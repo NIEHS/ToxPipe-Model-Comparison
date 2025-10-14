@@ -14,8 +14,8 @@ base-model:
       label: GPT-4o
     - config:
         temperature: 0
-      id: llm:openai:chat:claude-3-7-sonnet
-      label: Claude 3.7 Sonnet
+      id: llm:openai:chat:claude-4-5-sonnet
+      label: Claude 4.5 Sonnet
     - config:
         temperature: 0
       id: llm:openai:chat:gemini-2.5-pro
@@ -26,8 +26,8 @@ base-model:
       label: Gemini 2.5 Flash
     - config:
         temperature: 0
-      id: llm:openai:chat:llama3-3-70b
-      label: Llama 3.3 70B
+      id: llm:openai:chat:llama4-scout-17b-instruct
+      label: Llama 4 Scout 17B (Instruct)
     - config:
         temperature: 0
       id: llm:openai:chat:mistral-large-2
@@ -57,11 +57,11 @@ rag:
       label: Toxpipe (RAG) [GPT-4o]
     - config:
         max_iterations: 10
-        model: claude-3-7-sonnet
+        model: claude-4.5-sonnet
         summarize: "false"
         temp: 0
       id: ToxPipeRAG
-      label: Toxpipe (RAG) [Claude 3.7 Sonnet]
+      label: Toxpipe (RAG) [Claude 4.5 Sonnet]
     - config:
         max_iterations: 10
         model: gemini-2.5-pro
@@ -78,11 +78,11 @@ rag:
       label: Toxpipe (RAG) [Gemini 2.5 Flash]
     - config:
         max_iterations: 10
-        model: llama3-3-70b
+        model: llama4-scout-17b-instruct
         summarize: "false"
         temp: 0
       id: ToxPipeRAG
-      label: Toxpipe (RAG) [Llama 3.3 70B]
+      label: Toxpipe (RAG) [Llama 4 Scout 17B (Instruct)]
     - config:
         max_iterations: 10
         model: mistral-large-2

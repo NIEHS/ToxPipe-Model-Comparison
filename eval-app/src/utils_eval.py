@@ -46,9 +46,23 @@ class Evaluator:
         db = EvalConfigDB(eval_name)
         return db.collection.distinct('prompts_vars_asserts.prompt')
     
-    def getProviders(eval_name: str):
+    def getPromptsAndAsserts(eval_name: str):
         db = EvalConfigDB(eval_name)
-        return sorted(map(lambda x: x['label'], db.collection.distinct('providers')))
+        prompts_vars_asserts = db.collection.distinct('prompts_vars_asserts')
+        prompts_and_asserts = []
+        for item in prompts_vars_asserts:
+            for test in item['tests']:
+                prompt = item['prompt'].format(**test['vars'])
+                expected_kp = test['assert'][0]['expected_phrases']
+                prompts_and_asserts.append([prompt] + expected_kp)
+        return prompts_and_asserts
+    
+    def getProviderInfo(eval_name: str):
+        db = EvalConfigDB(eval_name)
+        return db.collection.distinct('providers')
+    
+    def getProviders(eval_name: str):
+        return sorted(map(lambda x: x['label'], Evaluator.getProviderInfo(eval_name)))
     
     def getVars(eval_name: str):
         db = EvalConfigDB(eval_name)
@@ -107,7 +121,7 @@ class Evaluator:
             return d_results
         
         if not Evaluator.hasOutput(eval_name): return pd.DataFrame()
-        breakpoint()
+
         results = []
 
         eval_info = Evaluator.getEvalInfo(eval_name)
@@ -140,18 +154,7 @@ class Evaluator:
                     'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
                     'Score':  float(item['response']['results']['score']) if item['response']['results'] else 0,
                     'Reason': getExplanation(item['response']['results'])
-                }
-                if 'steps_taken' in item['response'] and item['response']['steps_taken']:
-                    content |= {
-                        'Used Context': (item['response']['steps_taken'][-1] == 'query_with_context')
-                    }
-                if 'searched_keyphrases' in item['response']:
-                    content |= {
-                        'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']])
-                    }
-
-                # Vars columns must be added last to ensure ease of processing.
-                content |= item['vars']
+                } | item['vars']
                 
                 results.append(content)
 

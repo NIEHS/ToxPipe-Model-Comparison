@@ -203,7 +203,7 @@ def mod_ui(input, output, session):
     @reactive.effect
     def loadEvalSets():
         eval_sets = getEvalSetToCompare()
-        ui.update_select(id='select_eval_set', choices={'any': 'Any'} | {k: v['Name'] for k, v in eval_sets.items()})
+        ui.update_select(id='select_eval_set', choices={k: v['Name'] for k, v in eval_sets.items()})
 
     def hasAssertion(data, col_result):
         if data.empty: return False
@@ -215,14 +215,11 @@ def mod_ui(input, output, session):
     def loadResults():
         eval_set_name = input.select_eval_set()
 
-        eval_sets = getEvalSetToCompare()
-
-        if input.select_eval_set() != 'any':
-            eval_sets = {eval_set_name: eval_sets[eval_set_name]}
+        eval_sets = {eval_set_name: getEvalSetToCompare()[eval_set_name]}
 
         evals = []
         for eval_set_name in eval_sets:
-            for [_, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+            for eval_name in eval_sets[eval_set_name]['Evals to compare']:
                 if input.chk_hide_no_assertion_evals() and not Evaluator.hasAssertion(eval_name): continue
                 evals.append(eval_name)
 

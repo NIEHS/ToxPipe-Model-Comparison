@@ -1,5 +1,5 @@
 from shiny import reactive, ui as core_ui
-from shiny.express import ui, render, module
+from shiny.express import ui, render, module, expressify
 from shinywidgets import render_plotly
 import pandas as pd
 import faicons as fa
@@ -17,54 +17,52 @@ import re
 import asyncio
 
 # -----------------------------------------------------------------------
-def prettyTableUI(df, col_widths, style_dict={}):
+@expressify
+def prettyTableUI(df, style_dict={}):
     def format(text, col_name):
         if pd.isna(text): text = ''
         if col_name == 'Link': return ui.HTML(f"<a class='app-link' href='{text}'>{text}</a>")
         return text
     
-    header = '<tr>' + ''.join([f'<th width={"30%" if j != 0 else "10%"} class="p-2 text-center app-table-col"><strong>{col}</strong></th>' for j, col in enumerate(df.columns)]) + '</tr>'
-    body = ''.join([f'<tr>{''.join([f'<td width={"30%" if j != 0 else "10%"} class="{style_dict.get(f'row_{i}_col_{j}', '')} p-2 text-center app-table-col"><div style="text-align:start">{format(row[col], col)}</div></td>' for j, col in enumerate(df.columns)])}</tr>' for i, row in df.iterrows()])
-    
-    return core_ui.HTML(
-        f'''
-        <table id='table-responses' class='app-table resizable-table'>
-            <thead class='app-table-header'>
-                {header}
-            </thead>
-            <tbody>
-                {body}
-            </tbody>
-        </table>
-        ''')
+    n_cols = len(df.columns)
+
+    with ui.tags.table(id='table-responses', class_='app-table resizable-table'):
+        with ui.tags.thead(class_='app-table-header'):
+            with ui.tags.tr():
+                for col in df.columns:
+                    with ui.tags.th(width=f'{100/n_cols}%', class_='p-2 text-center app-table-col'):
+                        ui.strong(col)
+        with ui.tags.tbody():
+            for i, row in df.iterrows():
+                with ui.tags.tr():
+                    for j, col in enumerate(df.columns):
+                        with ui.tags.td(width=f'{100/n_cols}%', class_=f'{style_dict.get(f'row_{i}_col_{j}', '')} p-2 text-center app-table-col'):
+                            with ui.div(style="text-align:start"):
+                                format(row[col], col)
 
 @module
 def mod_ui(input, output, session):
 
     var_selected = reactive.value({})
+    models_selected = reactive.value({})
 
-    def getExplanationHTML(result):
+    @module
+    def mod_select_model(input, output, session, eval_name):
 
-        def resultStr(res):
-            return f"<span class='passed'>{fa.icon_svg('circle-check')}</span>" if res else f"<span class='failed'>{fa.icon_svg('circle-xmark')}</span>"
+        @render.express
+        def renderModels():
+            ui.input_select(id='select_model', label='', choices=load())
 
-        def getComponentExplanation(results):
-            text = ''
-            has_component = False
-            for result in results:
-                if 'components' in result:
-                    text += f"<strong>{result['reason']} {resultStr(result['pass'])}</strong>"
-                    text += f"<ul>{getComponentExplanation(result['components'])}</ul>"
-                    has_component = True
-
-            if not has_component:
-                for result in results:
-                    text += f"<li>{result['reason']} {resultStr(result['pass'])}</li>"
-                    
-            return text
-
-        if not isinstance(result, list): return "No reason found"
-        return getComponentExplanation(result)
+        @reactive.calc
+        def load():
+            return Evaluator.getProviders(eval_name=eval_name)
+        
+        @reactive.effect
+        @reactive.event(input.select_model)
+        def selectModel():
+            models = models_selected.get().copy()
+            models[eval_name] = input.select_model()
+            models_selected.set(models)
 
     with ui.div(class_="d-flex gap-5"):
         ui.input_select("select_eval_set", "Eval sets", choices=[])
@@ -87,10 +85,10 @@ def mod_ui(input, output, session):
         @render.express
         def showTopBar():
 
-            data = loadResultsTask.result().copy()
-            if data.empty: return
-            for col in list(data.columns[data.columns.str.startswith('Result')]):
-                if hasAssertion(data, col): break
+            eval_outputs = loadResultsTask.result().copy()
+            if not eval_outputs: return
+            for eval_name, data in eval_outputs.items():
+                if hasAssertion(data): break
             else:
                 return
             
@@ -99,33 +97,59 @@ def mod_ui(input, output, session):
                     ui.span('Pass score threshold')
                     with ui.div():
                         ui.input_numeric(id='numeric_threshold', label='', min=0, max=1, step=0.1, value=1)
-    
-        @render.ui
+
+            with ui.tags.table(id='table-responses', class_='app-table resizable-table'):
+                with ui.tags.tbody():
+                    with ui.tags.tr():
+                        for i, (eval_name, _) in enumerate(eval_outputs.items()):
+                            with ui.tags.td():
+                                with ui.div(class_='d-flex justify-content-center'):
+                                    mod_select_model(id=f'select_model_{i}', eval_name=eval_name)
+        @render.express
         def showResults():
-            def addReason(x, col_suffix, type, content):
-                return core_ui.popover(
-                            content,
-                            core_ui.HTML(getExplanationHTML(x[f'Reason{col_suffix}']) if x[f'Result{col_suffix}'] != 'No assertion' else 'No assertion'),
-                            placement="right",
-                            id=f"popover_result_reason_{type}_{x.name}",
-                            options={"trigger": "hover focus"}
-                )
+
+            def getExplanationHTML(result):
+
+                def resultStr(res):
+                    return f"<span class='passed'>{fa.icon_svg('circle-check')}</span>" if res else f"<span class='failed'>{fa.icon_svg('circle-xmark')}</span>"
+
+                def getComponentExplanation(results):
+                    text = ''
+                    has_component = False
+                    for result in results:
+                        if 'components' in result:
+                            text += f"<strong>{result['reason']} {resultStr(result['pass'])}</strong>"
+                            text += f"<ul>{getComponentExplanation(result['components'])}</ul>"
+                            has_component = True
+
+                    if not has_component:
+                        for result in results:
+                            text += f"<li>{result['reason']} {resultStr(result['pass'])}</li>"
+                            
+                    return text
+
+                if not isinstance(result, list): return "No reason found"
+                return getComponentExplanation(result)
             
-            def formatResponse(x, col_suffix, type):
+
+            def formatResponse(x):
+
+                @expressify
+                def format():
                 
-                if pd.isna(x[f'Response{col_suffix}']): return ''
+                    if pd.isna(x[f'Response']): return ''
+                    
+                    with ui.popover(placement="right", options={"trigger": "hover focus"}):
+                        with ui.div(class_='app-table-content'):
+                            with ui.div():
+                                ui.markdown(x['Response'])
+                        with ui.div(class_='p-2'):
+                            ui.HTML(getExplanationHTML(x['Reason']) if x['Result'] != 'No assertion' else 'No assertion')
+
+                with ui.hold() as content:
+                    format()
                 
-                if col_suffix == ' (RAG)':
-                    return addReason(x, col_suffix, type, 
-                                     core_ui.div(
-                                        core_ui.div(f'[The following response was taken from {("RAG resources" if x[f'Used Context{col_suffix}'] else "model's training knowledge")}]',
-                                                    class_='fst-italic fw-bold mb-4'),
-                                        core_ui.div(core_ui.markdown(x[f'Response{col_suffix}'])),
-                                        class_='app-table-content'
-                                    )
-                    )
-                
-                return addReason(x, col_suffix, type, core_ui.div(core_ui.markdown(x[f'Response{col_suffix}']), class_='app-table-content'))
+                return content
             
             def getResultBasedOnScoreThreshold(score_val, result_val, threshold_pass):
                 if score_val >= threshold_pass: return 'Pass'
@@ -134,55 +158,56 @@ def mod_ui(input, output, session):
             
             match loadResultsTask.status():
                 case 'initial':
-                    return ui.div(ui.strong("Responses will show up here"))
+                    ui.div(ui.strong("Responses will show up here"))
+                    return
                 case 'running':
-                    return ui.div(ui.strong("Extracting responses..."))
+                    ui.div(ui.strong("Extracting responses..."))
+                    return
 
-            data = loadResultsTask.result().copy()
-            if data.empty: return
+            eval_outputs = loadResultsTask.result().copy()
+            if not eval_outputs: return
 
-            eval_set_name = input.select_eval_set()
-            eval_sets = getEvalSetToCompare()
-            
-            eval_name_keys = []
-            
-            for eval_name_key, _ in eval_sets[eval_set_name]['Evals to compare']:
-                data[f'Response ({eval_name_key})'] = data.apply(lambda x: formatResponse(x, col_suffix=f' ({eval_name_key})', type=eval_name_key.lower()), axis=1)
-                
-                col_result = f'Result ({eval_name_key})'
+            eval_names = []
+            data_combined = []
+            for eval_name in eval_outputs:
+                data = eval_outputs[eval_name]
 
-                if hasAssertion(data, col_result):
+                model = models_selected.get().get(eval_name, None)
+                if model: data = data.query('Model == @model')
+
+                if hasAssertion(data):
                     threshold_pass = input.numeric_threshold()
-                    data[col_result] = data.apply(lambda x: getResultBasedOnScoreThreshold(x[f'Score ({eval_name_key})'], x[f'Result ({eval_name_key})'], threshold_pass), axis=1)
+                    data.loc[:, f'Result ({eval_name})'] = data.apply(lambda x: getResultBasedOnScoreThreshold(x['Score'], x['Result'], threshold_pass), axis=1)
 
-                eval_name_keys.append(eval_name_key)
-                    
+                data.loc[:, f'Response ({eval_name})'] = data.apply(lambda x: formatResponse(x), axis=1)
+
+                eval_names.append(eval_name)
+                data_combined.append(data[[f'Response ({eval_name})', f'Result ({eval_name})']].copy())
+
+            data_combined = pd.concat(data_combined, axis=1)
+            
             style_dict={}
-            if not data.empty:
-                for i, row in data.iterrows():
-                    style_dict[f'row_{i}_col_0'] = 'app-table-row-no-assertion'
-                    for j, eval_name_key in enumerate(eval_name_keys):
-                        col_name = f'Result ({eval_name_key})'
+            if not data_combined.empty:
+                for i, row in data_combined.iterrows():
+                    for j, eval_name in enumerate(eval_names):
+                        col_name = f'Result ({eval_name})'
                         match row[col_name]:
                             case 'Pass':
-                                style_dict[f'row_{i}_col_{j+1}'] = 'app-table-row-pass'
+                                style_dict[f'row_{i}_col_{j}'] = 'app-table-row-pass'
                             case 'Fail':
-                                style_dict[f'row_{i}_col_{j+1}'] = 'app-table-row-fail'
+                                style_dict[f'row_{i}_col_{j}'] = 'app-table-row-fail'
                             case _:
-                                style_dict[f'row_{i}_col_{j+1}'] = 'app-table-row-no-assertion'
+                                style_dict[f'row_{i}_col_{j}'] = 'app-table-row-no-assertion'
 
-            table = prettyTableUI(data[["Model"] + [f"Response ({eval_name_key})" for eval_name_key in eval_name_keys]], 
-                                  col_widths=[1, 3, 5, 3], 
-                                  style_dict=style_dict)
-
-            return table
+            prettyTableUI(data_combined[[f"Response ({eval_name})" for eval_name in eval_names]],
+                          style_dict=style_dict)
         
     ui.include_js(Config.DIR_HOME / "www" / "js" / "table.js", method='inline')
 
-    def hasAssertion(data, col_result):
+    def hasAssertion(data):
         if data.empty: return False
-        if len(data[col_result].unique()) == 0: return False
-        return not (data[col_result].unique() == ['No assertion']).all()
+        if len(data['Result'].unique()) == 0: return False
+        return not (data['Result'].unique() == ['No assertion']).all()
     
     @reactive.calc
     def getEvalSetToCompare():
@@ -205,7 +230,7 @@ def mod_ui(input, output, session):
         eval_sets = getEvalSetToCompare()
         prompts = []
         try:
-            for [_, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+            for eval_name in eval_sets[eval_set_name]['Evals to compare']:
                 prompts += Evaluator.getPrompts(eval_name=eval_name)
             prompts = sorted(set(prompts))
         except:
@@ -227,7 +252,7 @@ def mod_ui(input, output, session):
         
         d_vars = {}
         try:
-            for [_, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+            for eval_name in eval_sets[eval_set_name]['Evals to compare']:
                 d_vars |= Evaluator.getVars(eval_name=eval_name)
         except:
             return
@@ -260,23 +285,10 @@ def mod_ui(input, output, session):
 
         async def run():
 
-            req_cols = ['Prompt', *list(d_vars.keys()), 'Model']
-            extra_cols = ['Response', 'Result', 'Score', 'Used Context', 'Searched Keyphrases', 'Reason']
-            columns = req_cols + extra_cols
-
-            eval_outputs_to_compare = pd.DataFrame(columns=columns)
-            for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
-                eval_output= Evaluator.processResults(eval_name=eval_name, prompt=prompt, d_vars=var_sel)
-
-                if eval_output.empty: return pd.DataFrame()
-                
-                eval_output['Model'] = eval_output['Model'].apply(lambda x: re.sub(r'(.* \[)(.*)(\])', repl=r'\2', string=x))
-                
-                eval_outputs_to_compare = pd.merge(left=eval_outputs_to_compare, right=eval_output, on=['Prompt', *list(d_vars.keys()), 'Model'], suffixes=[None, f' ({eval_name_key})'], how='outer')
-
-            eval_outputs_to_compare = eval_outputs_to_compare.drop(columns=extra_cols).sort_values('Model')
-
-            return eval_outputs_to_compare
+            eval_outputs = {}
+            for eval_name in eval_sets[eval_set_name]['Evals to compare']:
+                eval_outputs[eval_name] = Evaluator.processResults(eval_name=eval_name, prompt=prompt, d_vars=var_sel)
+            return eval_outputs
         
         return await run()
         

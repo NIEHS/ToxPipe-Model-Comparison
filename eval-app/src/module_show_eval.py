@@ -1,5 +1,5 @@
 from shiny import reactive, ui as core_ui
-from shiny.express import ui, render, module
+from shiny.express import ui, render, module, expressify
 from shinywidgets import render_plotly
 import pandas as pd
 import faicons as fa
@@ -103,29 +103,6 @@ def mod_ui(input, output, session, reload_evals_flag):
 
     var_selected = reactive.value({})
 
-    def getExplanationHTML(result):
-
-        def resultStr(res):
-            return f"<span class='passed'>{fa.icon_svg('circle-check')}</span>" if res else f"<span class='failed'>{fa.icon_svg('circle-xmark')}</span>"
-
-        def getComponentExplanation(results):
-            text = ''
-            has_component = False
-            for result in results:
-                if 'components' in result:
-                    text += f"<strong>{result['reason']} {resultStr(result['pass'])}</strong>"
-                    text += f"<ul>{getComponentExplanation(result['components'])}</ul>"
-                    has_component = True
-
-            if not has_component:
-                for result in results:
-                    text += f"<li>{result['reason']} {resultStr(result['pass'])}</li>"
-                    
-            return text
-
-        if not isinstance(result, list): return "No reason found"
-        return getComponentExplanation(result)
-
     with ui.div(class_="d-flex gap-5"):
         ui.input_select("select_eval", "Evals", choices=[])
         ui.input_select("select_prompt", "Prompts", choices=[])
@@ -164,41 +141,69 @@ def mod_ui(input, output, session, reload_evals_flag):
 
     ui.busy_indicators.use(spinners=True, pulse=False, fade=False)
     
-    @render.ui
+    @render.express
     def showReults():
-        def addReason(x):
-            return core_ui.popover(
-                        #core_ui.div(fa.icon_svg("square-check" if x['Result'] == 'Pass' else "square-xmark", "solid", width="30px")),
-                        core_ui.div(core_ui.div(round(x['Score'], 2), class_='score')),
-                        core_ui.HTML(getExplanationHTML(x['Reason'])),
-                        placement="right",
-                        id=f"popover_result_reason_{x.name}",
-                        options={"trigger": "hover focus"}
-            )
-        
-        def formatResponse(x):
-            def getResponseSourceForRAG(use_context: bool):
-                if pd.isna(use_context):
-                    return ''
-                if use_context:
-                    return '[The following response was taken from RAG resources]'
-                return "[The following response was taken from model's training knowledge]"
 
-            if 'Searched Keyphrases' in x.index:
-                return core_ui.div(
-                            core_ui.div(f'[The following response was taken from {("RAG resources" if x['Used Context'] else "model's training knowledge")}]',
-                                        class_='fst-italic fw-bold mb-4'),
-                            core_ui.div(core_ui.markdown(x['Response'])),
-                            class_='app-table-content'
-                        )
-            
-            return core_ui.div(core_ui.markdown(x['Response']), class_='app-table-content')
+        def getExplanationHTML(result):
+
+            def resultStr(res):
+                return f"<span class='passed'>{fa.icon_svg('circle-check')}</span>" if res else f"<span class='failed'>{fa.icon_svg('circle-xmark')}</span>"
+
+            def getComponentExplanation(results):
+                text = ''
+                has_component = False
+                for result in results:
+                    if 'components' in result:
+                        text += f"<strong>{result['reason']} {resultStr(result['pass'])}</strong>"
+                        text += f"<ul>{getComponentExplanation(result['components'])}</ul>"
+                        has_component = True
+
+                if not has_component:
+                    for result in results:
+                        text += f"<li>{result['reason']} {resultStr(result['pass'])}</li>"
+                        
+                return text
+
+            if not isinstance(result, list): return "No reason found"
+            return getComponentExplanation(result)
+
+        def addReason(x):
+
+            @expressify
+            def format():
+                with ui.popover(placement="right", options={"trigger": "hover focus"}):
+                    #with ui.div():
+                    #   fa.icon_svg("square-check" if x['Result'] == 'Pass' else "square-xmark", "solid", width="30px"))
+                    with ui.div(class_='score'):
+                        with ui.div():
+                            round(x['Score'], 2)
+                    with ui.div(class_='p-3'):
+                        ui.HTML(getExplanationHTML(x['Reason']))
+                        
+            with ui.hold() as content:
+                format()
+
+            return content
+        
+        def formatResponse(response):
+
+            @expressify
+            def format():
+                with ui.div():
+                    ui.markdown(response)
+
+            with ui.hold() as content:
+                format()
+
+            return content
 
         match loadResultsTask.status():
             case 'initial':
-                return ui.div(ui.strong("Responses will show up here"))
+                ui.div(ui.strong("Responses will show up here"))
+                return
             case 'running':
-                return ui.div(ui.strong("Extracting responses..."))
+                ui.div(ui.strong("Extracting responses..."))
+                return
 
         data = loadResultsTask.result().copy()
         if data.empty: return
@@ -219,18 +224,13 @@ def mod_ui(input, output, session, reload_evals_flag):
                     case _:
                         style_dict[f'row_{i}'] = 'app-table-row-no-assertion'
 
-            data['Response'] = data.apply(lambda x: formatResponse(x), axis=1)
+        data['Response'] = data['Response'].apply(lambda x: formatResponse(x))
 
-        if 'Searched Keyphrases' in data.columns:
-            data['Searched Keyphrases'] = data['Searched Keyphrases'].apply(lambda x: core_ui.div(core_ui.markdown(x) if not pd.isna(x) else 'Not applicable for non-RAG pipeline', class_='app-table-content'))
-
-        if (data['Result'] == 'No assertion').all():        
-            if 'Searched Keyphrases' in data.columns:
-                data = data[['Model', 'Response', 'Searched Keyphrases']]
-                return prettyTableUI(data, col_widths=[1, 9, 2], style_dict=style_dict)
+        if (data['Result'] == 'No assertion').all():
             
             data = data[['Model', 'Response']]
-            return prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
+            prettyTableUI(data, col_widths=[1, 11], style_dict=style_dict)
+            return
         
         data['Score'] = data.apply(lambda x: addReason(x) if x['Result'] != 'No assertion' else x['Result'], axis=1)   
 
@@ -243,20 +243,12 @@ def mod_ui(input, output, session, reload_evals_flag):
             data['Feedback'] = data.apply(lambda x: mod_feedback(f'{x.name}', d_feedback[x['Id']] if x['Id'] in d_feedback else {'eval_id': eval_id, 
                                                                                                                                 'eval_name': eval_name, 
                                                                                                                                 'test_id': x['Id']}), axis=1)
-        
-            if 'Searched Keyphrases' in data.columns:
-                data = data[['Model', 'Response', 'Searched Keyphrases', 'Score', 'Feedback']]
-                return prettyTableUI(data, col_widths=[1, 7, 2, 1, 1], style_dict=style_dict)
-            
             data = data[['Model', 'Response', 'Score', 'Feedback']]
-            return prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
+            prettyTableUI(data, col_widths=[1, 9, 1, 1], style_dict=style_dict)
+            return
 
-        if 'Searched Keyphrases' in data.columns:
-            data = data[['Model', 'Response', 'Searched Keyphrases', 'Score']]
-            return prettyTableUI(data, col_widths=[1, 8, 2, 1], style_dict=style_dict)
-        
         data = data[['Model', 'Response', 'Score']]
-        return prettyTableUI(data, col_widths=[1, 10, 1], style_dict=style_dict)
+        prettyTableUI(data, col_widths=[1, 10, 1], style_dict=style_dict)
     
     # with ui.navset_underline(id="tab", selected="res"):
     #     with ui.nav_panel(title='Responses', value="res"):
@@ -361,13 +353,14 @@ def mod_ui(input, output, session, reload_evals_flag):
     async def loadResultsTask(eval_name, prompt, model, var_sel):
 
         async def run():
+
             data = Evaluator.processResults(eval_name=eval_name, 
                                             prompt=prompt, 
                                             provider=None if model == 'Any' else model,
                                             d_vars=var_sel)
             if data.empty: return data
 
-            cols = [col for col in ["Id", "eval_id", "Model", "Response", "Searched Keyphrases", "Score", "Result", "Reason", "Used Context"] if col in data.columns]
+            cols = ["Id", "eval_id", "Model", "Response", "Score", "Result", "Reason"]
 
             if not model or 'Any' in model:
                 res = data[cols].reset_index(drop=True).sort_values('Model')
@@ -375,7 +368,7 @@ def mod_ui(input, output, session, reload_evals_flag):
                 res = data[cols].reset_index(drop=True)
 
             return res
-    
+        
         return await run()
 
     @reactive.effect
@@ -385,11 +378,11 @@ def mod_ui(input, output, session, reload_evals_flag):
         eval_name = input.select_eval()
         prompt = input.select_prompt()
         model = input.select_model()
+        d_vars = loadVars()
         var_sel = var_selected.get()
 
-        vars_prompt = list(set(re.findall(r"{(\w+)}", prompt))) if prompt else []
+        if not (eval_name and prompt and (not d_vars or var_sel)): return pd.DataFrame()
 
-        if not (eval_name and prompt and (len(vars_prompt) == len(var_sel))): return pd.DataFrame()
         loadResultsTask(eval_name, prompt, model, var_sel)
 
     # @reactive.calc

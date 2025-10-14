@@ -83,7 +83,7 @@ def mod_ui(input, output, session):
 
                 df_report_eval = pd.DataFrame()
 
-                for [eval_name_key, eval_name] in eval_sets[eval_set_name]['Evals to compare']:
+                for eval_name in eval_sets[eval_set_name]['Evals to compare']:
 
                     data = Evaluator.processResults(eval_name=eval_name)
 
@@ -96,7 +96,7 @@ def mod_ui(input, output, session):
                         df_data_score['Model'] = sorted(data['Model'].unique())
                         df_data_score[header] = 'No assertion'
                         df_data_score = df_data_score.set_index('Model')
-                        df_data_score['Level'] = eval_name_key
+                        df_data_score['Eval ID'] = eval_name
                         df_report_eval = pd.concat([df_report_eval, df_data_score])
                         continue
 
@@ -109,11 +109,13 @@ def mod_ui(input, output, session):
                                 .reset_index(name=header)
                                 .set_index('Model'))
                     
-                    df_data_score['Level'] = eval_name_key
+                    df_data_score['Eval ID'] = eval_name
                     
                     df_report_eval = pd.concat([df_report_eval, df_data_score])
                 
-                if not df_report.empty and (df_report['Level'] == df_report_eval['Level']).all(): df_report = df_report.drop(columns='Level')
-                df_report = pd.concat([df_report, df_report_eval], axis=1)
+                df_report_eval = df_report_eval.reset_index()
+                if df_report.empty: df_report = df_report_eval.copy()
+                else: df_report = pd.merge(left=df_report, right=df_report_eval, on=['Model', 'Eval ID'], how='outer')
 
-        return df_report.reset_index()
+        cols = ['Model'] + [col for col in df_report.columns if col not in ['Model', 'Eval ID']] + ['Eval ID']
+        return df_report[cols]

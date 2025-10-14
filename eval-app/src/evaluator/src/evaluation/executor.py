@@ -51,25 +51,14 @@ class Executor:
         prompt = self.prompt_info['user'].format(**self.vars_info)
 
         model_params = '&'.join([f'{k}={v}' for k, v in self.model_info['config'].items()])
-        url = Config.env_config['NAVIGATOR_API_URL']
+        url = f'{Config.env_config['NAVIGATOR_API_HOST']}/rag/'
         
         response = requests.get(url=f"{url}?query={prompt}&{model_params}", verify=self.cert_path)
         if not response.ok: raise Exception(f'API url: {url}, query: {prompt}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()
 
-        # response is {'content': '', 'searched_keywords': '', 'steps_taken': '', 'error': ''}
-        for k in ['content', 'searched_keyphrases', 'steps_taken', 'error']:
-            if k not in res:
-                raise Exception(res)
-        if len(res['error'].strip()) > 0:
-            return {'output': str(res['content']), 
-                    'error': f'Error from Toxpipe: {res['error']}', 
-                    'searched_keyphrases': res['searched_keyphrases'],
-                    'steps_taken': res['steps_taken']}
-        
-        return {'output': str(res['content']), 
-                'searched_keyphrases': res['searched_keyphrases'],
-                'steps_taken': res['steps_taken']}
+        return {'output': res.get('response', str(res)), 
+                    'error': res.get('error', '')}
 
     def queryToxPipeAgentic(self):
 
@@ -87,7 +76,7 @@ class Executor:
 
             response = requests.get(url=url, verify=self.cert_path, timeout=None)
             if not response.ok: raise Exception(f'API url: {url}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
-            res = response.json()['response']
+            res = response.json()
 
-            # From AGENTIC: response is {'response': ''}        
-            return {'output': res}
+            return {'output': res.get('response', str(res)), 
+                    'error': res.get('error', '')}
