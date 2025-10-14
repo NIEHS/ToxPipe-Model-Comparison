@@ -31,7 +31,7 @@ class Executor:
         return queryFunc()
 
     #@traceable
-    def queryBaseLLM(self):
+    def queryLLM(self):
         
         model = createOpenAIModel(self.model_info['id'].split(':')[-1], **self.model_info['config'])
 
