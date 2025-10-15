@@ -117,13 +117,13 @@ def resumeLastRun(db, skip_run, resume_eval):
         if not (len(eval_sets) or len(eval_sets_eval)): continue
         
         print(f'Processing from record id {record['_id'] - threshold + 1} to {record['_id']}')
-        run(eval_sets, eval_sets_eval)
+        run(eval_sets, descs, indices, eval_sets_eval, descs_eval, indices_eval)
         eval_sets, descs, indices = [], [], []
         eval_sets_eval, descs_eval, indices_eval = [], [], []
 
     if len(eval_sets) or len(eval_sets_eval): 
         print(f'Processing upto record id {record['_id']}')
-        run(eval_sets, eval_sets_eval)
+        run(eval_sets, descs, indices, eval_sets_eval, descs_eval, indices_eval)
 
 def runTest(eval_name, resume=False, skip_run=False):
 
