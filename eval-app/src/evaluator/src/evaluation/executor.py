@@ -22,7 +22,7 @@ class Executor:
     def execute(self):
         
         try:
-            queryFunc = getattr(self, f'query{self.model_info['func']}')
+            queryFunc = getattr(self, f'{self.model_info['func']}')
         except AttributeError:
             raise Exception(f'Could not access executor function {self.model_info['id']}')
         
