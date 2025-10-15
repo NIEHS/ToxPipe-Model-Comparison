@@ -73,7 +73,7 @@ def resumeLastRun(db, skip_run, resume_eval):
                     pbar.set_description(descs_eval[i])
                     db.update(filter={'_id': indices_eval[i]}, value={'response.results': res})
 
-    records_db = db.getAll()
+    records_db = db.getAll().sort('_id', 1)
 
     first_record = True
     eval_sets, descs, indices = [], [], []

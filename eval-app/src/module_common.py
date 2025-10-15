@@ -1,6 +1,5 @@
 from shiny import reactive
 from shiny.express import ui, module
-from .utils_eval import Evaluator
 from .utils import Config
 import plotly.express as px
 
