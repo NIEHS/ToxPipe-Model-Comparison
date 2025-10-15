@@ -58,7 +58,8 @@ def writeJSON(output_path, data):
 
 def resumeLastRun(db, skip_run, resume_eval):
 
-    def run(eval_sets, eval_sets_eval):
+    def run(eval_sets, descs, indices,
+            eval_sets_eval, descs_eval, indices_eval):
 
         with concurrent.futures.ThreadPoolExecutor(10) as pool:
             if eval_sets: 
@@ -117,6 +118,8 @@ def resumeLastRun(db, skip_run, resume_eval):
         
         print(f'Processing from record id {record['_id'] - threshold + 1} to {record['_id']}')
         run(eval_sets, eval_sets_eval)
+        eval_sets, descs, indices = [], [], []
+        eval_sets_eval, descs_eval, indices_eval = [], [], []
 
     if len(eval_sets) or len(eval_sets_eval): 
         print(f'Processing upto record id {record['_id']}')
