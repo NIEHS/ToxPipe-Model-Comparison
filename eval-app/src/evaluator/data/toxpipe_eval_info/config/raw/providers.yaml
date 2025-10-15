@@ -2,36 +2,44 @@ base-model:
   providers:
     - config:
         temperature: 0
-      id: llm:openai:chat:azure-o3
+      id: azure-o3
       label: "o3"
+      func: queryLLM
     - config:
         temperature: 0
-      id: llm:openai:chat:azure-gpt-5-nano
-      label: GPT-5 nano
+      id: azure-gpt-5-nano
+      label: GPT-5 Nano
+      func: queryLLM
     - config:
         temperature: 0
-      id: llm:openai:chat:azure-gpt-4o
+      id: azure-gpt-4o
       label: GPT-4o
+      func: queryLLM
     - config:
         temperature: 0
-      id: llm:openai:chat:claude-4-5-sonnet
+      id: claude-4.5-sonnet
       label: Claude 4.5 Sonnet
+      func: queryLLM
     - config:
         temperature: 0
-      id: llm:openai:chat:gemini-2.5-pro
+      id: gemini-2.5-pro
       label: Gemini 2.5 Pro
+      func: queryLLM
     - config:
         temperature: 0
-      id: llm:openai:chat:gemini-2.5-flash
+      id: gemini-2.5-flash
       label: Gemini 2.5 Flash
+      func: queryLLM
     - config:
         temperature: 0
-      id: llm:openai:chat:llama4-scout-17b-instruct
+      id: llama4-scout-17b-instruct
       label: Llama 4 Scout 17B (Instruct)
+      func: queryLLM
     - config:
         temperature: 0
-      id: llm:openai:chat:mistral-large-2
+      id: mistral-large-2
       label: Mistral Large 2
+      func: queryLLM
 rag:
   providers:
     - config:
@@ -41,13 +49,15 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [o3]
+      func: queryToxPipeRAG
     - config:
         max_iterations: 10
         model: azure-gpt-5-nano
         summarize: "false"
         temp: 0
       id: ToxPipeRAG
-      label: Toxpipe (RAG) [GPT-5 nano]
+      label: Toxpipe (RAG) [GPT-5 Nano]
+      func: queryToxPipeRAG
     - config:
         max_iterations: 10
         model: azure-gpt-4o
@@ -55,6 +65,7 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [GPT-4o]
+      func: queryToxPipeRAG
     - config:
         max_iterations: 10
         model: claude-4.5-sonnet
@@ -62,6 +73,7 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Claude 4.5 Sonnet]
+      func: queryToxPipeRAG
     - config:
         max_iterations: 10
         model: gemini-2.5-pro
@@ -69,6 +81,7 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Gemini 2.5 Pro]
+      func: queryToxPipeRAG
     - config:
         max_iterations: 10
         model: gemini-2.5-flash
@@ -76,6 +89,7 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Gemini 2.5 Flash]
+      func: queryToxPipeRAG
     - config:
         max_iterations: 10
         model: llama4-scout-17b-instruct
@@ -83,6 +97,7 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Llama 4 Scout 17B (Instruct)]
+      func: queryToxPipeRAG
     - config:
         max_iterations: 10
         model: mistral-large-2
@@ -90,6 +105,7 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Mistral Large 2]
+      func: queryToxPipeRAG
 agentic:
   providers:
     - config:
@@ -98,7 +114,8 @@ agentic:
         summarize: "false"
         temp: 0
       id: ToxPipeAgentic
-      label: Toxpipe (Agentic) [GPT-5 nano]
+      label: Toxpipe (Agentic) [GPT-5 Nano]
+      func: queryToxPipeAgentic
     - config:
         max_iterations: 20
         model: azure-gpt-4o
@@ -106,3 +123,4 @@ agentic:
         temp: 0
       id: ToxPipeAgentic
       label: Toxpipe (Agentic) [GPT-4o]
+      func: queryToxPipeAgentic

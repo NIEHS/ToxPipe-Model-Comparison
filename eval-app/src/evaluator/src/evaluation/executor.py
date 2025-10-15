@@ -21,10 +21,8 @@ class Executor:
 
     def execute(self):
         
-        if self.model_info['id'].startswith('llm'):
-            return self.queryLLM()
         try:
-            queryFunc = getattr(self, f'query{self.model_info['id']}')
+            queryFunc = getattr(self, f'query{self.model_info['func']}')
         except AttributeError:
             raise Exception(f'Could not access executor function {self.model_info['id']}')
         

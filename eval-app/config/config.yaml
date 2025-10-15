@@ -12,7 +12,7 @@
 
 # providers:
 #   o3:
-#     funcSuffix: "BaseLLM"
+#     func: "queryLLM"
 #     label: "o3"
 #     config:
 #       temperature:
@@ -22,7 +22,7 @@
 #         min: 0
 #         max: 1
 #   ToxPipeRAG:
-#     funcSuffix: "ToxPipeRAG"
+#     func: "ToxPipeRAG"
 #     label: "Toxpipe (RAG)"
 #     config:
 #       model:
@@ -67,7 +67,7 @@ system_prompt: >
 
 providers:
   o3:
-    funcSuffix: "BaseLLM"
+    func: "queryLLM"
     label: "o3"
     config:
       temperature:
@@ -78,8 +78,8 @@ providers:
         max: 1
 
   azure_gpt_5_nano:
-    funcSuffix: "BaseLLM"
-    label: "GPT-5 nano"
+    func: "queryLLM"
+    label: "GPT-5 Nano"
     config:
       temperature:
         label: "Temperature"
@@ -89,7 +89,7 @@ providers:
         max: 1
 
   azure_gpt_4o:
-    funcSuffix: "BaseLLM"
+    func: "queryLLM"
     label: "GPT-4o"
     config:
       temperature:
@@ -100,7 +100,7 @@ providers:
         max: 1
 
   claude_3_7_sonnet:
-    funcSuffix: "BaseLLM"
+    func: "queryLLM"
     label: "Claude 3.7 Sonnet"
     config:
       temperature:
@@ -111,7 +111,7 @@ providers:
         max: 1
 
   gemini_2_5_pro:
-    funcSuffix: "BaseLLM"
+    func: "queryLLM"
     label: "Gemini 2.5 Pro"
     config:
       temperature:
@@ -122,7 +122,7 @@ providers:
         max: 1
 
   gemini_2_5_flash:
-    funcSuffix: "BaseLLM"
+    func: "queryLLM"
     label: "Gemini 2.5 Flash"
     config:
       temperature:
@@ -133,7 +133,7 @@ providers:
         max: 1
 
   llama3_3_70b:
-    funcSuffix: "BaseLLM"
+    func: "queryLLM"
     label: "Llama 3.3 70B"
     config:
       temperature:
@@ -144,7 +144,7 @@ providers:
         max: 1
 
   mistral_large_2:
-    funcSuffix: "BaseLLM"
+    func: "queryLLM"
     label: "Mistral Large 2"
     config:
       temperature:
@@ -155,7 +155,7 @@ providers:
         max: 1
 
   ToxPipeRAG:
-    funcSuffix: "ToxPipeRAG"
+    func: "queryToxPipeRAG"
     label: "Toxpipe (RAG)"
     config:
       model:
@@ -189,7 +189,7 @@ providers:
         default: "false"
 
   ToxPipeAgentic:
-    funcSuffix: "ToxPipeAgentic"
+    func: "queryToxPipeAgentic"
     label: "ToxPipe (Agentic)"
     config:
       model:
