@@ -7,6 +7,11 @@ import requests
 import httpx
 import truststore
 from pathlib import Path
+from pydantic import BaseModel
+
+class Response(BaseModel):
+    output: str = ''
+    error: str = ''
 
 class Executor:
 
@@ -26,7 +31,7 @@ class Executor:
         except AttributeError:
             raise Exception(f'Could not access executor function {self.model_info['id']}')
         
-        return queryFunc()
+        return dict(Response(**queryFunc()))
 
     #@traceable
     def queryLLM(self):
@@ -41,17 +46,17 @@ class Executor:
         )
 
         response = (prompt | model).invoke(self.vars_info).content
-        
-        return {'output': response}
+
+        return {'output': response, 'error': ''}
 
     def queryToxPipeRAG(self):
 
         prompt = self.prompt_info['user'].format(**self.vars_info)
 
         model_params = '&'.join([f'{k}={v}' for k, v in self.model_info['config'].items()])
-        url = f'{Config.env_config['NAVIGATOR_API_HOST']}/rag/'
-        
-        response = requests.get(url=f"{url}?query={prompt}&{model_params}", verify=self.cert_path)
+        url = f'{Config.env_config['TOXPIPE_API_HOST']}/rag/'
+
+        response = requests.get(url=f"{url}?q={prompt}&{model_params}", verify=self.cert_path)
         if not response.ok: raise Exception(f'API url: {url}, query: {prompt}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()
 

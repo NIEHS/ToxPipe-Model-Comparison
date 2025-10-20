@@ -7,7 +7,6 @@ import tqdm
 import traceback
 import json
 import yaml
-from .utils import Config
 from .db import EvalDB, EvalConfigDB
 from datetime import datetime
 
@@ -61,7 +60,7 @@ def resumeLastRun(db, skip_run, resume_eval):
     def run(eval_sets, descs, indices,
             eval_sets_eval, descs_eval, indices_eval):
 
-        with concurrent.futures.ThreadPoolExecutor(10) as pool:
+        with concurrent.futures.ThreadPoolExecutor(2) as pool:
             if eval_sets: 
                 results = pool.map(getResponseAndEvaluate, *zip(*eval_sets))
                 for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
@@ -87,9 +86,7 @@ def resumeLastRun(db, skip_run, resume_eval):
             first_record = False
             continue
         
-        is_response_error = (not skip_run) and (('error' in record['response'] and len(record['response']['error'].strip()) > 0) or 
-                            (not isinstance(record['response']['output'], str)) or 
-                            record['response']['output'].strip() == '' or
+        is_response_error = (not skip_run) and (('error' in record['response'] and len(record['response']['error'].strip()) > 0) or
                             record['response']['output'].lower().startswith('error'))
                             
         is_eval_error =  (len(record['assert']) > 0 and ((not resume_eval) or 
@@ -152,7 +149,7 @@ def runTest(eval_name, resume=False, skip_run=False):
                                   'prompt': pva['prompt'], 
                                   'vars': vars_info, 
                                   'assert': assert_info, 
-                                  'response': {'output': '', 'results': {}}})
+                                  'response': {'output': '', 'error': 'Init mode: Response has not been generated yet.', 'results': {}}})
                     index += 1
 
                     if len(tests) >= 50:
