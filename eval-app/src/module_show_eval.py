@@ -189,7 +189,7 @@ def mod_ui(input, output, session, reload_evals_flag):
 
             @expressify
             def format():
-                with ui.div():
+                with ui.div(class_='app-table-content'):
                     ui.markdown(response)
 
             with ui.hold() as content:

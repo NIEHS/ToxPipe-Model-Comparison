@@ -47,15 +47,11 @@ def mod_ui(input, output, session):
     models_selected = reactive.value({})
 
     @module
-    def mod_select_model(input, output, session, eval_name):
+    def mod_select_model(input, output, session, eval_name, model_options):
 
         @render.express
         def renderModels():
-            ui.input_select(id='select_model', label='', choices=load())
-
-        @reactive.calc
-        def load():
-            return Evaluator.getProviders(eval_name=eval_name)
+            ui.input_select(id='select_model', label='', choices=model_options)
         
         @reactive.effect
         @reactive.event(input.select_model)
@@ -98,13 +94,20 @@ def mod_ui(input, output, session):
                     with ui.div():
                         ui.input_numeric(id='numeric_threshold', label='', min=0, max=1, step=0.1, value=1)
 
+        @render.express
+        def showModels():
+
+            eval_outputs = loadResultsTask.result().copy()
+            if not eval_outputs: return
+
             with ui.tags.table(id='table-responses', class_='app-table resizable-table'):
                 with ui.tags.tbody():
                     with ui.tags.tr():
-                        for i, (eval_name, _) in enumerate(eval_outputs.items()):
+                        for i, (eval_name, data) in enumerate(eval_outputs.items()):
                             with ui.tags.td():
                                 with ui.div(class_='d-flex justify-content-center'):
-                                    mod_select_model(id=f'select_model_{i}', eval_name=eval_name)
+                                    if data.empty: return
+                                    mod_select_model(id=f'select_model_{i}', eval_name=eval_name, model_options=list(data['Model'].unique()))
         @render.express
         def showResults():
 
@@ -141,8 +144,7 @@ def mod_ui(input, output, session):
                     
                     with ui.popover(placement="right", options={"trigger": "hover focus"}):
                         with ui.div(class_='app-table-content'):
-                            with ui.div():
-                                ui.markdown(x['Response'])
+                            ui.markdown(x['Response'])
                         with ui.div(class_='p-2'):
                             ui.HTML(getExplanationHTML(x['Reason']) if x['Result'] != 'No assertion' else 'No assertion')
 
@@ -171,6 +173,7 @@ def mod_ui(input, output, session):
             data_combined = []
             for eval_name in eval_outputs:
                 data = eval_outputs[eval_name]
+                if data.empty: return
 
                 model = models_selected.get().get(eval_name, None)
                 if model: data = data.query('Model == @model')
@@ -178,12 +181,14 @@ def mod_ui(input, output, session):
                 if hasAssertion(data):
                     threshold_pass = input.numeric_threshold()
                     data.loc[:, f'Result ({eval_name})'] = data.apply(lambda x: getResultBasedOnScoreThreshold(x['Score'], x['Result'], threshold_pass), axis=1)
-
+                else:
+                    data.loc[:, f'Result ({eval_name})'] = data['Result'].copy()
+                    
                 data.loc[:, f'Response ({eval_name})'] = data.apply(lambda x: formatResponse(x), axis=1)
-
-                eval_names.append(eval_name)
+                
                 data_combined.append(data[[f'Response ({eval_name})', f'Result ({eval_name})']].copy())
-
+                eval_names.append(eval_name)
+                
             data_combined = pd.concat(data_combined, axis=1)
             
             style_dict={}
