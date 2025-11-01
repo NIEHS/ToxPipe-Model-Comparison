@@ -153,14 +153,14 @@ def runTest(eval_name, replace=False, skip_run=False):
                                                                 'error': 'Init mode: Response has not been generated yet.', 
                                                                 'results': {}}}
                     if replace:
-                        tests.append({'_id': index, 
-                                      'response': {'output': '', 
-                                                   'error': 'Init mode: Response has not been generated yet.', 
-                                                   'results': {}}})
+                        tests.append(update_value)
                     else:
                         record = db.collection.find_one(filter_value)
-                        if record['_id'] != index: db.update(filter_value, {'_id': index})
-
+                        if record is None:
+                            tests.append(update_value)
+                        elif record['_id'] != index: 
+                            db.update(filter_value, {'_id': index})
+                        
                     index += 1
 
                     if len(tests) >= 50:
