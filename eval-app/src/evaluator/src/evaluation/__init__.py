@@ -161,7 +161,6 @@ def runTest(eval_name, replace=False, skip_run=False):
                     index -= 1
 
                     if len(tests) >= 50:
-                        breakpoint()
                         db.add(tests)
                         tests = []
 
