@@ -137,10 +137,10 @@ def runTest(eval_name, replace=False, skip_run=False):
         db.addOrUpdate(filter=filter_value, value=update_value)
 
         tests = []
-        index = 1
-        for model_info in config['providers']:
-            for pva in config['prompts_vars_asserts']:
-                for test in pva['tests']:
+        index = len(config['providers']) * sum([len(pva['tests']) for pva in config['prompts_vars_asserts']]) - 1
+        for model_info in config['providers'][::-1]:
+            for pva in config['prompts_vars_asserts'][-1]:
+                for test in pva['tests'][::-1]:
                     vars_info = test.get('vars', {})
                     assert_info = test.get('assert', {})
                     filter_value = {'provider': model_info, 
@@ -158,9 +158,10 @@ def runTest(eval_name, replace=False, skip_run=False):
                     else:
                         if replace or record['_id'] != index: db.update(filter_value, {'_id': index})
                         
-                    index += 1
+                    index -= 1
 
                     if len(tests) >= 50:
+                        breakpoint()
                         db.add(tests)
                         tests = []
 
