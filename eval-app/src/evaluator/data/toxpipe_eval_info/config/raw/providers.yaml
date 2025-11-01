@@ -27,8 +27,8 @@ base-model:
       func: queryLLM
     - config:
         temperature: 0
-      id: claude-3.5-sonnet
-      label: Claude 3.5 Sonnet
+      id: claude-3-7-sonnet
+      label: Claude 3.7 Sonnet
       func: queryLLM
     - config:
         temperature: 0
@@ -83,10 +83,10 @@ rag:
       label: Toxpipe (RAG) [Claude 4.5 Sonnet]
       func: queryToxPipeRAG
     - config:
-        model: claude-3.5-sonnet
+        model: claude-3-7-sonnet
         temp: 0
       id: ToxPipeRAG
-      label: Toxpipe (RAG) [Claude 3.5 Sonnet]
+      label: Toxpipe (RAG) [Claude 3.7 Sonnet]
       func: queryToxPipeRAG
     - config:
         model: gemini-2.5-pro
