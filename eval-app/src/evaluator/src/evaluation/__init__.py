@@ -144,6 +144,9 @@ def runTest(eval_name, replace=False, skip_run=False):
 
     tests = []
     index = 1
+
+    print('Scanning for tests to run...')
+    
     for model_info in tqdm.tqdm(config['providers']):
         for pva in config['prompts_vars_asserts']:
             for test in pva['tests']:
