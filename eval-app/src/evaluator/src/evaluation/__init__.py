@@ -55,7 +55,7 @@ def writeJSON(output_path, data):
     with open(output_path, 'w') as f:
         json.dump(data, f)
 
-def resumeLastRun(db, skip_run):
+def resumeLastRun(eval_name, skip_run):
 
     def run(eval_sets, descs, indices,
             eval_sets_eval, descs_eval, indices_eval):
@@ -72,6 +72,7 @@ def resumeLastRun(db, skip_run):
                     pbar.set_description(descs_eval[i])
                     db.update(filter={'_id': indices_eval[i]}, value={'response.results': res})
 
+    db = EvalDB(eval_name)
     records_db = db.getAll().sort('_id', 1)
 
     first_record = True
@@ -123,47 +124,61 @@ def resumeLastRun(db, skip_run):
 
 def runTest(eval_name, replace=False, skip_run=False):
 
+    if skip_run: 
+        resumeLastRun(eval_name, skip_run=skip_run)
+        return
+
+    # The original eval db
     db = EvalDB(eval_name)
 
-    if not skip_run:
+    # Temporary eval db to store new test results
+    db_temp = EvalDB(f'{eval_name}_temp')
+    db_temp.drop()
 
-        db_config = EvalConfigDB(eval_name)
-        config = db_config.getAll()[0]
+    db_config = EvalConfigDB(eval_name)
+    config = db_config.getAll()[0]
 
-        event_id = str(datetime.now().timestamp())
-        
-        filter_value = {'system_prompt': config['system_prompt']}
-        update_value = filter_value | {'_id': 0, 'event_id': event_id}
-        db.addOrUpdate(filter=filter_value, value=update_value)
+    event_id = str(datetime.now().timestamp())
+    
+    db_temp.add({'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt']})
 
-        tests = []
-        index = len(config['providers']) * sum([len(pva['tests']) for pva in config['prompts_vars_asserts']]) - 1
-        for model_info in config['providers'][::-1]:
-            for pva in config['prompts_vars_asserts'][-1]:
-                for test in pva['tests'][::-1]:
-                    vars_info = test.get('vars', {})
-                    assert_info = test.get('assert', {})
-                    filter_value = {'provider': model_info, 
-                                    'prompt': pva['prompt'], 
-                                    'vars': vars_info, 
-                                    'assert': assert_info
-                    }
-                    update_value = filter_value | {'_id': index, 
-                                                   'response': {'output': '', 
+    tests = []
+    index = 1
+    for model_info in tqdm.tqdm(config['providers']):
+        for pva in config['prompts_vars_asserts']:
+            for test in pva['tests']:
+                vars_info = test.get('vars', {})
+                assert_info = test.get('assert', {})
+                filter_value = {'provider': model_info, 
+                                'prompt': pva['prompt'], 
+                                'vars': vars_info, 
+                                'assert': assert_info
+                }
+                if replace:
+                    tests.append(filter_value | {'_id': index, 
+                                                    'response': {'output': '', 
                                                                 'error': 'Init mode: Response has not been generated yet.', 
-                                                                'results': {}}}
+                                                                'results': {}}})
+                else:
                     record = db.collection.find_one(filter_value)
                     if record is None:
-                        tests.append(update_value)
+                        tests.append(filter_value | {'_id': index, 
+                                                'response': {'output': '', 
+                                                                'error': 'Init mode: Response has not been generated yet.', 
+                                                                'results': {}}})
                     else:
-                        if replace or record['_id'] != index: db.update(filter_value, {'_id': index})
-                        
-                    index -= 1
+                        tests.append(filter_value | {'_id': index,
+                                                        'response': record['response']})
+                    
+                index += 1
 
-                    if len(tests) >= 50:
-                        db.add(tests)
-                        tests = []
+                if len(tests) >= 50:
+                    db_temp.add(tests)
+                    tests = []
 
-        if len(tests): db.add(tests)
+    if len(tests): db_temp.add(tests)
 
-    resumeLastRun(db, skip_run=skip_run)
+    # Replace the original eval db with the temp db
+    db_temp.collection.rename(eval_name, dropTarget=True)
+
+    resumeLastRun(eval_name, skip_run=skip_run)
