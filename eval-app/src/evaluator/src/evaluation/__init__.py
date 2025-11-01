@@ -152,14 +152,11 @@ def runTest(eval_name, replace=False, skip_run=False):
                                                    'response': {'output': '', 
                                                                 'error': 'Init mode: Response has not been generated yet.', 
                                                                 'results': {}}}
-                    if replace:
+                    record = db.collection.find_one(filter_value)
+                    if record is None:
                         tests.append(update_value)
                     else:
-                        record = db.collection.find_one(filter_value)
-                        if record is None:
-                            tests.append(update_value)
-                        elif record['_id'] != index: 
-                            db.update(filter_value, {'_id': index})
+                        if replace or record['_id'] != index: db.update(filter_value, {'_id': index})
                         
                     index += 1
 
