@@ -209,10 +209,9 @@ def mod_ui(input, output, session):
         
     ui.include_js(Config.DIR_HOME / "www" / "js" / "table.js", method='inline')
 
-    def hasAssertion(data):
+    def hasAssertion(data, col_result):
         if data.empty: return False
-        if len(data['Result'].unique()) == 0: return False
-        return not (data['Result'].unique() == ['No assertion']).all()
+        return bool((data[col_result] != 'No assertion').any())
     
     @reactive.calc
     def getEvalSetToCompare():

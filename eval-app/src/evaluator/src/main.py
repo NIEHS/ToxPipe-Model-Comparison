@@ -5,8 +5,8 @@ import argparse
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("eval", help="Eval set name")
-    parser.add_argument("-r", "--resume", action="store_true", help="Resumes running tests or evaluation")
-    parser.add_argument("-s", "--skip-run", action="store_true", help="Only runs evaluation, skips running the tests")
+    parser.add_argument("-r", "--replace", action="store_true", help="Replace execution and evaluation")
+    parser.add_argument("-s", "--skip-run", action="store_true", help="Skip execution, run evaluation only")
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -14,4 +14,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    runTest(args.eval, resume=args.resume, skip_run=args.skip_run)
+    runTest(args.eval, replace=args.replace, skip_run=args.skip_run)

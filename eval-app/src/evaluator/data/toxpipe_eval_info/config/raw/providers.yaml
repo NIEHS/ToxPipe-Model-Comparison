@@ -17,8 +17,18 @@ base-model:
       func: queryLLM
     - config:
         temperature: 0
+      id: claude-4.5-haiku
+      label: Claude 4.5 Haiku
+      func: queryLLM
+    - config:
+        temperature: 0
       id: claude-4.5-sonnet
       label: Claude 4.5 Sonnet
+      func: queryLLM
+    - config:
+        temperature: 0
+      id: claude-3.5-sonnet
+      label: Claude 3.5 Sonnet
       func: queryLLM
     - config:
         temperature: 0
@@ -43,65 +53,61 @@ base-model:
 rag:
   providers:
     - config:
-        max_iterations: 10
         model: azure-o3
-        summarize: "false"
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [o3]
       func: queryToxPipeRAG
     - config:
-        max_iterations: 10
         model: azure-gpt-5-nano
-        summarize: "false"
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [GPT-5 Nano]
       func: queryToxPipeRAG
     - config:
-        max_iterations: 10
         model: azure-gpt-4o
-        summarize: "false"
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [GPT-4o]
       func: queryToxPipeRAG
     - config:
-        max_iterations: 10
+        model: claude-4.5-haiku
+        temp: 0
+      id: ToxPipeRAG
+      label: Toxpipe (RAG) [Claude 4.5 Haiku]
+      func: queryToxPipeRAG
+    - config:
         model: claude-4.5-sonnet
-        summarize: "false"
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Claude 4.5 Sonnet]
       func: queryToxPipeRAG
     - config:
-        max_iterations: 10
+        model: claude-3.5-sonnet
+        temp: 0
+      id: ToxPipeRAG
+      label: Toxpipe (RAG) [Claude 3.5 Sonnet]
+      func: queryToxPipeRAG
+    - config:
         model: gemini-2.5-pro
-        summarize: "false"
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Gemini 2.5 Pro]
       func: queryToxPipeRAG
     - config:
-        max_iterations: 10
         model: gemini-2.5-flash
-        summarize: "false"
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Gemini 2.5 Flash]
       func: queryToxPipeRAG
     - config:
-        max_iterations: 10
         model: llama4-scout-17b-instruct
-        summarize: "false"
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Llama 4 Scout 17B (Instruct)]
       func: queryToxPipeRAG
     - config:
-        max_iterations: 10
         model: mistral-large-2
-        summarize: "false"
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Mistral Large 2]
@@ -124,3 +130,11 @@ agentic:
       id: ToxPipeAgentic
       label: Toxpipe (Agentic) [GPT-4o]
       func: queryToxPipeAgentic
+    - config:
+        max_iterations: 20
+        model: claude-4.5-haiku
+        summarize: "false"
+        temp: 0
+      id: ToxPipeRAG
+      label: Toxpipe (Agentic) [Claude 4.5 Haiku]
+      func: queryToxPipeRAG

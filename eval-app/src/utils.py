@@ -6,6 +6,7 @@ import uuid
 class Config:
     DIR_HOME = Path(__file__).parent.parent
     DIR_CONFIG = DIR_HOME / 'config'
+    DIR_CACHE = DIR_HOME / 'cache'
     RANDOM_STATE = 1000
     CONFIG_PLOT = dict(
                         template = 'simple_white',

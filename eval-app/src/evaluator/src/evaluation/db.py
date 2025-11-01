@@ -15,6 +15,9 @@ class MongoDB():
         else:
             raise Exception('Invalid data type. Data type must be either dict or list of dicts.')
         
+    def exists(self, value):
+        return self.collection.find_one(value) is not None
+
     def getAll(self):
         return self.collection.find({})
         
@@ -23,6 +26,12 @@ class MongoDB():
 
     def update(self, filter: dict, value: dict):
         self.collection.update_one(filter, {"$set": value})
+
+    def addOrUpdate(self, filter: dict, value: dict):
+        if self.exists(filter):
+            self.update(filter, value)
+        else:
+            self.add(value)
 
 class EvalDB(MongoDB):
 

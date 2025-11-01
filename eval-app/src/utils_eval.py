@@ -83,7 +83,10 @@ class Evaluator:
     
     def hasAssertion(eval_name: str):
         db = EvalDB(eval_name)
-        return bool(len([f for f in db.collection.find({"assert": {"$exists": True}})]))
+        for f in db.getAll():
+            if 'assert' in f and len(f['assert']) > 0:
+                return True
+        return False
 
     def processResults(eval_name: str, prompt: str = None, provider: str = None, d_vars: dict = None):
             

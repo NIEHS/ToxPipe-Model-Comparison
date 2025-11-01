@@ -55,7 +55,7 @@ def writeJSON(output_path, data):
     with open(output_path, 'w') as f:
         json.dump(data, f)
 
-def resumeLastRun(db, skip_run, resume_eval):
+def resumeLastRun(db, skip_run):
 
     def run(eval_sets, descs, indices,
             eval_sets_eval, descs_eval, indices_eval):
@@ -87,12 +87,11 @@ def resumeLastRun(db, skip_run, resume_eval):
             continue
         
         is_response_error = (not skip_run) and (('error' in record['response'] and len(record['response']['error'].strip()) > 0) or
-                            record['response']['output'].lower().startswith('error'))
+                                                record['response']['output'].lower().startswith('error'))
                             
-        is_eval_error =  (len(record['assert']) > 0 and ((not resume_eval) or 
-                                                    'results' not in record['response'] or 
-                                                    len(record['response']['results']) == 0 or 
-                                                    'error' in record['response']['results']))
+        is_eval_error =  (len(record['assert']) > 0 and ('results' not in record['response'] or 
+                                                         len(record['response']['results']) == 0 or 
+                                                         'error' in record['response']['results']))
         if is_response_error or is_eval_error:
             
             model_info = record['provider']
@@ -122,20 +121,21 @@ def resumeLastRun(db, skip_run, resume_eval):
         print(f'Processing upto record id {record['_id']}')
         run(eval_sets, descs, indices, eval_sets_eval, descs_eval, indices_eval)
 
-def runTest(eval_name, resume=False, skip_run=False):
+def runTest(eval_name, replace=False, skip_run=False):
 
     db = EvalDB(eval_name)
 
-    if not resume and not skip_run:
-
-        db.drop()
+    if not skip_run:
 
         db_config = EvalConfigDB(eval_name)
         config = db_config.getAll()[0]
 
         event_id = str(datetime.now().timestamp())
-        init = {'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt']}
-        db.add(init)
+        
+        filter_value = {'system_prompt': config['system_prompt']}
+        update_value = filter_value | {'_id': 0, 'event_id': event_id}
+        db.addOrUpdate(filter=filter_value, value=update_value)
+
         tests = []
         index = 1
         for model_info in config['providers']:
@@ -143,13 +143,24 @@ def runTest(eval_name, resume=False, skip_run=False):
                 for test in pva['tests']:
                     vars_info = test.get('vars', {})
                     assert_info = test.get('assert', {})
+                    filter_value = {'provider': model_info, 
+                                    'prompt': pva['prompt'], 
+                                    'vars': vars_info, 
+                                    'assert': assert_info
+                    }
+                    update_value = filter_value | {'_id': index, 
+                                                   'response': {'output': '', 
+                                                                'error': 'Init mode: Response has not been generated yet.', 
+                                                                'results': {}}}
+                    if replace:
+                        tests.append({'_id': index, 
+                                      'response': {'output': '', 
+                                                   'error': 'Init mode: Response has not been generated yet.', 
+                                                   'results': {}}})
+                    else:
+                        record = db.collection.find_one(filter_value)
+                        if record['_id'] != index: db.update(filter_value, {'_id': index})
 
-                    tests.append({'_id': index, 
-                                  'provider': model_info, 
-                                  'prompt': pva['prompt'], 
-                                  'vars': vars_info, 
-                                  'assert': assert_info, 
-                                  'response': {'output': '', 'error': 'Init mode: Response has not been generated yet.', 'results': {}}})
                     index += 1
 
                     if len(tests) >= 50:
@@ -158,4 +169,4 @@ def runTest(eval_name, resume=False, skip_run=False):
 
         if len(tests): db.add(tests)
 
-    resumeLastRun(db, skip_run=skip_run, resume_eval=resume)
+    resumeLastRun(db, skip_run=skip_run)

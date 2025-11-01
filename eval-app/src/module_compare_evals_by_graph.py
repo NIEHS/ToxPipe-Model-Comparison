@@ -207,8 +207,7 @@ def mod_ui(input, output, session):
 
     def hasAssertion(data, col_result):
         if data.empty: return False
-        if len(data[col_result].unique()) == 0: return False
-        return not (data[col_result].unique() == ['No assertion']).all()
+        return bool((data[col_result] != 'No assertion').any())
 
     @reactive.calc
     @reactive.event(input.select_eval_set, input.chk_hide_no_assertion_evals)
