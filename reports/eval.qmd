@@ -104,6 +104,6 @@ import pandas as pd
 from pathlib import Path
 
 data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/results/eval_report.csv'))
-data = data.set_index('Models').round(2).reset_index()
+data = data.set_index('Model').round(2).reset_index()
 print(data.to_markdown(index=False))
 ```
