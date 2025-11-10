@@ -1,9 +1,10 @@
 from shiny import reactive
 from shiny.express import ui, module, render
+import json
 from .utils import Config, loadYML
 from .utils_eval import Evaluator
 import pandas as pd
-import re
+from .common import hasAssertion
 
 @module
 def mod_ui(input, output, session):
@@ -32,6 +33,8 @@ def mod_ui(input, output, session):
             @render.data_frame
             def renderReport():
                 df = getReport()
+
+                if df.empty: return df
             
                 eval_groups = df['Eval Group'].unique()
                 eval_group_colors = ['#f7e9e9', '#e9f7ed', '#ebe9f7', '#f7f3e9', '#f0e9f7', '#e9f7f3']
@@ -58,11 +61,8 @@ def mod_ui(input, output, session):
     @reactive.effect
     def loadEvalSets():
         eval_sets = getEvalSetToCompare()
-        ui.update_select(id='select_eval_set', choices={'any': 'Any'} | {k: v['Name'] for k, v in eval_sets.items() if Evaluator.hasAssertion(k)})
-
-    def hasAssertion(data, col_result):
-        if data.empty: return False
-        return bool((data[col_result] != 'No assertion').any())
+        eval_sets_with_assertions = {k: v['Name'] for k, v in eval_sets.items() if any(Evaluator.hasAssertion(eval_info['Eval Name']) for eval_info in v['Evals to compare'])}
+        ui.update_select(id='select_eval_set', choices={'any': 'Any'} | eval_sets_with_assertions)
 
     def generateReport():
         
@@ -71,6 +71,7 @@ def mod_ui(input, output, session):
         eval_sets = getEvalSetToCompare()
 
         df_report = pd.DataFrame()
+        header_names = {}
 
         with ui.Progress(min=1, max=len(eval_sets)) as p:
             
@@ -83,16 +84,19 @@ def mod_ui(input, output, session):
 
                 df_report_eval = pd.DataFrame()
 
-                for eval_name in eval_sets[eval_set_name]['Evals to compare']:
+                for eval_info in eval_sets[eval_set_name]['Evals to compare']:
+
+                    eval_name, eval_group_name = eval_info['Eval Name'], eval_info['Eval Group Name']
 
                     data = Evaluator.processResults(eval_name=eval_name)
 
                     if data.empty: continue
 
-                    if not hasAssertion(data, 'Result'): continue
+                    if not hasAssertion(data): continue
 
                     total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
                     header = f'{eval_sets[eval_set_name]['Name']} ({int(total_assertions.iloc[0])})'
+                    header_names[eval_set_name] = header
 
                     df_data_score = (data.query('Result != "No assertion"')
                                 .groupby('Model')['Score']
@@ -100,7 +104,7 @@ def mod_ui(input, output, session):
                                 .reset_index(name=header)
                                 .set_index('Model'))
                     
-                    df_data_score['Eval Group'] = eval_name.split('_')[0]
+                    df_data_score['Eval Group'] = eval_group_name
                     
                     df_report_eval = pd.concat([df_report_eval, df_data_score])
                 
@@ -115,6 +119,9 @@ def mod_ui(input, output, session):
         
         df_report = df_report[cols].sort_values(by=['Eval Group', 'Model']).reset_index(drop=True)
         df_report.to_csv(Config.DIR_CACHE / 'compare_evals_by_table.csv', index=None)
+        
+        with open(Config.DIR_CACHE / 'compare_evals_by_table_headers.json', mode='w') as fp:
+            json.dump(header_names, fp)
 
         cache_reloaded_flag.set(not cache_reloaded_flag.get())
 
@@ -135,8 +142,11 @@ def mod_ui(input, output, session):
         if not cache_file_path.exists():
             generateReport()
         
+        with open(Config.DIR_CACHE / 'compare_evals_by_table_headers.json') as fp:
+            header_names = json.load(fp)
+
         df = pd.read_csv(cache_file_path)
         if input.select_eval_set() != 'any':
-            return df[input.select_eval_set()] 
+            return df[['Model', header_names[input.select_eval_set()], 'Eval Group']] 
         
         return df

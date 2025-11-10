@@ -1,5 +1,6 @@
 from shiny import reactive, ui as core_ui
 from shiny.express import ui, render, module, expressify
+import faicons as fa
 from .utils import Config, loadYML, saveYML
 from .utils_eval import Evaluator
 from .db import EvalDB
@@ -11,20 +12,34 @@ import re
 @module
 def mod_ui(input, output, session, reload_evals_flag):
 
+    eval_set_evals = reactive.value({})
     reload_eval_set_flag = reactive.value(True)
     errors = reactive.value([])
 
     @module
     def mod_eval_info(input, output, session, eval_name):
-        with ui.div(class_="col-auto"):
+        with ui.div(style='min-width:500px'):
             with ui.card():
                 ui.card_header(eval_name)
+                with ui.div(class_='row gap-2 p-3'):
+                    with ui.div(class_='col-auto'):
+                        ui.input_text(id='txt_eval_group_name', label='Eval Group')
+                    with ui.div(class_='col-auto'):
+                        with ui.tooltip(placement="right"):
+                            ui.span(fa.icon_svg('circle-question'))
+                            'Set the name of the eval group to categorize evals in the comparison report.'
+                    
                 @render.express
                 def renderEvalInfo():
                     getEvalInfo()
 
         def showKeyVal(k, v):
             return f"<strong>{k}:</strong><span class='ms-1'>{v}</span>"
+        
+        @reactive.effect
+        @reactive.event(input.txt_eval_group_name, ignore_init=True)
+        def updateEvalGroupName():
+            eval_set_evals.set(eval_set_evals.get() | {eval_name: input.txt_eval_group_name()})
         
         @reactive.calc
         @expressify
@@ -110,7 +125,7 @@ def mod_ui(input, output, session, reload_evals_flag):
                 with ui.div(class_="col-3 col-5-sm"):
                     with ui.card():
                         ui.card_header(f'{eval_set_id} - {eval_set_name}')
-                        ui.markdown('\n'.join([f'- {eval_name}' for eval_name in evals]))
+                        ui.markdown('\n'.join([f'- {eval_info['Eval Name']} (**{eval_info['Eval Group Name']}**)' for eval_info in evals]))
 
     @reactive.effect
     @reactive.event(reload_evals_flag)
@@ -187,7 +202,8 @@ def mod_ui(input, output, session, reload_evals_flag):
         eval_set_name = input.txt_eval_set_name()
         
         eval_sets = getEvalSetToCompare()
-        eval_sets |= {eval_set_id: {'Name': eval_set_name, 'Evals to compare': list(input.select_evals())}}
+        evals_to_compare = [{'Eval Name': eval_name, 'Eval Group Name': eval_group_name} for eval_name, eval_group_name in eval_set_evals.get().items()]
+        eval_sets |= {eval_set_id: {'Name': eval_set_name, 'Evals to compare': evals_to_compare}}
 
         try:
             saveYML(data=eval_sets, file_path=Config.DIR_CONFIG / 'compare.yaml')

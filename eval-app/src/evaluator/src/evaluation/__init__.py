@@ -114,6 +114,7 @@ def resumeLastRun(eval_name, skip_run):
         if not (len(eval_sets) or len(eval_sets_eval)): continue
         
         print(f'Processing from record id {record['_id'] - threshold + 1} to {record['_id']}')
+        breakpoint()
         run(eval_sets, descs, indices, eval_sets_eval, descs_eval, indices_eval)
         eval_sets, descs, indices = [], [], []
         eval_sets_eval, descs_eval, indices_eval = [], [], []
@@ -146,7 +147,7 @@ def runTest(eval_name, replace=False, skip_run=False):
     index = 1
 
     print('Scanning for tests to run...')
-    
+
     for model_info in tqdm.tqdm(config['providers']):
         for pva in config['prompts_vars_asserts']:
             for test in pva['tests']:
@@ -180,7 +181,7 @@ def runTest(eval_name, replace=False, skip_run=False):
                     tests = []
 
     if len(tests): db_temp.add(tests)
-
+    
     # Replace the original eval db with the temp db
     db_temp.collection.rename(eval_name, dropTarget=True)
 

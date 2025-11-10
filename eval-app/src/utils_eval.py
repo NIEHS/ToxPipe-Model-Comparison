@@ -9,7 +9,7 @@ import re
 class Evaluator:
 
     PROMPT_VAR_FORMAT = r'\{(.*?)\}'
-    NUM_NONVARS_COLS = 10
+    NUM_NONVARS_COLS = 8
 
     def hasOutput(eval_name):
         if not eval_name: return False
@@ -53,7 +53,10 @@ class Evaluator:
         for item in prompts_vars_asserts:
             for test in item['tests']:
                 prompt = item['prompt'].format(**test['vars'])
-                expected_kp = test['assert'][0]['expected_phrases']
+                if 'assert' not in test or len(test['assert']) == 0:
+                    expected_kp = []
+                else:
+                    expected_kp = test['assert'][0]['expected_phrases']
                 prompts_and_asserts.append([prompt] + expected_kp)
         return prompts_and_asserts
     
@@ -83,11 +86,8 @@ class Evaluator:
     
     def hasAssertion(eval_name: str):
         db = EvalDB(eval_name)
-        for f in db.getAll():
-            if 'assert' in f and len(f['assert']) > 0:
-                return True
-        return False
-
+        return db.collection.find_one({'assert': {'$exists': True, '$ne': {}}}) is not None
+        
     def processResults(eval_name: str, prompt: str = None, provider: str = None, d_vars: dict = None):
             
         def getExplanation(result):
@@ -167,8 +167,6 @@ class Evaluator:
                 continue
 
         results = pd.DataFrame(results)
-
-        Evaluator.NUM_NONVARS_COLS = 10 if 'Used Context' in results.columns and 'Searched Keyphrases' in results.columns else 8
 
         return results
     

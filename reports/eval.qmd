@@ -26,6 +26,7 @@ This level includes the following foundational models,
 ```{python}
 import yaml
 from pathlib import Path
+
 with open(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/providers.yaml')) as fp:
     d = yaml.safe_load(fp)
 

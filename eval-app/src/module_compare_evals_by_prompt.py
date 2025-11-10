@@ -1,20 +1,11 @@
 from shiny import reactive, ui as core_ui
 from shiny.express import ui, render, module, expressify
-from shinywidgets import render_plotly
 import pandas as pd
 import faicons as fa
-from sklearn.manifold import TSNE
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans, AgglomerativeClustering
-from sklearn.metrics.pairwise import cosine_similarity
-#from umap import UMAP
-import plotly.express as px
 from .utils import Config, loadYML
 from .utils_eval import Evaluator
-from .module_common import mod_vars
-from .db import getRating, saveRating
+from .common import mod_vars, hasAssertion
 import re
-import asyncio
 
 # -----------------------------------------------------------------------
 @expressify
@@ -208,10 +199,6 @@ def mod_ui(input, output, session):
                           style_dict=style_dict)
         
     ui.include_js(Config.DIR_HOME / "www" / "js" / "table.js", method='inline')
-
-    def hasAssertion(data, col_result):
-        if data.empty: return False
-        return bool((data[col_result] != 'No assertion').any())
     
     @reactive.calc
     def getEvalSetToCompare():
@@ -234,8 +221,8 @@ def mod_ui(input, output, session):
         eval_sets = getEvalSetToCompare()
         prompts = []
         try:
-            for eval_name in eval_sets[eval_set_name]['Evals to compare']:
-                prompts += Evaluator.getPrompts(eval_name=eval_name)
+            for eval_info in eval_sets[eval_set_name]['Evals to compare']:
+                prompts += Evaluator.getPrompts(eval_name=eval_info['Eval Name'])
             prompts = sorted(set(prompts))
         except:
             return
@@ -256,10 +243,10 @@ def mod_ui(input, output, session):
         
         d_vars = {}
         try:
-            for eval_name in eval_sets[eval_set_name]['Evals to compare']:
-                d_vars |= Evaluator.getVars(eval_name=eval_name)
+            for eval_info in eval_sets[eval_set_name]['Evals to compare']:
+                d_vars |= Evaluator.getVars(eval_name=eval_info['Eval Name'])
         except:
-            return
+           return d_vars 
         
         data = Evaluator.filterVarsByPrompt(d_vars, prompt)
         
@@ -285,13 +272,13 @@ def mod_ui(input, output, session):
         return prompt
     
     @reactive.extended_task
-    async def loadResultsTask(eval_set_name, prompt, d_vars, var_sel, eval_sets):
+    async def loadResultsTask(eval_set_name, prompt, var_sel, eval_sets):
 
         async def run():
 
             eval_outputs = {}
-            for eval_name in eval_sets[eval_set_name]['Evals to compare']:
-                eval_outputs[eval_name] = Evaluator.processResults(eval_name=eval_name, prompt=prompt, d_vars=var_sel)
+            for eval_info in eval_sets[eval_set_name]['Evals to compare']:
+                eval_outputs[eval_info['Eval Name']] = Evaluator.processResults(eval_name=eval_info['Eval Name'], prompt=prompt, d_vars=var_sel)
             return eval_outputs
         
         return await run()
@@ -308,7 +295,7 @@ def mod_ui(input, output, session):
 
         if not eval_set_name or not prompt or (d_vars and len(d_vars) != len(var_sel)): return
 
-        loadResultsTask(eval_set_name, prompt, d_vars, var_sel, eval_sets)
+        loadResultsTask(eval_set_name, prompt, var_sel, eval_sets)
 
     def selectVar(var_sel):
         var_selected.set({**var_selected.get(), **var_sel})

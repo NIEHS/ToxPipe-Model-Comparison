@@ -1,16 +1,8 @@
 from shiny import reactive, ui as core_ui
 from shiny.express import ui, render, module, expressify
-from shinywidgets import render_plotly
 import pandas as pd
 import faicons as fa
-from sklearn.manifold import TSNE
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans, AgglomerativeClustering
-from sklearn.metrics.pairwise import cosine_similarity
-#from umap import UMAP
-import plotly.express as px
-from .utils import Config
-from .module_common import mod_vars
+from .common import mod_vars, hasAssertion
 from .utils_eval import Evaluator
 from .db import getRating, saveRating
 import re
@@ -250,42 +242,6 @@ def mod_ui(input, output, session, reload_evals_flag):
         data = data[['Model', 'Response', 'Score']]
         prettyTableUI(data, col_widths=[1, 10, 1], style_dict=style_dict)
     
-    # with ui.navset_underline(id="tab", selected="res"):
-    #     with ui.nav_panel(title='Responses', value="res"):
-
-    #     with ui.nav_panel(title='Similarity of responses', value="sim"):
-
-    #         ui.input_select("select_embedding", "Embeddings", choices=[])
-
-    #         with ui.layout_columns(col_widths=[8, 4]):
-    #             with ui.card():
-    #                 with ui.layout_sidebar():
-    #                     with ui.sidebar(title='Settings'):
-    #                         ui.input_select('select_clustering_type', 'Select clustering algorithm', choices={'hierarchical': 'Hierarchical clustering', 'kmeans': 'KMeans'}, selected='hierarchical')
-    #                         ui.input_slider('slide_n_clusters', 'Number of clusters', min=2, max=10, value=2)
-
-    #                         ui.hr()
-
-    #                         ui.input_select('select_projection_type', 'Select projection algorithm', choices={'umap': 'UMAP', 'tsne': 'TSNE'}, selected='umap')
-
-    #                         with ui.panel_conditional("input.select_projection_type === 'tsne'"):
-    #                             with ui.tooltip(placement='right'):
-    #                                 ui.input_slider('slide_tsne_perplexity', 'TSNE perplexity', min=5, max=50, value=30)
-    #                                 'The perplexity is related to the number of nearest neighbors in manifold learning algorithms.'
-
-    #                     @render_plotly
-    #                     def showSimilarityClusters():
-    #                         return loadEmbeddingClusterPlot()
-                    
-    #             with ui.card():
-    #                 @render_plotly
-    #                 def showSimilarityHeatmap():
-    #                     return loadEmbeddingHeatmapPlot()
-
-    def hasAssertion(data, col_result):
-        if data.empty: return False
-        return bool((data[col_result] != 'No assertion').any())
-    
     @reactive.calc
     @reactive.event(input.select_eval)
     def loadFeedbacks():
@@ -310,8 +266,6 @@ def mod_ui(input, output, session, reload_evals_flag):
         models = Evaluator.getProviders(eval_name)
         ui.update_select(id="select_prompt", choices=prompts)
         ui.update_select(id="select_model", choices=['Any'] + models)
-        #embeddings = Evaluator.processEmbeddings(eval_name)
-        #return output, embeddings
 
     @reactive.calc
     @reactive.event(input.select_eval, input.select_prompt)
@@ -383,110 +337,3 @@ def mod_ui(input, output, session, reload_evals_flag):
         if not (eval_name and prompt and (not d_vars or var_sel)): return pd.DataFrame()
 
         loadResultsTask(eval_name, prompt, model, var_sel)
-
-    # @reactive.calc
-    # @reactive.event(input.select_eval, input.select_prompt, input.select_model, input.select_embedding)
-    # def loadEmbeddings():
-    #     data, embeddings = loadResults()
-    #     if data.empty or not embeddings: return None, None
-    #     prompt, model, embedding = input.select_prompt(), input.select_model(), input.select_embedding()
-    #     if not model or 'Any' in model:
-    #         ids = data.query('Prompt == @prompt')['Id'].values
-    #     else:
-    #         ids = data.query('(Prompt == @prompt) and (Model in @model)')['Id'].values 
-        
-    #     df_embed = pd.DataFrame({k: embeddings[embedding][k] for k in ids})
-
-    #     if df_embed.shape[1] <= 1: return
-
-    #     ui.update_slider('slide_n_clusters', min=2, max=df_embed.shape[1], value=2)
-    #     ui.update_slider('slide_tsne_perplexity', min=1, max=df_embed.shape[1]-1, value=df_embed.shape[1]-1)
-    #     if df_embed.shape[1] <= 3:
-    #         ui.update_select('select_projection_type', choices={'tsne': 'TSNE'}, selected='tsne')
-
-    #     cols = list(map(lambda x: x.split('|')[1], df_embed.columns))
-    #     df_sim = pd.DataFrame(cosine_similarity(df_embed.T), columns=cols, index=cols)
-        
-    #     return df_embed, df_sim
-
-    # @reactive.calc
-    # @reactive.event(input.select_eval, input.select_prompt, input.select_model, input.select_embedding,
-    #                 input.select_clustering_type, input.slide_n_clusters,
-    #                 input.select_projection_type, input.slide_tsne_perplexity)
-    # def loadEmbeddingClusterPlot():
-
-    #     df_embed, df_sim = loadEmbeddings()
-
-    #     if (df_embed is None) or (df_sim is None): return
-        
-    #     return plotEmbeddingClusters(df_embed = df_embed,
-    #                             df_sim = df_sim,
-    #                             clustering=input.select_clustering_type(),
-    #                             n_clusters=input.slide_n_clusters(),
-    #                             projection=input.select_projection_type(),
-    #                             tsne_perplexity=input.slide_tsne_perplexity())
-
-    # @reactive.calc
-    # def loadEmbeddingHeatmapPlot():
-
-    #     _, df_sim = loadEmbeddings()
-
-    #     if df_sim is None: return
-
-    #     return plotEmbeddingSimilarityHeatmap(df_sim=df_sim)
-
-    # def plotEmbeddingClusters(df_embed:pd.DataFrame,
-    #                     df_sim: pd.DataFrame,
-    #                     clustering: str,
-    #                     n_clusters: int,
-    #                     projection: str,
-    #                     tsne_perplexity: int,
-    # ):
-
-    #     scaler = StandardScaler()
-    #     X_t = scaler.fit_transform(df_embed.values.T)
-        
-    #     if clustering == 'hierarchical':
-    #         X_c = AgglomerativeClustering(n_clusters=n_clusters).fit(df_sim)
-    #     else:
-    #         X_t = scaler.fit_transform(df_embed.values.T)
-    #         X_c = KMeans(n_clusters=n_clusters, max_iter=3000, random_state=Config.RANDOM_STATE, verbose=True).fit(X_t)
-
-    #     if projection == 'umap':
-    #         X_p = UMAP(n_neighbors=2, random_state=Config.RANDOM_STATE).fit_transform(X_t)
-    #     else:
-    #         X_p = TSNE(n_components=2, perplexity=tsne_perplexity, max_iter=1000, random_state=Config.RANDOM_STATE).fit_transform(X_t)
-
-    #     df_plot = pd.DataFrame(X_p, columns=['X', 'Y'])
-    #     df_plot['Cluster'] = list(map(str, X_c.labels_))
-    #     df_plot['Model'] = list(map(lambda x: x.split('|')[1], df_embed.columns))
-
-    #     fig = px.scatter(df_plot, 
-    #                     x='X', 
-    #                     y='Y', 
-    #                     color='Cluster',
-    #                     symbol='Model',
-    #                     opacity=0.5,
-    #                     hover_name='Model'
-    #     )
-    #     fig.update_traces(marker={'size': 15})
-
-    #     fig.update_layout(
-    #         title="Clusters",
-    #         **Config.CONFIG_PLOT
-    #     )
-
-    #     return fig
-
-    # def plotEmbeddingSimilarityHeatmap(df_sim: pd.DataFrame):
-
-    #     df_sim = df_sim.round(2)
-        
-    #     fig = px.imshow(df_sim, text_auto=True)
-
-    #     fig.update_layout(
-    #         title="Similarity",
-    #         **Config.CONFIG_PLOT
-    #     )
-
-    #     return fig

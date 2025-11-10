@@ -19,3 +19,6 @@ website:
       - icon: github
         href: https://github.com/NIEHS/ToxPipe-Model-Comparison
         target: "_blank"
+
+execute:
+  python: .venv/bin/python

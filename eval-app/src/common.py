@@ -25,3 +25,7 @@ def getNoDataPlot(title):
     fig.update_yaxes(visible=False)
                         
     return fig
+
+def hasAssertion(data, col_result='Result'):
+    if data.empty: return False
+    return bool((data[col_result] != 'No assertion').any())

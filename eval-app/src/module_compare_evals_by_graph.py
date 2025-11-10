@@ -1,12 +1,11 @@
 from shiny import reactive
 from shiny.express import ui, module, render
-from shinywidgets import render_widget
+from shinywidgets import render_plotly
 import plotly.express as px
-from .utils import Config, loadYML
+from .utils import Config, loadYML, getUIID
 from .utils_eval import Evaluator
-from .module_common import mod_vars, getNoDataPlot
+from .common import mod_vars, getNoDataPlot
 import pandas as pd
-import asyncio
 
 @module
 def module_graph(input, output, session, eval_name):
@@ -19,7 +18,7 @@ def module_graph(input, output, session, eval_name):
                 ui.strong(eval_name)
             @render.express
             def showVars():
-                data = loadEvalResults()
+                data = loadEvalResults().copy()
                 if data.empty: return
                 for col in data.columns[Evaluator.NUM_NONVARS_COLS:]:
                     with ui.div(class_='col'):
@@ -29,24 +28,26 @@ def module_graph(input, output, session, eval_name):
     
             with ui.div(class_='col'):
                 with ui.card(fill=True):
-                    @render_widget
-                    def showPassFailStatPlot():
-                        return plotPassFailStat()
+                    with ui.div(class_='d-flex justify-content-center align-items-center'):
+                        @render_plotly
+                        def showPassFailStatPlot():
+                            return plotPassFailStat()
                     
             with ui.div(class_='col'):
                 with ui.card(fill=True):
-                    @render_widget
-                    def showAssertionStatPlot():
-                        return plotAssertionStat()
+                    with ui.div(class_='d-flex justify-content-center align-items-center'):
+                        @render_plotly
+                        def showAssertionStatPlot():
+                            return plotAssertionStat()
                     
-            @render.express
-            def showPlots():
-                if eval_name.startswith('rag'):
-                    with ui.div(class_='col'):
-                        with ui.card(fill=True):
-                            @render_widget
-                            def showContextSearchStat():
-                                return plotContextSearchStat()
+            # @render.express
+            # def showPlots():
+            #     if eval_name.startswith('rag'):
+            #         with ui.div(class_='col'):
+            #             with ui.card(fill=True):
+            #                 @render_widget
+            #                 def showContextSearchStat():
+            #                     return plotContextSearchStat()
                 
     @reactive.calc
     def loadEvalResults():
@@ -73,14 +74,15 @@ def module_graph(input, output, session, eval_name):
     @reactive.event(var_selected)
     def plotPassFailStat():
 
-        #if not var_selected.get(): return
+        if not var_selected.get(): return
 
-        data = loadEvalResults()
+        data = loadEvalResults().copy()
         data = filterDataByVars(data, var_selected.get())
 
         if data.empty: return getNoDataPlot(title='Correct Responses')
 
         df_plot = data.query('Result != "No assertion"')[['Score', 'Model']].sort_values('Model')
+        
         fig = px.violin(df_plot, x='Score', y='Model', orientation='h', box=True)
 
         fig.update_layout(
@@ -95,13 +97,6 @@ def module_graph(input, output, session, eval_name):
     @reactive.event(var_selected)
     def plotAssertionStat():
 
-        #if not var_selected.get(): return
-
-        data = loadEvalResults()
-        data = filterDataByVars(data, var_selected.get())
-
-        if data.empty: return getNoDataPlot(title='Correct Assertions in Responses')
-            
         def getAssertionCount(reason, result):
             if result == 'No assertion': return (1, result, 1)
             if not isinstance(reason, list): return (0, result, 1)
@@ -109,7 +104,14 @@ def module_graph(input, output, session, eval_name):
             for y in reason:
                 s += y['pass']
             return (s, 'Pass', len(reason))
-        
+
+        if not var_selected.get(): return
+
+        data = loadEvalResults().copy()
+        data = filterDataByVars(data, var_selected.get())
+
+        if data.empty: return getNoDataPlot(title='Correct Assertions in Responses')
+       
         df_assertion_count = (data.apply(lambda x: getAssertionCount(x['Reason'], x['Result']), axis=1, result_type='expand')
                                 .rename(columns={0: 'Count', 1: 'Result', 2: 'Total assertions'})
         )
@@ -147,36 +149,38 @@ def module_graph(input, output, session, eval_name):
 
         return fig
     
-    @reactive.calc
-    @reactive.event(var_selected)
-    def plotContextSearchStat():
+    # @reactive.calc
+    # @reactive.event(var_selected)
+    # def plotContextSearchStat():
 
-        #if not var_selected.get(): return
+    #     #if not var_selected.get(): return
 
-        data = loadEvalResults()
-        data = filterDataByVars(data, var_selected.get())
+    #     data = loadEvalResults().copy()
+    #     data = filterDataByVars(data, var_selected.get())
 
-        if data.empty: return getNoDataPlot(title='Context search frequency')
+    #     if data.empty: return getNoDataPlot(title='Context search frequency')
 
-        data['Used Context'] = data['Used Context'].apply(lambda x: 'From Resources' if x else 'From Training Data')
-        df_plot = data.groupby('Model')['Used Context'].value_counts().reset_index().sort_values('Model')
+    #     breakpoint()
+
+    #     data['Used Context'] = data['Used Context'].apply(lambda x: 'From Resources' if x else 'From Training Data')
+    #     df_plot = data.groupby('Model')['Used Context'].value_counts().reset_index().sort_values('Model')
         
-        category_orders = {'Used Context':['From Resources', 'From Training Data']}
-        category_colors = ['#7c8fe6', '#eb8c60']
+    #     category_orders = {'Used Context':['From Resources', 'From Training Data']}
+    #     category_colors = ['#7c8fe6', '#eb8c60']
         
-        fig = px.bar(df_plot, x='count', y='Model', color='Used Context', orientation='h',
-                     category_orders=category_orders, 
-                     color_discrete_sequence=category_colors)
+    #     fig = px.bar(df_plot, x='count', y='Model', color='Used Context', orientation='h',
+    #                  category_orders=category_orders, 
+    #                  color_discrete_sequence=category_colors)
 
-        fig.update_layout(
-            title="Context search frequency",
-            barmode='stack',
-            **Config.CONFIG_PLOT
-        )
+    #     fig.update_layout(
+    #         title="Context search frequency",
+    #         barmode='stack',
+    #         **Config.CONFIG_PLOT
+    #     )
 
-        fig.update_xaxes(visible=False)
+    #     fig.update_xaxes(visible=False)
 
-        return fig
+    #     return fig
     
 @module
 def mod_ui(input, output, session):
@@ -185,11 +189,13 @@ def mod_ui(input, output, session):
         with ui.div(class_="col d-flex justify-content-start align-items-center gap-2"):
             ui.input_select("select_eval_set", "Eval sets", choices=[])
         with ui.div(class_="col d-flex pb-1 justify-content-start align-items-end"):
-            ui.input_checkbox("chk_hide_no_assertion_evals", "Hide unlabeled evals", value=True)
+            ui.help_text("Only evals with assertions are shown in the report.")
 
     @render.express
     def showPlots():
-        loadResults()
+        evals = loadEvals()
+        for i, eval_name in enumerate(evals):
+            module_graph(getUIID(f'eval_{i}'), eval_name=eval_name)
 
     @reactive.calc
     def getEvalSetToCompare():
@@ -203,23 +209,22 @@ def mod_ui(input, output, session):
     @reactive.effect
     def loadEvalSets():
         eval_sets = getEvalSetToCompare()
-        ui.update_select(id='select_eval_set', choices={k: v['Name'] for k, v in eval_sets.items()})
-
-    def hasAssertion(data, col_result):
-        if data.empty: return False
-        return bool((data[col_result] != 'No assertion').any())
+        eval_sets_with_assertions = {k: v['Name'] for k, v in eval_sets.items() if any(Evaluator.hasAssertion(eval_info['Eval Name']) for eval_info in v['Evals to compare'])}
+        ui.update_select(id='select_eval_set', choices=eval_sets_with_assertions)
 
     @reactive.calc
-    @reactive.event(input.select_eval_set, input.chk_hide_no_assertion_evals)
-    def loadResults():
+    @reactive.event(input.select_eval_set)
+    def loadEvals():
         eval_set_name = input.select_eval_set()
+
+        if eval_set_name is None: return []
 
         eval_sets = {eval_set_name: getEvalSetToCompare()[eval_set_name]}
 
         evals = []
         for eval_set_name in eval_sets:
-            for eval_name in eval_sets[eval_set_name]['Evals to compare']:
-                if input.chk_hide_no_assertion_evals() and not Evaluator.hasAssertion(eval_name): continue
-                evals.append(eval_name)
+            for eval_info in eval_sets[eval_set_name]['Evals to compare']:
+                if not Evaluator.hasAssertion(eval_info['Eval Name']): continue
+                evals.append(eval_info['Eval Name'])
 
-        return [module_graph(f'eval_{i}', eval_name) for i, eval_name in enumerate(evals)]
+        return evals
