@@ -1,28 +1,28 @@
 abt-qa-assertion-prompts_mixed:
   Evals to compare:
-    - Eval Group Name: base-model
+    - Eval Group Name: Base
       Eval Name: base-model_abt-qa-assertion-prompts_mixed
-    - Eval Group Name: rag
+    - Eval Group Name: RAG
       Eval Name: rag_abt-qa-assertion-prompts_mixed
-    - Eval Group Name: agentic
+    - Eval Group Name: Agentic
       Eval Name: agentic_abt-qa-assertion-prompts_mixed
   Name: ABT Q/A
 basic-prompts_human:
   Evals to compare:
-    - Eval Group Name: base-model
+    - Eval Group Name: Base
       Eval Name: base-model_basic-prompts_human
-    - Eval Group Name: rag
+    - Eval Group Name: RAG
       Eval Name: rag_basic-prompts_human
-    - Eval Group Name: agentic
+    - Eval Group Name: Agentic
       Eval Name: agentic_basic-prompts_human
   Name: Basic prompts (Human)
 basic-prompts_rat:
   Evals to compare:
-    - Eval Group Name: base-model
+    - Eval Group Name: Base
       Eval Name: base-model_basic-prompts_rat
-    - Eval Group Name: rag
+    - Eval Group Name: RAG
       Eval Name: rag_basic-prompts_rat
-    - Eval Group Name: agentic
+    - Eval Group Name: Agentic
       Eval Name: agentic_basic-prompts_rat
   Name: Basic prompts (Rat)
 test:
@@ -36,19 +36,19 @@ test:
   Name: Test
 tox-type-assertion-prompts_human:
   Evals to compare:
-    - Eval Group Name: base-model
+    - Eval Group Name: Base
       Eval Name: base-model_tox-type-assertion-prompts_human
-    - Eval Group Name: rag
+    - Eval Group Name: RAG
       Eval Name: rag_tox-type-assertion-prompts_human
-    - Eval Group Name: agentic
+    - Eval Group Name: Agentic
       Eval Name: agentic_tox-type-assertion-prompts_human
   Name: Tox type prompts (Human)
 tox-type-assertion-prompts_rat:
   Evals to compare:
-    - Eval Group Name: base-model
+    - Eval Group Name: Base
       Eval Name: base-model_tox-type-assertion-prompts_rat
-    - Eval Group Name: rag
+    - Eval Group Name: RAG
       Eval Name: rag_tox-type-assertion-prompts_rat
-    - Eval Group Name: agentic
+    - Eval Group Name: Agentic
       Eval Name: agentic_tox-type-assertion-prompts_rat
   Name: Tox type prompts (Rat)
