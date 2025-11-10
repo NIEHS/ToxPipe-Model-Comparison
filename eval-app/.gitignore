@@ -9,4 +9,4 @@ docs/~*
 .posit
 __pycache__
 
-**/data/**/backup*
+**/data/**/backup*/*
