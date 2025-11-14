@@ -1,13 +1,11 @@
 from .utils import Config
 from .models import createOpenAIModel
-from langchain.prompts import ChatPromptTemplate
-from langsmith import traceable
 import threading
 import requests
-import httpx
 import truststore
 from pathlib import Path
 from pydantic import BaseModel
+
 
 class Response(BaseModel):
     output: str = ''
@@ -33,8 +31,28 @@ class Executor:
         
         return dict(Response(**queryFunc()))
 
-    #@traceable
     def queryLLM(self):
+
+        from langchain_openai import ChatOpenAI
+        from langchain.prompts import ChatPromptTemplate
+        from .utils import Config
+        import httpx
+
+        http_client = httpx.Client(verify=self.cert_path)
+
+        def createOpenAIModel(model_name, temperature):
+            
+            return ChatOpenAI(
+                model=model_name,
+                base_url=Config.env_config['AI_BASE_URL'],
+                api_key=Config.env_config['AI_API_KEY'],
+                temperature=temperature,
+                max_tokens=None,
+                timeout=None,
+                max_retries=10,
+                seed=1000,
+                http_client=http_client
+             )
         
         model = createOpenAIModel(self.model_info['id'].split(':')[-1], **self.model_info['config'])
 
