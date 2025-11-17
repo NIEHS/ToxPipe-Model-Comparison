@@ -1,0 +1,13 @@
+services:
+  toxpipe-evaluation:
+    container_name: ToxPipe-Evaluation
+    build: .
+    ports:
+      - "8114:8011"
+    volumes:
+      - ./config:/app/config
+      - ./cache:/app/cache
+
+volumes:
+  config:
+  cache:

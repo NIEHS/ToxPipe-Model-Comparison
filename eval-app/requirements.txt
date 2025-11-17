@@ -36,7 +36,7 @@ pyyaml==6.0.2
     # via toxpipe-model-comparison (pyproject.toml)
 scikit-learn==1.6.0
     # via toxpipe-model-comparison (pyproject.toml)
-shiny==1.2.1
+shiny==1.5.0
     # via toxpipe-model-comparison (pyproject.toml)
 shinywidgets==0.7.0
     # via toxpipe-model-comparison (pyproject.toml)

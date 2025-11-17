@@ -1,6 +1,7 @@
 from shiny import reactive
 from shiny.express import ui
 from src.utils import Config
+from src.utils_eval import Evaluator
 from src import module_create_and_run_eval, \
                 module_show_eval, \
                 module_compare_evals_by_prompt, \
@@ -33,3 +34,8 @@ with ui.navset_pill(id="nav_main", selected='show'):
                 with ui.nav_panel('Table', value='table'):
                     with ui.div(class_='app-container'):
                         module_compare_evals_by_table.mod_ui('table')
+
+@reactive.effect
+def resetReloadEvalsFlag():
+    if not Evaluator.loadEvals():
+        ui.update_navset(id='nav_main', selected='set')

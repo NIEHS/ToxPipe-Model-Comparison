@@ -33,26 +33,7 @@ class Executor:
 
     def queryLLM(self):
 
-        from langchain_openai import ChatOpenAI
         from langchain.prompts import ChatPromptTemplate
-        from .utils import Config
-        import httpx
-
-        http_client = httpx.Client(verify=self.cert_path)
-
-        def createOpenAIModel(model_name, temperature):
-            
-            return ChatOpenAI(
-                model=model_name,
-                base_url=Config.env_config['AI_BASE_URL'],
-                api_key=Config.env_config['AI_API_KEY'],
-                temperature=temperature,
-                max_tokens=None,
-                timeout=None,
-                max_retries=10,
-                seed=1000,
-                http_client=http_client
-             )
         
         model = createOpenAIModel(self.model_info['id'].split(':')[-1], **self.model_info['config'])
 
@@ -73,8 +54,9 @@ class Executor:
 
         model_params = '&'.join([f'{k}={v}' for k, v in self.model_info['config'].items()])
         url = f'{Config.env_config['TOXPIPE_API_HOST']}/rag/'
-
-        response = requests.get(url=f"{url}?q={prompt}&{model_params}", verify=self.cert_path)
+        api_key = Config.env_config.get('TOXPIPE_API_API_KEY', '')
+        headers = { "Authorization": f"Bearer {api_key}" } if api_key else {}
+        response = requests.get(url=f"{url}?q={prompt}&{model_params}", headers=headers, verify=self.cert_path)
         if not response.ok: raise Exception(f'API url: {url}, query: {prompt}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()
 
@@ -91,11 +73,12 @@ class Executor:
             url = f'{Config.env_config['TOXPIPE_API_HOST']}/agent/create/'
             response = requests.get(url=f"{url}?{model_params}", verify=self.cert_path, timeout=None)
             if not response.ok: raise Exception(response.text)
-            agentid = response.json()['agentid']
             
+            agentid = response.json()['agentid']
             url = f'{Config.env_config['TOXPIPE_API_HOST']}/agent/query/?agentid={agentid}&q={prompt}'
-
-            response = requests.get(url=url, verify=self.cert_path, timeout=None)
+            api_key = Config.env_config.get('TOXPIPE_API_API_KEY', '')
+            headers = { "Authorization": f"Bearer {api_key}" } if api_key else {}
+            response = requests.get(url=url, headers=headers, verify=self.cert_path, timeout=None)
             if not response.ok: raise Exception(f'API url: {url}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
             res = response.json()
 

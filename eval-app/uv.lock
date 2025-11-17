@@ -119,15 +119,6 @@ wheels = [
 ]
 
 [[package]]
-name = "appdirs"
-version = "1.4.4"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d7/d8/05696357e0311f5b5c316d7b95f46c669dd9c15aaeecbb48c7d0aeb88c40/appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41", size = 13470, upload_time = "2020-05-11T07:59:51.037Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3b/00/2344469e2084fb287c2e0b57b72910309874c3245463acd6cf5e3db69324/appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128", size = 9566, upload_time = "2020-05-11T07:59:49.499Z" },
-]
-
-[[package]]
 name = "appnope"
 version = "0.1.4"
 source = { registry = "https://pypi.org/simple" }
@@ -1859,10 +1850,9 @@ wheels = [
 
 [[package]]
 name = "shiny"
-version = "1.2.1"
+version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "appdirs" },
     { name = "asgiref" },
     { name = "click", marker = "sys_platform != 'emscripten'" },
     { name = "htmltools" },
@@ -1872,19 +1862,34 @@ dependencies = [
     { name = "narwhals" },
     { name = "orjson" },
     { name = "packaging" },
+    { name = "platformdirs" },
     { name = "prompt-toolkit", marker = "sys_platform != 'emscripten'" },
-    { name = "python-multipart" },
+    { name = "python-multipart", marker = "sys_platform != 'emscripten'" },
     { name = "questionary", marker = "sys_platform != 'emscripten'" },
     { name = "setuptools" },
+    { name = "shinychat" },
     { name = "starlette" },
     { name = "typing-extensions" },
     { name = "uvicorn", marker = "sys_platform != 'emscripten'" },
     { name = "watchfiles", marker = "sys_platform != 'emscripten'" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0a/1e/7fb6b23a09f85b2d7fa81ae9b0992dd817e8fcaf7218c86a4641ab6d896d/shiny-1.2.1.tar.gz", hash = "sha256:69a4db338710d87fad0ae50e04b2d70f6b7183edb846db4fa90cd7456091feee", size = 5205474, upload_time = "2024-11-14T15:53:38.803Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/09/00/588d12aaeb1179bcbb20d5841a6db722d1c01c922858bbbb49de58ea03c7/shiny-1.5.0.tar.gz", hash = "sha256:6a07b5057db4471a804b5f915def5db9eeec5ce0cc45d58ee2e174324c5471e0", size = 4905968, upload_time = "2025-09-11T22:26:56.495Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/70/e692ba2b6af84017c96e6856f87be596e341bf06ef6774fcd0b4a32856fa/shiny-1.2.1-py3-none-any.whl", hash = "sha256:b5778ed5370066d33a10e7fbaaef19e9691ec4c4f24e2f59137b8cac92f064f9", size = 4306265, upload_time = "2024-11-14T15:53:35.616Z" },
+    { url = "https://files.pythonhosted.org/packages/dd/ac/1d0da6abb068ce31207bd597c9b8a6bd623aa561142cc67eeea5160518d8/shiny-1.5.0-py3-none-any.whl", hash = "sha256:97349fddd2212abaf588548f023b07944e4095fee5bc2c103ff53308ac472806", size = 3924490, upload_time = "2025-09-11T22:26:54.506Z" },
+]
+
+[[package]]
+name = "shinychat"
+version = "0.2.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "htmltools" },
+    { name = "shiny" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a3/c6/6887a3618842e65794e5dcfb345825ccd43d58c56fefa9d31286d8e14d16/shinychat-0.2.8.tar.gz", hash = "sha256:d27f28ddf1d512a05ef2cc2f0cffbb75b5b6e3157d5e3690ce4e63d18bfa7492", size = 547318, upload_time = "2025-09-11T20:13:20.367Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/16/01/8658eaffa920f4c621f05acc42ea98248147706079287b3a7ab4e47e1ece/shinychat-0.2.8-py3-none-any.whl", hash = "sha256:6742a2354257280458269a8b5675f1254e5583be34b6eb1a626de44c0323286a", size = 561057, upload_time = "2025-09-11T20:13:18.683Z" },
 ]
 
 [[package]]
@@ -2088,7 +2093,7 @@ requires-dist = [
     { name = "python-dotenv", specifier = "==1.0.1" },
     { name = "pyyaml", specifier = "==6.0.2" },
     { name = "scikit-learn", specifier = "==1.6.0" },
-    { name = "shiny", specifier = "==1.2.1" },
+    { name = "shiny", specifier = "==1.5.0" },
     { name = "shinywidgets", specifier = "==0.7.0" },
     { name = "sqlalchemy", specifier = "==2.0.36" },
     { name = "tqdm", specifier = "==4.67.1" },

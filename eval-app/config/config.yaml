@@ -99,6 +99,26 @@ providers:
         min: 0
         max: 1
 
+  claude-4.5-haiku:
+    func: "queryLLM"
+    label: "Claude 4.5 Haiku"
+    config:
+      label: "Temperature"
+      type: "int"
+      default: 0
+      min: 0
+      max: 1
+
+  claude-4.5-sonnet:
+    func: "queryLLM"
+    label: "Claude 4.5 Sonnet"
+    config:
+      label: "Temperature"
+      type: "int"
+      default: 0
+      min: 0
+      max: 1
+
   claude_3_7_sonnet:
     func: "queryLLM"
     label: "Claude 3.7 Sonnet"
@@ -132,9 +152,9 @@ providers:
         min: 0
         max: 1
 
-  llama3_3_70b:
+  llama4-scout-17b-instruct:
     func: "queryLLM"
-    label: "Llama 3.3 70B"
+    label: "Llama 4 Scout 17B (Instruct)"
     config:
       temperature:
         label: "Temperature"
@@ -164,10 +184,12 @@ providers:
           - "azure-o3"
           - "azure-gpt-5-nano"
           - "azure-gpt-4o"
+          - "claude-4.5-haiku"
+          - "claude-4.5-sonnet"
           - "claude-3-7-sonnet"
           - "gemini-2.5-pro"
           - "gemini-2.5-flash"
-          - "llama3-3-70b"
+          - "llama4-scout-17b-instruct"
           - "mistral-large"
         default: "azure-gpt-4o"
       temp:

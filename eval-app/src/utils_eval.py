@@ -52,7 +52,10 @@ class Evaluator:
         prompts_and_asserts = []
         for item in prompts_vars_asserts:
             for test in item['tests']:
-                prompt = item['prompt'].format(**test['vars'])
+                if 'vars' not in test:
+                    prompt = item['prompt']
+                else:
+                    prompt = item['prompt'].format(**test['vars'])
                 if 'assert' not in test or len(test['assert']) == 0:
                     expected_kp = []
                 else:
