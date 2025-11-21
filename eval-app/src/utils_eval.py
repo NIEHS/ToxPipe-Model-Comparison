@@ -151,15 +151,16 @@ class Evaluator:
         for item in records_db:
             
             try:
+                response = item['response'] if isinstance(item['response'], dict) else item['response'][0]
                 content = {
                     'Id': f"{event_id}|{item['_id']}",
                     'eval_id': event_id,
                     'Prompt': item['prompt'], 
                     'Model': item['provider']['label'], 
-                    'Response': item['response']['output'],
-                    'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
-                    'Score':  float(item['response']['results']['score']) if item['response']['results'] else 0,
-                    'Reason': getExplanation(item['response']['results'])
+                    'Response': response['output'],
+                    'Result': 'No assertion' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail',
+                    'Score':  float(response['results']['score']) if response['results'] else 0,
+                    'Reason': getExplanation(response['results'])
                 } | item['vars']
                 
                 results.append(content)

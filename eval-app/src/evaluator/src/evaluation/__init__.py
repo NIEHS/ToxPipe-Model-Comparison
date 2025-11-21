@@ -31,12 +31,16 @@ def getEvaluationResponse(assert_info, response, prompt):
         return {'output': '', 'error': f'Error in evaluation: {error}'}
 
 #@traceable 
-def getResponseAndEvaluate(model_info, prompt_info, vars_info, assert_info):
+def getResponseAndEvaluate(model_info, prompt_info, vars_info, assert_info, num_runs=1):
 
-    response = getModelResponse(model_info, prompt_info, vars_info)
-    response['results'] = getEvaluationResponse(assert_info=assert_info, response=response, prompt=prompt_info['user'].format(**vars_info)) if len(assert_info) > 0 else {}
+    responses = []
+    for _ in range(num_runs):
+        response = getModelResponse(model_info, prompt_info, vars_info)
+        response['results'] = getEvaluationResponse(assert_info=assert_info, response=response, prompt=prompt_info['user'].format(**vars_info)) if len(assert_info) > 0 else {}
+        responses.append(response)
 
-    return response
+    if num_runs == 1: return responses[0]
+    return responses
 
 def loadYML(file_path):
     data = None
@@ -141,7 +145,7 @@ def runTest(eval_name, replace=False, skip_run=False):
 
     event_id = str(datetime.now().timestamp())
     
-    db_temp.add({'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt']})
+    db_temp.add({'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt'], 'num_runs': config.get('num_runs', 1)})
 
     tests = []
     index = 1
