@@ -77,6 +77,8 @@ class Evaluator:
         for d in var_list:
             for k, v in d.items():
                 d_vars[k] = d_vars.get(k, []) + [v]
+        for i in d_vars:
+            d_vars[i] = sorted(list(d_vars[i]))
         return d_vars
     
     def filterVarsByPrompt(d_vars, prompt):
@@ -126,6 +128,25 @@ class Evaluator:
                 }]
             return d_results
         
+        def getResponseAndResult(item):
+            if isinstance(item['response'], dict):
+                response = item['response']
+                result = 'No assertion' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail'
+            elif isinstance(item['response'], list):
+                count_result = 0
+                for response in item['response']:
+                    result_item = 'No assertion' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail'
+                    if result_item == 'Pass':
+                        count_result += 1
+                    elif result_item == 'Fail':
+                        count_result -= 1
+                result = 'Pass' if count_result > 0 else 'Fail' if count_result < 0 else 'No assertion'
+                for response in item['response']:
+                    result_item = 'No assertion' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail'
+                    if result == result_item:
+                        break
+            return response, result
+        
         if not Evaluator.hasOutput(eval_name): return pd.DataFrame()
 
         results = []
@@ -151,14 +172,15 @@ class Evaluator:
         for item in records_db:
             
             try:
-                response = item['response'] if isinstance(item['response'], dict) else item['response'][0]
+                response, result = getResponseAndResult(item)
+
                 content = {
                     'Id': f"{event_id}|{item['_id']}",
                     'eval_id': event_id,
                     'Prompt': item['prompt'], 
                     'Model': item['provider']['label'], 
                     'Response': response['output'],
-                    'Result': 'No assertion' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail',
+                    'Result': result,
                     'Score':  float(response['results']['score']) if response['results'] else 0,
                     'Reason': getExplanation(response['results'])
                 } | item['vars']
