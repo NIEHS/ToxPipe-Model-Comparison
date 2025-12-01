@@ -25,15 +25,6 @@ basic-prompts_rat:
     - Eval Group Name: Agentic
       Eval Name: agentic_basic-prompts_rat
   Name: Basic prompts (Rat)
-test:
-  Evals to compare:
-    - Eval Group Name: test1
-      Eval Name: agentic_basic-prompts_human
-    - Eval Group Name: test2
-      Eval Name: base-model_basic-prompts_human
-    - Eval Group Name: test3
-      Eval Name: rag_basic-prompts_human
-  Name: Test
 tox-type-assertion-prompts_human:
   Evals to compare:
     - Eval Group Name: Base
