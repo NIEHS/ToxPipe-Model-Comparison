@@ -106,8 +106,9 @@ def resumeLastRun(eval_name, skip_run):
 
         # Check for error in response to re-execute and re-evaluate
         for i, response in enumerate(response_list):
+            
             is_response_error = (not skip_run) and (('error' in response and len(response['error'].strip()) > 0) or
-                                    response['output'].lower().startswith('error'))
+                                                    response['output'].lower().startswith('error'))
             
             if not is_response_error: continue
             
@@ -118,10 +119,19 @@ def resumeLastRun(eval_name, skip_run):
         # Check for error in evaluation to re-evaluate
         else:
             for i, response in enumerate(response_list):
-                is_eval_error =  (len(record['assert']) > 0 and ('results' not in response or 
-                                                            len(response['results']) == 0 or 
-                                                            'error' in response['results']))
+
+                if not len(record['assert']) > 0: continue 
                 
+                is_eval_error = False
+                if 'results' in response:
+                    if isinstance(response['results'], dict):
+                        if 'error' in response['results']: is_eval_error = True
+                    else:
+                        for res in response['results']:
+                            if 'error' in res: 
+                                is_eval_error = True
+                                break
+
                 if not is_eval_error: continue
                 
                 descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
@@ -144,10 +154,6 @@ def resumeLastRun(eval_name, skip_run):
         if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, indices_eval, indices_response_eval, num_runs)
 
 def runTest(eval_name, replace=False, skip_run=False):
-
-    if skip_run: 
-        resumeLastRun(eval_name, skip_run=skip_run)
-        return
 
     # The original eval db
     db = EvalDB(eval_name)
@@ -186,13 +192,35 @@ def runTest(eval_name, replace=False, skip_run=False):
                     response_init_value = [{'output': '', 
                                         'error': 'Init mode: Response has not been generated yet.', 
                                         'results': {}} for _ in range(num_runs)]
-                if replace:
-                    tests.append(filter_value | {'_id': index, 'response': response_init_value})
+                if not skip_run:
+                    if replace:
+                        tests.append(filter_value | {'_id': index, 'response': response_init_value})
+                    else:
+                        record = db.collection.find_one(filter_value)
+                        if record is None:
+                            tests.append(filter_value | {'_id': index, 'response': response_init_value})
+                        else:
+                            tests.append(filter_value | {'_id': index, 'response': record['response']})
+
                 else:
                     record = db.collection.find_one(filter_value)
                     if record is None:
                         tests.append(filter_value | {'_id': index, 'response': response_init_value})
+                    elif not replace:
+                        if not record['assert']:
+                            if isinstance(record['response'], list):
+                                for i in range(len(record['response'])):
+                                    record['response'][i]['results'] = {}
+                            else:
+                                record['response']['results'] = {}
+                        tests.append(filter_value | {'_id': index, 'response': record['response']})
                     else:
+                        if isinstance(record['response'], list):
+                            for i in range(len(record['response'])):
+                                record['response'][i]['results'] = {}
+                        else:
+                            record['response']['results'] = {}
+
                         tests.append(filter_value | {'_id': index, 'response': record['response']})
                     
                 index += 1

@@ -133,11 +133,12 @@ def module_graph(input, output, session, eval_name):
         df_plot = df_plot.groupby(['Model', 'Result'])['Count'].sum().reset_index().sort_values('Model')
 
         category_orders = {'Result':['Pass', 'Fail', 'No assertion']}
-        category_colors = ['#7c8fe6', '#eb8c60', '#dbd8d0']
+        category_colors = ["#b2cdff", "#f8adad", '#dbd8d0']
         
         fig = px.bar(df_plot, x='Count', y='Model', color='Result', orientation='h',
                      category_orders=category_orders, 
-                     color_discrete_sequence=category_colors)
+                     color_discrete_sequence=category_colors,
+                     text_auto=True)
 
         fig.update_layout(
             title="Correct Assertions in Responses",

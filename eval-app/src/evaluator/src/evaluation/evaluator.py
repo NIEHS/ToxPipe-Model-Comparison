@@ -47,7 +47,7 @@ class EvaluateResponse:
 
     def __init__(self, assert_info):
         self.assert_info = assert_info
-        llm = createOpenAIModel(model_name='azure-gpt-4o', temperature=0)
+        llm = createOpenAIModel(model_name='azure-gpt-5', temperature=0)
         parser = OutputFixingParser.from_llm(parser=PydanticOutputParser(pydantic_object=EvaluateResponseSchema), 
                                              llm=llm,
                                              max_retries=2)

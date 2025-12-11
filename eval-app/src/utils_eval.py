@@ -14,7 +14,6 @@ class Evaluator:
     def hasOutput(eval_name):
         if not eval_name: return False
         return EvalDB(eval_name).exists()
-        return (Config.DIR_TESTS / eval_name / 'output' / 'output_0.json').exists()
     
     #def hasEmbedding(eval_name):
     #    return (Config.DIR_TESTS / eval_name / 'output' / 'response_embeddings.json').exists()
@@ -22,7 +21,6 @@ class Evaluator:
     def loadEvals():
         try:
             return EvalDB().listEvals()
-            return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if Evaluator.hasOutput(eval_name)])
         except Exception as exp:
             print(exp)
             return []
@@ -30,7 +28,6 @@ class Evaluator:
     def loadEvalsToRun():
         try:
             return EvalConfigDB().listEvals()
-            return sorted([eval_name.name for eval_name in Config.DIR_TESTS.iterdir() if (Config.DIR_TESTS / eval_name / 'config.yaml').exists()])
         except:
             return []
 
@@ -38,7 +35,6 @@ class Evaluator:
         try:
             db = EvalConfigDB(eval_name)
             return db.getAll()[0]
-            return loadYML(Config.DIR_TESTS / eval_name / 'config.yaml')
         except:
             return {}
         
@@ -193,60 +189,6 @@ class Evaluator:
                 continue
 
         results = pd.DataFrame(results)
-
-        return results
-    
-        if not Evaluator.hasOutput(eval_name): return pd.DataFrame()
-
-        db = EvalDB(eval_name)
-
-        results = []
-
-        dir_output = Config.DIR_TESTS / eval_name / 'output'
-        list_output_file_path = sorted(list(dir_output.glob('output_*.json')), key=lambda x: int(x.stem.split('_')[-1]))
-    
-        for file_path in list_output_file_path:
-
-            with open(file_path) as f:
-                data = json.load(f)
-
-            results_chunk = []
-            for item in data['tests']:
-                try:
-                    content = {
-                        'Id': f"{data['id']}|{item['provider']['label']}",
-                        'eval_id': data['id'],
-                        'Prompt': item['prompt'], 
-                        'Model': item['provider']['label'], 
-                        'Response': item['response']['output'],
-                        'Result': 'No assertion' if not item['response']['results'] else 'Pass' if item['response']['results']['pass'] else 'Fail',
-                        'Score':  float(item['response']['results']['score']) if item['response']['results'] else 0,
-                        'Reason': getExplanation(item['response']['results'])
-                    }
-                    if 'steps_taken' in item['response']:
-                        content |= {
-                            'Used Context': (item['response']['steps_taken'][-1] == 'query_with_context')
-                        }
-                    if 'searched_keyphrases' in item['response']:
-                        content |= {
-                            'Searched Keyphrases': '\n'.join([f'- {x}' for x in item['response']['searched_keyphrases']])
-                        }
-
-                    # Vars columns must be added last to ensure ease of processing.
-                    content |= item['vars']
-                    
-                    results_chunk.append(content)
-
-                except Exception as exp:
-                    print(f'Error reading output from {file_path}')
-                    print(f"Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}")
-                    continue
-                
-            results += results_chunk
-
-        results = pd.DataFrame(results)
-
-        Evaluator.NUM_NONVARS_COLS = 10 if 'Used Context' in results.columns and 'Searched Keyphrases' in results.columns else 8
 
         return results
     
