@@ -33,7 +33,7 @@ class Executor:
 
     def queryLLM(self):
 
-        from langchain.prompts import ChatPromptTemplate
+        from langchain_core.prompts import ChatPromptTemplate
         
         model = createOpenAIModel(self.model_info['id'].split(':')[-1], **self.model_info['config'])
 

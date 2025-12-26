@@ -8,15 +8,11 @@ httpx==0.28.1
     # via toxpipe-model-comparison (pyproject.toml)
 ipykernel==6.29.5
     # via toxpipe-model-comparison (pyproject.toml)
-langchain==0.3.12
+langchain==0.3.27
     # via toxpipe-model-comparison (pyproject.toml)
-langchain-core==0.3.25
+langchain-core==0.3.76
     # via toxpipe-model-comparison (pyproject.toml)
-langchain-openai==0.2.12
-    # via toxpipe-model-comparison (pyproject.toml)
-langchain-text-splitters==0.3.3
-    # via toxpipe-model-comparison (pyproject.toml)
-langsmith==0.2.3
+langchain-openai==0.3.33
     # via toxpipe-model-comparison (pyproject.toml)
 nbformat==5.10.4
     # via toxpipe-model-comparison (pyproject.toml)
