@@ -10,7 +10,7 @@ ipykernel==6.29.5
     # via toxpipe-model-comparison (pyproject.toml)
 langchain==0.3.27
     # via toxpipe-model-comparison (pyproject.toml)
-langchain-core==0.3.76
+langchain-core==0.3.81
     # via toxpipe-model-comparison (pyproject.toml)
 langchain-openai==0.3.33
     # via toxpipe-model-comparison (pyproject.toml)
