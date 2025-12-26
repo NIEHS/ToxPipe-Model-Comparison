@@ -24,6 +24,6 @@ dependencies = [
     "anywidget==0.9.18",
     "nbformat==5.10.4",
     "langchain==0.3.27",
-    "langchain-core==0.3.76",
+    "langchain-core==0.3.81",
     "langchain-openai==0.3.33",
 ]
