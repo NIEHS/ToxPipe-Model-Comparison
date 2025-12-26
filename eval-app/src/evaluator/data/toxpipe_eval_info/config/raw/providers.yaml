@@ -3,7 +3,24 @@ base-model:
     - config:
         temperature: 0
       id: azure-o3
-      label: "o3"
+      label: o3
+      func: queryLLM
+    - config:
+        temperature: 0
+        reasoning_effort: high
+      id: azure-gpt-5
+      label: GPT-5 (high reasoning)
+      func: queryLLM
+    - config:
+        temperature: 0
+        reasoning_effort: low
+      id: azure-gpt-5
+      label: GPT-5 (low reasoning)
+      func: queryLLM
+    - config:
+        temperature: 0
+      id: azure-gpt-5-nano
+      label: GPT-5 Nano
       func: queryLLM
     - config:
         temperature: 0
@@ -57,6 +74,20 @@ rag:
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (RAG) [o3]
+      func: queryToxPipeRAG
+    - config:
+        model: azure-gpt-5
+        temp: 0
+        reasoning_effort: high
+      id: ToxPipeRAG
+      label: Toxpipe (RAG) [GPT-5 High Reasoning]
+      func: queryToxPipeRAG
+    - config:
+        model: azure-gpt-5
+        temp: 0
+        reasoning_effort: low
+      id: ToxPipeRAG
+      label: Toxpipe (RAG) [GPT-5 Low Reasoning]
       func: queryToxPipeRAG
     - config:
         model: azure-gpt-5-nano
@@ -116,8 +147,26 @@ agentic:
   providers:
     - config:
         max_iterations: 20
+        model: azure-gpt-5
+        summarize: false
+        temp: 0
+        reasoning_effort: high
+      id: ToxPipeAgentic
+      label: Toxpipe (Agentic) [GPT-5 High Reasoning]
+      func: queryToxPipeAgentic
+    - config:
+        max_iterations: 20
+        model: azure-gpt-5
+        summarize: false
+        temp: 0
+        reasoning_effort: low
+      id: ToxPipeAgentic
+      label: Toxpipe (Agentic) [GPT-5 Low Reasoning]
+      func: queryToxPipeAgentic
+    - config:
+        max_iterations: 20
         model: azure-gpt-5-nano
-        summarize: "false"
+        summarize: false
         temp: 0
       id: ToxPipeAgentic
       label: Toxpipe (Agentic) [GPT-5 Nano]
@@ -125,7 +174,7 @@ agentic:
     - config:
         max_iterations: 20
         model: azure-gpt-4o
-        summarize: "false"
+        summarize: false
         temp: 0
       id: ToxPipeAgentic
       label: Toxpipe (Agentic) [GPT-4o]
@@ -133,7 +182,7 @@ agentic:
     - config:
         max_iterations: 20
         model: claude-4.5-haiku
-        summarize: "false"
+        summarize: false
         temp: 0
       id: ToxPipeRAG
       label: Toxpipe (Agentic) [Claude 4.5 Haiku]
