@@ -24,11 +24,6 @@ base-model:
       func: queryLLM
     - config:
         temperature: 0
-      id: azure-gpt-5-nano
-      label: GPT-5 Nano
-      func: queryLLM
-    - config:
-        temperature: 0
       id: azure-gpt-4o
       label: GPT-4o
       func: queryLLM
