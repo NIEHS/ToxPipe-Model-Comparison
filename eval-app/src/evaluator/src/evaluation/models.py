@@ -15,7 +15,7 @@ def createOpenAIModel(model_name, temperature, **kwargs):
         base_url=Config.env_config['AI_BASE_URL'],
         api_key=Config.env_config['AI_API_KEY'],
         temperature=temperature,
-        max_tokens=None,
+        max_tokens=99999,
         timeout=None,
         max_retries=10,
         seed=1000,

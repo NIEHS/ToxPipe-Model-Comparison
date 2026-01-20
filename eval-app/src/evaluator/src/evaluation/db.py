@@ -14,9 +14,15 @@ class MongoDB():
             self.collection.insert_one(data)
         else:
             raise Exception('Invalid data type. Data type must be either dict or list of dicts.')
-        
+
     def exists(self, value):
-        return self.collection.find_one(value) is not None
+        return self.getOne(value) is not None
+    
+    def get(self, value):
+        return self.collection.find(value)
+    
+    def getOne(self, value):
+        return self.collection.find_one(value)
 
     def getAll(self):
         return self.collection.find({})
@@ -32,6 +38,9 @@ class MongoDB():
             self.update(filter, value)
         else:
             self.add(value)
+
+    def __len__(self):
+        return self.collection.count_documents({})
 
 class EvalDB(MongoDB):
 

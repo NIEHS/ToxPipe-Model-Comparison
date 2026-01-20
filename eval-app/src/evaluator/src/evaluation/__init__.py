@@ -10,6 +10,7 @@ import yaml
 from .db import EvalDB, EvalConfigDB
 from datetime import datetime
 from functools import partial
+from .utils import Config
 
 def execute(model_info, prompt_info, vars_info):
 
@@ -71,6 +72,7 @@ def resumeLastRun(eval_name, skip_run):
                 db.update(filter={'_id': indices[i]}, value={'response': res})
 
     def runEvaluate(eval_sets_eval, descs_eval, indices_eval, indices_response_eval, num_runs):
+        
         with concurrent.futures.ThreadPoolExecutor(2) as pool:
             results = pool.map(evaluate, *zip(*eval_sets_eval))
             for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
@@ -81,77 +83,77 @@ def resumeLastRun(eval_name, skip_run):
                     db.update(filter={'_id': indices_eval[i]}, value={'response.results': res})
 
     db = EvalDB(eval_name)
-    records_db = db.getAll().sort('_id', 1)
 
-    first_record = True
-    eval_sets, descs, indices = [], [], []
-    eval_sets_eval, descs_eval, indices_eval, indices_response_eval = [], [], [], []
+    record = db.getOne({"_id": 0})
+    system_prompt = record['system_prompt']
+    num_runs = record.get('num_runs', 1)
+
     threshold = 50
+    db_size = len(db)
+    start = 1
+    
+    while start < db_size:
 
-    for record in records_db:
-
-        if first_record: 
-            system_prompt = record['system_prompt']
-            num_runs = record.get('num_runs', 1)
-            first_record = False
-            continue
-
-        model_info = record['provider']
-        prompt = record['prompt']
-        vars_info = record['vars']
-        assert_info = record['assert']
-        prompt_info = {'system': system_prompt, 'user': prompt}
-
-        response_list = [record['response'].copy()] if num_runs == 1 else record['response'].copy()
-
-        # Check for error in response to re-execute and re-evaluate
-        for i, response in enumerate(response_list):
-            
-            is_response_error = (not skip_run) and (('error' in response and len(response['error'].strip()) > 0) or
-                                                    response['output'].lower().startswith('error'))
-            
-            if not is_response_error: continue
-            
-            descs.append(f"{model_info['label']} - {prompt[:30]}")
-            eval_sets.append([model_info, prompt_info, vars_info, assert_info])
-            indices.append(record['_id'])
-            break
-        # Check for error in evaluation to re-evaluate
-        else:
-            for i, response in enumerate(response_list):
-
-                if not len(record['assert']) > 0: continue 
-                
-                is_eval_error = False
-                if 'results' in response:
-                    if isinstance(response['results'], dict):
-                        if 'error' in response['results']: is_eval_error = True
-                    else:
-                        for res in response['results']:
-                            if 'error' in res: 
-                                is_eval_error = True
-                                break
-
-                if not is_eval_error: continue
-                
-                descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
-                eval_sets_eval.append([assert_info, response['output'], prompt_info['user'].format(**vars_info)])
-                indices_eval.append(record['_id'])
-                indices_response_eval.append(i)
-        
-        if record['_id'] % threshold: continue
-        if not (len(eval_sets) or len(eval_sets_eval)): continue
-        
-        print(f'Processing from record id {record['_id'] - threshold + 1} to {record['_id']}')
-        if eval_sets: runExecuteAndEvaluate(eval_sets, descs, indices, num_runs)
-        if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, indices_eval, indices_response_eval, num_runs)
         eval_sets, descs, indices = [], [], []
         eval_sets_eval, descs_eval, indices_eval, indices_response_eval = [], [], [], []
 
-    if len(eval_sets) or len(eval_sets_eval): 
-        print(f'Processing upto record id {record['_id']}')
+        records = [x for x in db.get({"_id": {"$in": list(range(start, start+threshold))}})]
+
+        for record in records:
+
+            model_info = record['provider']
+            prompt = record['prompt']
+            vars_info = record['vars']
+            assert_info = record['assert']
+            prompt_info = {'system': system_prompt, 'user': prompt}
+
+            response_list = [record['response'].copy()] if num_runs == 1 else record['response'].copy()
+            
+            # Check for error in response to re-execute and re-evaluate
+            for i, response in enumerate(response_list):
+                
+                is_response_error = (not skip_run) and (('error' in response and len(response['error'].strip()) > 0) or
+                                                        response['output'].lower().startswith('error'))
+                
+                if not is_response_error: continue
+                
+                descs.append(f"{model_info['label']} - {prompt[:30]}")
+                eval_sets.append([model_info, prompt_info, vars_info, assert_info])
+                indices.append(record['_id'])
+
+            # Check for error in evaluation to re-evaluate
+            else:
+                for i, response in enumerate(response_list):
+
+                    if not len(record['assert']) > 0: continue 
+                    
+                    is_eval_error = False
+                    if 'results' in response:
+                        if isinstance(response['results'], dict):
+                            if 'error' in response['results']: is_eval_error = True
+                        else:
+                            for res in response['results']:
+                                if 'error' in res: 
+                                    is_eval_error = True
+                                    break
+
+                    if not is_eval_error: continue
+                    
+                    descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
+                    eval_sets_eval.append([assert_info, response['output'], prompt_info['user'].format(**vars_info)])
+                    indices_eval.append(record['_id'])
+                    indices_response_eval.append(i)
+            
+        if not (len(eval_sets) or len(eval_sets_eval)): 
+            start += threshold
+            continue
+        
+        print(f'Processing from record id {start} to {start+threshold-1}')
         if eval_sets: runExecuteAndEvaluate(eval_sets, descs, indices, num_runs)
         if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, indices_eval, indices_response_eval, num_runs)
+
+        start += threshold
+            
 
 def runTest(eval_name, replace=False, skip_run=False):
 

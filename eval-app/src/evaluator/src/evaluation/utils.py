@@ -8,3 +8,5 @@ class Config():
     env_config = dotenv_values(DIR_HOME / ".env")
 
     RANDOM_STATE = 1000
+
+    NUM_THREADS = 2
