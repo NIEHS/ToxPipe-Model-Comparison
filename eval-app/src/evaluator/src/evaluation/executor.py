@@ -62,6 +62,21 @@ class Executor:
 
         return {'output': res.get('response', str(res)), 
                     'error': res.get('error', '')}
+    
+    def queryToxPipeMCP(self):
+
+        prompt = self.prompt_info['user'].format(**self.vars_info)
+
+        model_params = '&'.join([f'{k}={v}' for k, v in self.model_info['config'].items()])
+        url = f'{Config.env_config['TOXPIPE_MCP_API_HOST']}/mcp/'
+        api_key = Config.env_config.get('TOXPIPE_API_API_KEY', '')
+        headers = { "Authorization": f"Bearer {api_key}" } if api_key else {}
+        response = requests.get(url=f"{url}?query={prompt}&{model_params}", headers=headers, verify=self.cert_path)
+        if not response.ok: raise Exception(f'API url: {url}, query: {prompt}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
+        res = response.json()
+
+        return {'output': res.get('response', str(res)), 
+                    'error': res.get('error', '')}
 
     def queryToxPipeAgentic(self):
 
@@ -71,6 +86,7 @@ class Executor:
             
             model_params = '&'.join([f'{k}={v}' for k, v in self.model_info['config'].items()])
             url = f'{Config.env_config['TOXPIPE_API_HOST']}/agent/create/'
+
             response = requests.get(url=f"{url}?{model_params}", verify=self.cert_path, timeout=None)
             if not response.ok: raise Exception(response.text)
             

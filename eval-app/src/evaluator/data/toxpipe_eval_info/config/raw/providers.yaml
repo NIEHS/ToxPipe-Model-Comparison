@@ -138,6 +138,82 @@ rag:
       id: ToxPipeRAG
       label: Toxpipe (RAG) [Mistral Large 2]
       func: queryToxPipeRAG
+mcp:
+  providers:
+    - config:
+        model: azure-o3
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [o3]
+      func: queryToxPipeMCP
+    - config:
+        model: azure-gpt-5
+        temp: 0
+        reasoning_effort: high
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [GPT-5 High Reasoning]
+      func: queryToxPipeMCP
+    - config:
+        model: azure-gpt-5
+        temp: 0
+        reasoning_effort: low
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [GPT-5 Low Reasoning]
+      func: queryToxPipeMCP
+    - config:
+        model: azure-gpt-5-nano
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [GPT-5 Nano]
+      func: queryToxPipeMCP
+    - config:
+        model: azure-gpt-4o
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [GPT-4o]
+      func: queryToxPipeMCP
+    - config:
+        model: claude-4.5-haiku
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [Claude 4.5 Haiku]
+      func: queryToxPipeMCP
+    - config:
+        model: claude-4.5-sonnet
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [Claude 4.5 Sonnet]
+      func: queryToxPipeMCP
+    - config:
+        model: claude-3-7-sonnet
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [Claude 3.7 Sonnet]
+      func: queryToxPipeMCP
+    - config:
+        model: gemini-2.5-pro
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [Gemini 2.5 Pro]
+      func: queryToxPipeMCP
+    - config:
+        model: gemini-2.5-flash
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [Gemini 2.5 Flash]
+      func: queryToxPipeMCP
+    - config:
+        model: llama4-scout-17b-instruct
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [Llama 4 Scout 17B (Instruct)]
+      func: queryToxPipeMCP
+    - config:
+        model: mistral-large-2
+        temp: 0
+      id: ToxPipeMCP
+      label: Toxpipe (MCP) [Mistral Large 2]
+      func: queryToxPipeMCP
 agentic:
   providers:
     - config:
