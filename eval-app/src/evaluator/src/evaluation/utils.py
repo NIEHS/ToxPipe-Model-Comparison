@@ -1,5 +1,5 @@
 from pathlib import Path
-from dotenv import dotenv_values, load_dotenv
+from dotenv import dotenv_values
 
 class Config():
 
