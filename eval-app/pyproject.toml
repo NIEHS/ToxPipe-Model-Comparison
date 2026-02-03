@@ -23,7 +23,8 @@ dependencies = [
     "plotly[express]==6.4.0",
     "anywidget==0.9.18",
     "nbformat==5.10.4",
-    "langchain==0.3.27",
-    "langchain-core==0.3.76",
-    "langchain-openai==0.3.33",
+    "langchain>=1.2.8",
+    "langchain-core>=1.2.8",
+    "langchain-openai>=1.1.7",
+    "langchain-mcp-adapters>=0.2.1",
 ]

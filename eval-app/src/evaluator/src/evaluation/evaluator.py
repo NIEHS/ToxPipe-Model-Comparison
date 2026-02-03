@@ -1,7 +1,7 @@
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import PydanticOutputParser
-from langchain.output_parsers.fix import OutputFixingParser
+from langchain.agents import create_agent
 from .models import createOpenAIModel
 from pydantic import BaseModel, Field
 from typing import Dict, Any, Union
@@ -15,7 +15,7 @@ class EvaluateResponseSchema(BaseModel):
 
 class EvaluateResponse:
 
-    prompt_template = '''\
+    user_prompt_template = '''\
     <QUERY>
     {query}
     </QUERY>
@@ -29,32 +29,19 @@ class EvaluateResponse:
     </PHRASE>
     '''
 
-    prompt_question = ChatPromptTemplate.from_messages(
-        [
-            ("system", 
-            """
-            You are an expert in toxicology and the effects of chemicals on human health. You will be provided QUERY, a ANSWER to the QUERY and a PHRASE. 
-            
-            <Instructions>
-            - Assess the QUERY, ANSWER and PHRASE. 
-            - Check if the ANSWER is similar to the PHRASE and relevant to the QUERY. The PHRASE does not necessarily have to be in the ANSWER, but the PHRASE at least need to be semantically similar to the ANSWER.
-            - Provide the output in the following format.
-            {format_instructions}
-            """),
-            ("user", prompt_template)
-        ]
-    )
+    system_prompt = '''\
+    You are an expert in toxicology and the effects of chemicals on human health. You will be provided QUERY, a ANSWER to the QUERY and a PHRASE. 
+    
+    <Instructions>
+    - Assess the QUERY, ANSWER and PHRASE. 
+    - Check if the ANSWER is similar to the PHRASE and relevant to the QUERY. The PHRASE does not necessarily have to be in the ANSWER, but the PHRASE at least need to be semantically similar to the ANSWER.
+    </Instructions>
+    '''
 
     def __init__(self, assert_info):
         self.assert_info = assert_info
-        llm = createOpenAIModel(model_name='azure-gpt-5', temperature=0)
-        parser = OutputFixingParser.from_llm(parser=PydanticOutputParser(pydantic_object=EvaluateResponseSchema), 
-                                             llm=llm,
-                                             max_retries=2)
-        
-        prompt = self.prompt_question.partial(format_instructions=parser.get_format_instructions())
-        
-        self.evaluation_chain = prompt | llm | parser
+        model = createOpenAIModel(model_name='azure-gpt-5', temperature=0)
+        self.evaluation_chain = create_agent(model=model, system_prompt=self.system_prompt, response_format=EvaluateResponseSchema)
 
     def getEvaluation(self, response: str, prompt: str) -> Union[bool, float, Dict[str, Any]]:
         
@@ -63,7 +50,8 @@ class EvaluateResponse:
         component_results = []
         expected_keyphrases = self.assert_info[0]['expected_phrases']
         for res_exp in expected_keyphrases:
-            res_ = dict(self.evaluation_chain.invoke(input={'query': prompt, 'answer': response, 'phrase': res_exp}))
+            user_prompt = self.user_prompt_template.format(query=prompt, answer=response, phrase=res_exp)
+            res_ = dict(self.evaluation_chain.invoke({"messages": [{"role": "user", "content": user_prompt}]})['structured_response'])
             passed &= res_['pass_']
             score += int(res_['pass_'])
             component_results.append({'pass': res_['pass_'], 'reason': res_['reason']})

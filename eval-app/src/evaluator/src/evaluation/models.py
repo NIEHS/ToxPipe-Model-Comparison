@@ -8,7 +8,7 @@ truststore.inject_into_ssl()
 cert_path = str(Path(Config.DIR_HOME / 'certs/NIH-FULL.pem'))
 http_client = httpx.Client(verify=cert_path)
 
-def createOpenAIModel(model_name, temperature, **kwargs):
+def createOpenAIModel(model_name, temperature=0, **kwargs):
     
     return ChatOpenAI(
         model=model_name,

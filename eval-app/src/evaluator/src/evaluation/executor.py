@@ -1,11 +1,13 @@
 from .utils import Config
 from .models import createOpenAIModel
+from langchain_mcp_adapters.client import MultiServerMCPClient
+from langchain.agents import create_agent
 import threading
 import requests
 import truststore
 from pathlib import Path
 from pydantic import BaseModel
-
+import asyncio
 
 class Response(BaseModel):
     output: str = ''
@@ -25,11 +27,15 @@ class Executor:
     def execute(self):
         
         try:
-            queryFunc = getattr(self, f'{self.model_info['func']}')
+            queryFunc = getattr(self, self.model_info['func'])
+            if self.model_info['func'] == 'queryToxPipeMCP':
+                result = asyncio.run(queryFunc())
+            else:
+                result = queryFunc()
         except AttributeError:
             raise Exception(f'Could not access executor function {self.model_info['id']}')
         
-        return dict(Response(**queryFunc()))
+        return dict(Response(**result))
 
     def queryLLM(self):
 
@@ -63,7 +69,35 @@ class Executor:
         return {'output': res.get('response', str(res)), 
                     'error': res.get('error', '')}
     
-    def queryToxPipeMCP(self):
+    async def queryToxPipeMCP(self):
+
+        model = createOpenAIModel(self.model_info['id'].split(':')[-1], **self.model_info['config'])
+
+        client = MultiServerMCPClient(
+            {
+                "ToxPipeMCPServers": {
+                    "transport": "http",
+                    "url": Config.env_config['TOXPIPE_MCP_SERVER_URL'],
+                }
+            }
+        )
+        
+        tools = await client.get_tools()
+
+        user_prompt = self.prompt_info['user'].format(**self.vars_info)
+        agent = create_agent(model=model, tools=tools, system_prompt=self.prompt_info['system'])
+        #try:
+        result = await agent.ainvoke({'messages': [{'role': 'user', 'content': user_prompt}]})
+        result = result['messages'][-1].content
+        error = ''
+        # except Exception as e:
+        #     print("Error performing search with mcp agent.")
+        #     print(e)
+        #     response.status_code = 400
+        #     result = ''
+        #     error = f"Error: query failed to run with message: {e}."
+
+        return {"output": result, "error": error}
 
         prompt = self.prompt_info['user'].format(**self.vars_info)
 
