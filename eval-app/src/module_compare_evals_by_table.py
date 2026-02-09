@@ -93,7 +93,7 @@ def mod_ui(input, output, session):
                     if data.empty: continue
 
                     if not hasAssertion(data): continue
-
+                    
                     total_assertions = data.query('Result != "No assertion"').groupby('Model')['Result'].count()
                     header = f'{eval_sets[eval_set_name]['Name']} ({int(total_assertions.iloc[0])})'
                     header_names[eval_set_name] = header

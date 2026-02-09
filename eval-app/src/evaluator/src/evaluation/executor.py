@@ -82,35 +82,23 @@ class Executor:
             }
         )
         
-        tools = await client.get_tools()
+        try:
+            tools = await asyncio.wait_for(client.get_tools(), timeout=Config.TIMEOUT_SHORT_TASK)
+        except asyncio.TimeoutError:
+            raise Exception(f'MCP tools took too much time (> {Config.TIMEOUT_SHORT_TASK} seconds). Please check your connection with the MCP server.')
 
         user_prompt = self.prompt_info['user'].format(**self.vars_info)
         agent = create_agent(model=model, tools=tools, system_prompt=self.prompt_info['system'])
-        #try:
-        result = await agent.ainvoke({'messages': [{'role': 'user', 'content': user_prompt}]})
-        result = result['messages'][-1].content
-        error = ''
-        # except Exception as e:
-        #     print("Error performing search with mcp agent.")
-        #     print(e)
-        #     response.status_code = 400
-        #     result = ''
-        #     error = f"Error: query failed to run with message: {e}."
+        
+        try:
+            result = await agent.ainvoke({'messages': [{'role': 'user', 'content': user_prompt}]})
+            result = result['messages'][-1].content
+            error = ''
+        except Exception as e:
+            result = ''
+            error = f"Error: query failed to run with message: {e}."
 
         return {"output": result, "error": error}
-
-        prompt = self.prompt_info['user'].format(**self.vars_info)
-
-        model_params = '&'.join([f'{k}={v}' for k, v in self.model_info['config'].items()])
-        url = f'{Config.env_config['TOXPIPE_MCP_API_HOST']}/mcp/'
-        api_key = Config.env_config.get('TOXPIPE_API_API_KEY', '')
-        headers = { "Authorization": f"Bearer {api_key}" } if api_key else {}
-        response = requests.get(url=f"{url}?query={prompt}&{model_params}", headers=headers, verify=self.cert_path)
-        if not response.ok: raise Exception(f'API url: {url}, query: {prompt}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
-        res = response.json()
-
-        return {'output': res.get('response', str(res)), 
-                    'error': res.get('error', '')}
 
     def queryToxPipeAgentic(self):
 

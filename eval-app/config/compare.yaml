@@ -1,11 +1,13 @@
 abt-qa-assertion-prompts_mixed:
   Evals to compare:
-    - Eval Group Name: Base
-      Eval Name: base-model_abt-qa-assertion-prompts_mixed
-    - Eval Group Name: RAG
-      Eval Name: rag_abt-qa-assertion-prompts_mixed
     - Eval Group Name: Agentic
       Eval Name: agentic_abt-qa-assertion-prompts_mixed
+    - Eval Group Name: Base
+      Eval Name: base-model_abt-qa-assertion-prompts_mixed
+    - Eval Group Name: MCP
+      Eval Name: mcp_abt-qa-assertion-prompts_mixed
+    - Eval Group Name: RAG
+      Eval Name: rag_abt-qa-assertion-prompts_mixed
   Name: ABT Q/A
 basic-prompts_human:
   Evals to compare:

@@ -210,6 +210,42 @@ providers:
           - "false"
         default: "false"
 
+  ToxPipeMCP:
+    func: "queryToxPipeMCP"
+    label: "Toxpipe (MCP)"
+    config:
+      model:
+        label: "LLM"
+        type:
+          - "azure-o3"
+          - "azure-gpt-5-nano"
+          - "azure-gpt-4o"
+          - "claude-4.5-haiku"
+          - "claude-4.5-sonnet"
+          - "claude-3-7-sonnet"
+          - "gemini-2.5-pro"
+          - "gemini-2.5-flash"
+          - "llama4-scout-17b-instruct"
+          - "mistral-large"
+        default: "azure-gpt-4o"
+      temp:
+        label: "Temperature"
+        type: "int"
+        default: 0
+        min: 0
+        max: 1
+      max_iterations:
+        label: "Maximum number of Iterations"
+        type: "int"
+        default: 10
+        min: 1
+      summarize:
+        label: "Should summarize the response?"
+        type:
+          - "true"
+          - "false"
+        default: "false"
+
   ToxPipeAgentic:
     func: "queryToxPipeAgentic"
     label: "ToxPipe (Agentic)"

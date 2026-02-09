@@ -125,22 +125,27 @@ class Evaluator:
             return d_results
         
         def getResponseAndResult(item):
+            
+            getResultLabel = lambda item, response: 'No assertion' if not item['assert'] else 'NA' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail'
+            
             if isinstance(item['response'], dict):
                 response = item['response']
-                result = 'No assertion' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail'
-            elif isinstance(item['response'], list):
-                count_result = 0
-                for response in item['response']:
-                    result_item = 'No assertion' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail'
-                    if result_item == 'Pass':
-                        count_result += 1
-                    elif result_item == 'Fail':
-                        count_result -= 1
-                result = 'Pass' if count_result > 0 else 'Fail' if count_result < 0 else 'No assertion'
-                for response in item['response']:
-                    result_item = 'No assertion' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail'
-                    if result == result_item:
-                        break
+                result = getResultLabel(item, response)
+                return response, result
+            
+            assert isinstance(item['response'], list), f"Invalid data type for response item, expected dict or list, found {type(item['response'])}"
+            count_result = 0
+            for response in item['response']:
+                result_item = getResultLabel(item, response)
+                if result_item == 'Pass':
+                    count_result += 1
+                elif result_item == 'Fail':
+                    count_result -= 1
+            result = 'Pass' if count_result > 0 else 'Fail' if count_result < 0 else 'No assertion'
+            for response in item['response']:
+                result_item = getResultLabel(item, response)
+                if result == result_item:
+                    break
             return response, result
         
         if not Evaluator.hasOutput(eval_name): return pd.DataFrame()

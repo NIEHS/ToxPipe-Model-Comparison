@@ -1,12 +1,9 @@
-from shiny import reactive, ui as core_ui
+from shiny import reactive
 from shiny.express import ui, render, module, expressify
 import faicons as fa
-from .utils import Config, loadYML, saveYML
+from .utils import Config, loadYML, saveYML, getUIID
 from .utils_eval import Evaluator
-from .db import EvalDB
 import traceback
-import datetime
-import os
 import re
 
 @module
@@ -15,15 +12,53 @@ def mod_ui(input, output, session, reload_evals_flag):
     eval_set_evals = reactive.value({})
     reload_eval_set_flag = reactive.value(True)
     errors = reactive.value([])
+    selected_eval_set_id = reactive.value(None)
 
     @module
-    def mod_eval_info(input, output, session, eval_name):
+    def mod_eval_set(input, output, session, eval_set_id, eval_set_name, evals):
+        with ui.div(class_="col-3 col-5-sm"):
+            with ui.card():
+                ui.card_header(
+                    ui.div(f'{eval_set_id} - {eval_set_name}', 
+                            ui.div(
+                                ui.input_action_link(id='btn_edit_eval_set', label='', icon=fa.icon_svg('pen-to-square', style='solid')), 
+                                ui.input_action_link(id='btn_remove_eval_set', label='', icon=fa.icon_svg('trash', style='solid')),
+                                class_='d-flex gap-2'
+                            ), 
+                            class_='d-flex justify-content-between'
+                    )
+                )
+                ui.markdown('\n'.join([f'- {eval_info['Eval Name']} (**{eval_info['Eval Group Name']}**)' for eval_info in evals]))
+
+        @reactive.effect
+        @reactive.event(input.btn_edit_eval_set)
+        def selectEval():
+            selected_eval_set_id.set(eval_set_id)
+
+        @reactive.effect
+        @reactive.event(input.btn_remove_eval_set)
+        def removeEval():
+
+            eval_sets = getEvalSetToCompare()
+            eval_sets = {e_set_id: e_set for e_set_id, e_set in eval_sets.items() if e_set_id != eval_set_id}
+
+            try:
+                saveYML(data=eval_sets, file_path=Config.DIR_CONFIG / 'compare.yaml')
+                ui.notification_show(f'Eval set was removed successfully', type="message")
+                reload_eval_set_flag.set(not reload_eval_set_flag.get())
+            except Exception as exp:
+                print(f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}')
+                ui.notification_show(f'Eval set was not removed successfully', type="error")
+
+    @module
+    def mod_eval_info(input, output, session, eval_name, eval_group_name=''):
+
         with ui.div(style='min-width:500px'):
             with ui.card():
                 ui.card_header(eval_name)
                 with ui.div(class_='row gap-2 p-3'):
                     with ui.div(class_='col-auto'):
-                        ui.input_text(id='txt_eval_group_name', label='Eval Group')
+                        ui.input_text(id='txt_eval_group_name', label='Eval Group', value=eval_group_name)
                     with ui.div(class_='col-auto'):
                         with ui.tooltip(placement="right"):
                             ui.span(fa.icon_svg('circle-question'))
@@ -84,6 +119,21 @@ def mod_ui(input, output, session, reload_evals_flag):
             return ui.HTML(f'<ui>{"".join(["<li>" + e_text + "</li>" for e_text in errors.get()])}</ui>')
     with ui.div(class_='row'):
         with ui.div(class_='col gap-5 border rounded p-5'):
+            @render.express
+            def showEditModeControls():
+                if (eval_set_id := selected_eval_set_id.get()) is None or not (eval_sets := getEvalSetToCompare()): return
+                eval_info = eval_sets[eval_set_id]
+                with ui.div(class_='d-flex justify-content-between'):
+                    with ui.strong():
+                        f'Updating '
+                        ui.tags.i(f'"{eval_set_id} - {eval_info['Name']}"')
+                    ui.input_action_button(id='btn_cancel_update_eval_set', label='Cancel Update')
+
+                    @reactive.effect
+                    @reactive.event(input.btn_cancel_update_eval_set, ignore_init=True)
+                    def cancelUpdate():
+                        selected_eval_set_id.set(None)
+                ui.hr()
             with ui.div(class_='row'):
                 ui.help_text('An eval set consists of multiple evals. Setting up an eval set will facilitate making comparison among the evals that the eval set consists of.')
             with ui.div(class_='row gap-2 mt-4'):
@@ -93,12 +143,10 @@ def mod_ui(input, output, session, reload_evals_flag):
                 with ui.div(class_='col-3'):
                     ui.input_select(id='select_evals', label='Select evals to compare', choices=[], multiple=True, width='500px', size=10)
                 @render.express
-                def showAddName():
-                    evals = input.select_evals()
-                    if not evals: return
+                def showSelectedEvals():
                     with ui.div(class_='col-9 d-flex gap-2 p-4 align-items-center', style='overflow-x:auto'):
-                        for i, eval_name in enumerate(evals):
-                            mod_eval_info(id=f'eval_info_{i}', eval_name=eval_name)
+                        for i, (eval_name, eval_group_name) in enumerate(eval_set_evals.get().items()):
+                            mod_eval_info(id=getUIID(f'eval_info_{i}'), eval_name=eval_name, eval_group_name=eval_group_name)
             @render.express
             def showCommonPromptsAmongSelectedEvals():
                 prompts_asserts = getCommonPromptsAmongSelectedEvals()
@@ -119,13 +167,30 @@ def mod_ui(input, output, session, reload_evals_flag):
 
             if not eval_sets: "No eval sets have been set up yet"
 
-            for eval_set_id, v in eval_sets.items():
-                eval_set_name = v['Name']
-                evals = v['Evals to compare']
-                with ui.div(class_="col-3 col-5-sm"):
-                    with ui.card():
-                        ui.card_header(f'{eval_set_id} - {eval_set_name}')
-                        ui.markdown('\n'.join([f'- {eval_info['Eval Name']} (**{eval_info['Eval Group Name']}**)' for eval_info in evals]))
+            for i, (eval_set_id, eval_info) in enumerate(eval_sets.items()):
+                eval_set_name = eval_info['Name']
+                evals = eval_info['Evals to compare']
+                mod_eval_set(id=getUIID(f'eval_set_{i}'), eval_set_id=eval_set_id, eval_set_name=eval_set_name, evals=evals)
+
+    @reactive.effect
+    @reactive.event(selected_eval_set_id, ignore_init=True, ignore_none=False)
+    def changeSelectedEvalSet():
+
+        eval_set_id = selected_eval_set_id.get()
+        eval_sets = getEvalSetToCompare()
+
+        if eval_set_id is None or not eval_sets:
+            eval_set_id = ''
+            eval_set_name = ''
+            eval_names = []
+        else:
+            eval_info = eval_sets[eval_set_id]
+            eval_set_name = eval_info['Name']
+            eval_names = [x['Eval Name'] for x in eval_info['Evals to compare']]
+        
+        ui.update_text(id='txt_eval_set_id', value=eval_set_id)
+        ui.update_text(id='txt_eval_set_name', value=eval_set_name)
+        ui.update_select(id='select_evals', selected=eval_names)
 
     @reactive.effect
     @reactive.event(reload_evals_flag)
@@ -151,13 +216,14 @@ def mod_ui(input, output, session, reload_evals_flag):
         val = input.txt_eval_set_id()
         if not (ignore_empty and not val):
             p = re.compile(r'[A-Za-z0-9\-\_]+')
+            eval_set_id_selected = selected_eval_set_id.get()
             if not bool(p.fullmatch(val)): errors.append('ID can only contain alphanumeric characters, "-" and "_"')
-            elif val and val in eval_sets: errors.append('ID already exists')
+            elif val and val in eval_sets and val != eval_set_id_selected: errors.append('ID already exists')
 
         val = input.txt_eval_set_name()
         if not (ignore_empty and not val):
-            p = re.compile(r'[A-Za-z0-9 \-\_\,\;\(\)]+')
-            if not bool(p.fullmatch(val)): errors.append('Name can only contain alphanumeric characters, space, "-", "_", ",", ";" and "()"')
+            p = re.compile(r'[A-Za-z0-9 \-\_\\/,\;\(\)]+')
+            if not bool(p.fullmatch(val)): errors.append('Name can only contain alphanumeric characters, space, "-", "_", ",", ";", "/" and "()"')
 
         evals_sel = input.select_evals()
 
@@ -171,6 +237,23 @@ def mod_ui(input, output, session, reload_evals_flag):
     
         return errors
     
+    @reactive.effect
+    @reactive.event(input.select_evals)
+    def loadSelectedEvals():
+
+        evals = input.select_evals()
+        if not evals:
+            eval_set_evals.set({})
+            return
+        
+        eval_set_id = selected_eval_set_id.get()
+        eval_sets = getEvalSetToCompare()
+        eval_set_evals_mapping_from_selected_eval_set = {}
+        if eval_set_id is not None:
+            eval_set_evals_mapping_from_selected_eval_set = {x['Eval Name']: x['Eval Group Name'] for x in eval_sets[eval_set_id]['Evals to compare']}
+        
+        eval_set_evals.set({eval_name: eval_set_evals_mapping_from_selected_eval_set.get(eval_name, '') for eval_name in evals})
+                        
     @reactive.effect
     @reactive.event(input.txt_eval_set_id, input.txt_eval_set_name, input.select_evals, ignore_init=True)
     def getValidationErrors():
@@ -200,11 +283,18 @@ def mod_ui(input, output, session, reload_evals_flag):
         
         eval_set_id = input.txt_eval_set_id()
         eval_set_name = input.txt_eval_set_name()
-        
+
         eval_sets = getEvalSetToCompare()
         evals_to_compare = [{'Eval Name': eval_name, 'Eval Group Name': eval_group_name} for eval_name, eval_group_name in eval_set_evals.get().items()]
-        eval_sets |= {eval_set_id: {'Name': eval_set_name, 'Evals to compare': evals_to_compare}}
-
+    
+        eval_set_id_selected =  selected_eval_set_id.get()
+        eval_set_new = {eval_set_id: {'Name': eval_set_name, 'Evals to compare': evals_to_compare}}
+    
+        if eval_set_id_selected is not None and eval_set_id != eval_set_id_selected:
+            eval_sets[eval_set_id] = eval_sets.pop(eval_set_id_selected)
+        
+        eval_sets |= eval_set_new
+            
         try:
             saveYML(data=eval_sets, file_path=Config.DIR_CONFIG / 'compare.yaml')
             ui.notification_show(f'Comparison was set up successfully', type="message")
