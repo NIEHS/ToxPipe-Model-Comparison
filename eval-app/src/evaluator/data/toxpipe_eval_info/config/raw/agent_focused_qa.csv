@@ -1,0 +1,11 @@
+Question,Answer
+"What human drugs that are structural analogs to CCC(C)(C)C(=O)O[C@@H]1C[C@H](C=C2[C@H]1[C@H]([C@H](C=C2)C)CC[C@@H]3C[C@H](CC(=O)O3)O)C?","Simvastatin or Lovastatin or Pravastatin"
+"Identify the chemical is ToxRefDB with the highest structural similarity to [H][C@]12[C@H](C[C@@H](C)C=C1C=C[C@H](C)[C@@H]2CC[C@@H]1C[C@@H](O)CC(=O)O1)OC(=O)C(C)(C)CC.","Spirodiclofen"
+"What is the Cramer Class of [H][C@]12[C@H](C[C@@H](C)C=C1C=C[C@H](C)[C@@H]2CC[C@@H]1C[C@@H](O)CC(=O)O1)OC(=O)C(C)(C)CC?","Class III"
+"What enzyme is inhibited by [H][C@]12[C@H](C[C@@H](C)C=C1C=C[C@H](C)[C@@H]2CC[C@@H]1C[C@@H](O)CC(=O)O1)OC(=O)C(C)(C)CC?","HMGCoA Reductase"
+"What  are the most likely side effects of C1CC1C(=O)NC2=CC=CC(=C2)NC3=NC=NC(=C3)NC4=CC=CC(=C4)C(F)(F)F?","Diarrhea, Rash"
+"What is the most likely in vivo molecular/pharmacological target of  C1CC1C(=O)NC2=CC=CC(=C2)NC3=NC=NC(=C3)NC4=CC=CC(=C4)C(F)(F)F?","EGFR"
+"Which of these 3 chemicals would be likely lower blood triglycerides: C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O or C[C@]12CC[C@H]3[C@H]([C@@H]1CCC2=O)CCC4=CC(=O)CC[C@]34CO","C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O"
+"Which of these 3 chemicals has a mode of action that is genotoxic: CCNC1=C(C(=O)C2=C(C1=O)[C@H]([C@@]3(N2C[C@H]4[C@@H]3N4)OC)COC(=O)N)C or C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O","CCNC1=C(C(=O)C2=C(C1=O)[C@H]([C@@]3(N2C[C@H]4[C@@H]3N4)OC)COC(=O)N)C"
+"Which of these 3 chemicals are likely to cross the blood brain barrier and be an effective neuroactive agent: CC1=CC(=C(C=C1)C(C)C)O or  CCNC1=C(C(=O)C2=C(C1=O)[C@H]([C@@]3(N2C[C@H]4[C@@H]3N4)OC)COC(=O)N)C or C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O","CC1=CC(=C(C=C1)C(C)C)O"
+"What chemical is most likely to be exported from cells through MDR1/PGP (ie it is a high affinity subtrate for MDR1): CC[C@H](C)[C@@H]1[C@H](CC[C@@]2(O1)C[C@@H]3C[C@H](O2)C/C=C(/[C@H]([C@H](/C=C/C=C/4\CO[C@H]5[C@@]4([C@@H](CC([C@H]5O)C)C(=O)O3)O)C)O[C@H]6C[C@@H]([C@H]([C@@H](O6)C)O[C@H]7C[C@@H]([C@H]([C@@H](O7)C)O)OC)OC)\C)C or C1CCC(CC1)(CC(=O)[O-])C[NH3+] or CN(C)CCO?","CC[C@H](C)[C@@H]1[C@H](CC[C@@]2(O1)C[C@@H]3C[C@H](O2)C/C=C(/[C@H]([C@H](/C=C/C=C/4\CO[C@H]5[C@@]4([C@@H](CC([C@H]5O)C)C(=O)O3)O)C)O[C@H]6C[C@@H]([C@H]([C@@H](O6)C)O[C@H]7C[C@@H]([C@H]([C@@H](O7)C)O)OC)OC)\C)C"

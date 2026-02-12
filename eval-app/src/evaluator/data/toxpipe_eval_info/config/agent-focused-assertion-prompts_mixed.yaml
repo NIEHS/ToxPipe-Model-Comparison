@@ -1,0 +1,4 @@
+prompts:
+  - 'Answer the following question.
+
+    {question}'

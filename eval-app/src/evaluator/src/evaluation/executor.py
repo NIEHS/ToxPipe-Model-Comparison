@@ -2,6 +2,7 @@ from .utils import Config
 from .models import createOpenAIModel
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain.agents import create_agent
+from langchain.agents.middleware import ToolCallLimitMiddleware
 import threading
 import requests
 import truststore
@@ -85,15 +86,33 @@ class Executor:
         try:
             tools = await asyncio.wait_for(client.get_tools(), timeout=Config.TIMEOUT_SHORT_TASK)
         except asyncio.TimeoutError:
-            raise Exception(f'MCP tools took too much time (> {Config.TIMEOUT_SHORT_TASK} seconds). Please check your connection with the MCP server.')
+            result = ''
+            error = f'Error: MCP tools took too much time (> {Config.TIMEOUT_SHORT_TASK} seconds). Please check your connection with the MCP server.'
+            return {"output": result, "error": error}
 
         user_prompt = self.prompt_info['user'].format(**self.vars_info)
-        agent = create_agent(model=model, tools=tools, system_prompt=self.prompt_info['system'])
+        agent = create_agent(model=model, 
+                             tools=tools, 
+                             system_prompt=self.prompt_info['system'],
+                             middleware=[
+                                 ToolCallLimitMiddleware(
+                                    tool_name='rag_search',
+                                    run_limit=1
+                                ),
+                                ToolCallLimitMiddleware(
+                                    tool_name='literature_search',
+                                    run_limit=1
+                                )
+                            ]
+                )
         
         try:
-            result = await agent.ainvoke({'messages': [{'role': 'user', 'content': user_prompt}]})
+            result = await asyncio.wait_for(agent.ainvoke({'messages': [{'role': 'user', 'content': user_prompt}]}), timeout=Config.TIMEOUT_LONG_TASK)
             result = result['messages'][-1].content
             error = ''
+        except asyncio.TimeoutError:
+            result = ''
+            error = f'Error: MCP agent took too much time (> {Config.TIMEOUT_LONG_TASK} seconds). Please check your connection with the MCP server.'
         except Exception as e:
             result = ''
             error = f"Error: query failed to run with message: {e}."

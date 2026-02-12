@@ -12,3 +12,5 @@ class Config():
     NUM_THREADS = 2
     
     TIMEOUT_SHORT_TASK = 120 # 2 minute
+
+    TIMEOUT_LONG_TASK = 240 # 4 minute
