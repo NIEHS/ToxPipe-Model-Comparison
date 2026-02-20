@@ -96,19 +96,20 @@ class Executor:
                              system_prompt=self.prompt_info['system'],
                              middleware=[
                                  ToolCallLimitMiddleware(
-                                    tool_name='rag_search',
-                                    run_limit=1
-                                ),
-                                ToolCallLimitMiddleware(
-                                    tool_name='literature_search',
-                                    run_limit=1
+                                    run_limit=3,
+                                    thread_limit=3
                                 )
                             ]
                 )
         
         try:
             result = await asyncio.wait_for(agent.ainvoke({'messages': [{'role': 'user', 'content': user_prompt}]}), timeout=Config.TIMEOUT_LONG_TASK)
-            result = result['messages'][-1].content
+            ai_messages = []
+            for msg in result['messages'][:-1]: 
+                if msg.type != 'ai': continue
+                tool_messages = '\n'.join([f'[{i+1}] {msg_tool["name"]}, args: {", ".join([f"{k}: {v}" for k, v in msg_tool["args"].items()])}' for i, msg_tool in enumerate(msg.tool_calls)])
+                ai_messages.append(f'{msg.content}\n\n*Tools called:*\n{tool_messages}')
+            result = result['messages'][-1].content + '\n\n---\n\n**Agent Messages**\n\n' + '\n\n'.join(ai_messages)
             error = ''
         except asyncio.TimeoutError:
             result = ''

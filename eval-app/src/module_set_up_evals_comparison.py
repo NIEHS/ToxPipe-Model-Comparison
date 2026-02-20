@@ -292,6 +292,7 @@ def mod_ui(input, output, session, reload_evals_flag):
     
         if eval_set_id_selected is not None and eval_set_id != eval_set_id_selected:
             eval_sets[eval_set_id] = eval_sets.pop(eval_set_id_selected)
+            selected_eval_set_id.set(eval_set_id)
         
         eval_sets |= eval_set_new
             

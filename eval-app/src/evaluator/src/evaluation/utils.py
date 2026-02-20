@@ -9,7 +9,7 @@ class Config():
 
     RANDOM_STATE = 1000
 
-    NUM_THREADS = 2
+    NUM_THREADS = 1
     
     TIMEOUT_SHORT_TASK = 120 # 2 minute
 

@@ -1,5 +1,7 @@
 from shiny import reactive
 from shiny.express import ui, module, render
+from shinywidgets import render_plotly
+import plotly.express as px
 import json
 from .utils import Config, loadYML
 from .utils_eval import Evaluator
@@ -29,25 +31,25 @@ def mod_ui(input, output, session):
                 yield df_report.to_csv(index=None)
 
     with ui.div(class_='row mt-4'):
-        with ui.div(class_='col'):
-            @render.data_frame
-            def renderReport():
-                df = getReport()
+        
+        @render.data_frame
+        def renderReport():
+            df = getReport()
 
-                if df.empty: return df
+            if df.empty: return df
+        
+            eval_groups = df['Eval Group'].unique()
+            eval_group_colors = ['#f7e9e9', '#e9f7ed', '#ebe9f7', '#f7f3e9', '#f0e9f7', '#e9f7f3']
             
-                eval_groups = df['Eval Group'].unique()
-                eval_group_colors = ['#f7e9e9', '#e9f7ed', '#ebe9f7', '#f7f3e9', '#f0e9f7', '#e9f7f3']
-                
-                return render.DataTable(
-                    df.round(2),
-                    width='100%',
-                    height='100%',
-                    styles=[*[{'rows': df[df['Eval Group'] == eval_group].index.tolist(), 
-                               'style': {'background-color': eval_group_colors[i%len(eval_group_colors)]}} for i, eval_group in enumerate(eval_groups)],
-                            {'cols': None, 'style': {'text-align': 'center'}}
-                    ]
-                )
+            return render.DataTable(
+                df.round(2),
+                width='100%',
+                height='100%',
+                styles=[*[{'rows': df[df['Eval Group'] == eval_group].index.tolist(), 
+                            'style': {'background-color': eval_group_colors[i%len(eval_group_colors)]}} for i, eval_group in enumerate(eval_groups)],
+                        {'cols': None, 'style': {'text-align': 'center'}}
+                ]
+            )
             
     @reactive.calc
     def getEvalSetToCompare():

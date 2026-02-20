@@ -167,7 +167,7 @@ def mod_ui(input, output, session):
                 if data.empty: return
 
                 model = models_selected.get().get(eval_name, None)
-                if model: data = data.query('Model == @model')
+                if model: data = data.query('Model == @model').reset_index(drop=True)
 
                 if hasAssertion(data):
                     threshold_pass = input.numeric_threshold()

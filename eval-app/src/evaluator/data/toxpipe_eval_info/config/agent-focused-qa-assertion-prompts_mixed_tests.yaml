@@ -44,7 +44,7 @@ tests:
     vars:
       question: 'Which of these 3 chemicals would be likely lower blood triglycerides:
         C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O or
-        C[C@]12CC[C@H]3[C@H]([C@@H]1CCC2=O)CCC4=CC(=O)CC[C@]34CO'
+        C[C@]12CC[C@H]3[C@H]([C@@H]1CCC2=O)CCC4=CC(=O)CC[C@]34CO?'
   - assert:
       - expected_phrases:
           - CCNC1=C(C(=O)C2=C(C1=O)[C@H]([C@@]3(N2C[C@H]4[C@@H]3N4)OC)COC(=O)N)C
@@ -52,15 +52,15 @@ tests:
     vars:
       question: 'Which of these 3 chemicals has a mode of action that is genotoxic:
         CCNC1=C(C(=O)C2=C(C1=O)[C@H]([C@@]3(N2C[C@H]4[C@@H]3N4)OC)COC(=O)N)C or C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O
-        or CNC1=CC=C(C=C1)O'
+        or CNC1=CC=C(C=C1)O?'
   - assert:
       - expected_phrases:
           - CC1=CC(=C(C=C1)C(C)C)O
     description: Test similarity
     vars:
-      question: 'Which of these 3 chemicals are likely to cross the blood brain barrier
+      question: 'Which of these 4 chemicals are likely to cross the blood brain barrier
         and be an effective neuroactive agent: CC1=CC(=C(C=C1)C(C)C)O or  CCNC1=C(C(=O)C2=C(C1=O)[C@H]([C@@]3(N2C[C@H]4[C@@H]3N4)OC)COC(=O)N)C
-        or C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O'
+        or C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O?'
   - assert:
       - expected_phrases:
           - CC[C@H](C)[C@@H]1[C@H](CC[C@@]2(O1)C[C@@H]3C[C@H](O2)C/C=C(/[C@H]([C@H](/C=C/C=C/4\CO[C@H]5[C@@]4([C@@H](CC([C@H]5O)C)C(=O)O3)O)C)O[C@H]6C[C@@H]([C@H]([C@@H](O6)C)O[C@H]7C[C@@H]([C@H]([C@@H](O7)C)O)OC)OC)\C)C

@@ -29,12 +29,12 @@ basic-prompts_rat:
   Name: Basic prompts (Rat)
 tox-type-assertion-prompts_human:
   Evals to compare:
+    - Eval Group Name: Agentic
+      Eval Name: agentic_tox-type-assertion-prompts_human
     - Eval Group Name: Base
       Eval Name: base-model_tox-type-assertion-prompts_human
     - Eval Group Name: RAG
       Eval Name: rag_tox-type-assertion-prompts_human
-    - Eval Group Name: Agentic
-      Eval Name: agentic_tox-type-assertion-prompts_human
   Name: Tox type prompts (Human)
 tox-type-assertion-prompts_rat:
   Evals to compare:
