@@ -2,7 +2,7 @@ from .utils import Config
 from .models import createOpenAIModel
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain.agents import create_agent
-from langchain.agents.middleware import ToolCallLimitMiddleware
+from langchain.agents.middleware import ToolCallLimitMiddleware, SummarizationMiddleware
 import threading
 import requests
 import truststore
@@ -72,7 +72,8 @@ class Executor:
     
     async def queryToxPipeMCP(self):
 
-        model = createOpenAIModel(self.model_info['id'].split(':')[-1], **self.model_info['config'])
+        model_name = self.model_info['id'].split(':')[-1]
+        model = createOpenAIModel(model_name, **self.model_info['config'])
 
         client = MultiServerMCPClient(
             {
@@ -96,6 +97,7 @@ class Executor:
                              system_prompt=self.prompt_info['system'],
                              middleware=[
                                  ToolCallLimitMiddleware(
+                                    tool_name=None,
                                     run_limit=3,
                                     thread_limit=3
                                 )

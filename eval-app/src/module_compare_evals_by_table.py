@@ -1,7 +1,5 @@
 from shiny import reactive
 from shiny.express import ui, module, render
-from shinywidgets import render_plotly
-import plotly.express as px
 import json
 from .utils import Config, loadYML
 from .utils_eval import Evaluator

@@ -112,7 +112,8 @@ def resumeLastRun(eval_name, skip_run):
             # Check for error in response to re-execute and re-evaluate
             for i, response in enumerate(response_list):
                 
-                is_response_error = (not skip_run) and (('error' in response and len(response['error'].strip()) > 0) or
+                is_response_error = (not skip_run) and (('error' in response and len(response['error'].strip()) > 0 and 
+                                                         (response['error'].startswith('Line number: 18, Description: unhandled errors in a TaskGroup'))) or
                                                         response['output'].lower().startswith('error'))
                 
                 if not is_response_error: continue

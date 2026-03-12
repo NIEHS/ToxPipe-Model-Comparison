@@ -37,9 +37,17 @@ for model in d['base-model']['providers']:
 
 In this level, the aforementioned foundational models are used with an extra RAG (Retrieval Augmented Generation) step.
 
-*Agentic*
+*MCP*
 
-In this level, the RAG level is used as a tool along with ChemBioTox API and Literature Search
+In this level, the LLMs are exposed to the tools that leverage the internal databases of ToxPipe using MCP (Model-Chain-Prompt) approach.
+
+```{python}
+import pandas as pd
+from pathlib import Path
+
+data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/mcp_tools.csv'))
+print(data.to_markdown(index=False))
+```
 
 ### Query sets
 

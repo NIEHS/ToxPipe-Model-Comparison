@@ -201,8 +201,734 @@ ul.task-list li input[type="checkbox"] {
 </ul>
 <p><em>RAG</em></p>
 <p>In this level, the aforementioned foundational models are used with an extra RAG (Retrieval Augmented Generation) step.</p>
-<p><em>Agentic</em></p>
-<p>In this level, the RAG level is used as a tool along with ChemBioTox API and Literature Search</p>
+<p><em>MCP</em></p>
+<p>In this level, the LLMs are exposed to the tools that leverage the internal databases of ToxPipe using MCP (Model-Chain-Prompt) approach.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 93%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">literature_search</td>
+<td style="text-align: left;">Given a query, return relevant academic and scientific papers from PubMed. Use this tool if the user requests a literature search.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">query: The query to perform a literature search on. This should be a string of at least one character and at most 9999 characters. The query should be specific enough to yield relevant results.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A string containing the results of the literature search.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">rag_search</td>
+<td style="text-align: left;">Given a query, return relevant toxicological information from publications from the National Toxicology Program (NTP) at https://ntp.niehs.nih.gov/publications. These reports are retrieved via retrieval-augmented generation (RAG). The publications include chemical, toxicity, and technical reports. This tool should be used if the user requests a literature search or a RAG search.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">query: The query to perform a RAG search on. This should be a string of at least one character and at most 9999 characters. The query should be specific enough to yield relevant results.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A string containing the results of the RAG search, which may include information from the model’s training data and/or from NTP publications.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">is_valid_smiles</td>
+<td style="text-align: left;">Given a SMILES string, return whether or not it is a valid SMILES representation.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">smiles: A SMILES string representing a chemical’s structure. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A boolean indicating whether or not the given SMILES string is valid.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">smiles_to_mol_weight</td>
+<td style="text-align: left;">Given a SMILES string, return the average molecular weight in g/mol of the chemical.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">smiles: A SMILES string representing a chemical’s structure. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">The average molecular weight in g/mol of the chemical.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">smiles_to_name</td>
+<td style="text-align: left;">Given a chemical’s SMILES representation, return its preferred name. If an exact mapping could not be found, the most structurally similar chemical’s name is returned instead.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">smiles: A SMILES string representing a chemical’s structure. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is structured as follows: chemical_name</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">casrn_to_name</td>
+<td style="text-align: left;">Given a chemical’s CASRN, return its preferred name.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">casrn: A string representing the CASRN number for a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A string representing the preferred name of the chemical corresponding to the given CASRN. If no chemical with the given CASRN is found, a string indicating that no chemical name could be obtained is returned instead.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">name_to_canonical_smiles</td>
+<td style="text-align: left;">Given the name of a chemical, return its canonical SMILES representation.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A string representing the canonical SMILES representation of the chemical corresponding to the given name. If no chemical with the given name is found, a string indicating that no SMILES could be obtained is returned instead.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ctd_chemical_to_genes</td>
+<td style="text-align: left;">Given the name of a chemical and a species, return that chemical’s associated gene interactions from the Comparative Toxicogenomics database (CTD). This tool returns a list of strings, where each string is an interaction for the given chemical in the specified species passed to the tool.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">species: A string representing the species for which gene interactions are requested. Must be exactly one of: Homo sapiens, Mus musculus, Rattus norvegicus.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is an interaction for the given chemical in the specified species. If no interactions are found for the given chemical in the specified species, an empty list is returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ctd_chemical_to_diseases_direct</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s associated diseases with direct evidence (i.e., from a marker) from the Comparative Toxicogenomics database (CTD).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a disease associated with the given chemical with direct evidence in CTD. If no diseases with direct evidence associations are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ctd_chemical_to_diseases_inferred</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s associated diseases with inferred evidence (i.e., from a gene) from the Comparative Toxicogenomics database (CTD). The output from this tool is a list of strings, with each string being of the format: disease_name</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a disease associated with the given chemical with inferred evidence in CTD, along with the gene from which the association was inferred. If no diseases with inferred evidence associations are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ctd_chemical_to_go_biological_process</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s associated biological process GO terms from the Comparative Toxicogenomics database (CTD).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a biological process GO term associated with the given chemical in CTD. If no biological process GO terms are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ctd_chemical_to_go_cellular_component</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s associated cellular component GO terms from the Comparative Toxicogenomics database (CTD).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a cellular component GO term associated with the given chemical in CTD. If no cellular component GO terms are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ctd_chemical_to_go_molecular_function</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s associated molecular function GO terms from the Comparative Toxicogenomics database (CTD).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a molecular function GO term associated with the given chemical in CTD. If no molecular function GO terms are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">tox21_assay_predictions</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s predicted behavior(s) from Tox21 assays. Each item in the output list contains the assay model name and if the chemical was predicted to be active or inactive.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string contains the assay model name and if the chemical was predicted to be active or inactive. The assay model name and activity status are formatted as follows: assay_model_name: active/inactive. If no Tox21 predictions are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">drugbank_genes</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s associated gene interactions as documented in DrugBank. This tool returns a list of strings, where each entry is structured like the following: gene_name</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a gene interaction for the given chemical in DrugBank, structured like the following: gene_name</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">drugbank_atccodes</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s therapeutic properties as documented in DrugBank. Use this tool to retrieve a chemical’s organ interactions, therapeutic use, and chemical properties.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a therapeutic property for the given chemical in DrugBank. If no therapeutic properties are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">genra_results</td>
+<td style="text-align: left;">Given the name of a chemical, return corresponding predicted organ interactions, protein interactions, health effects, associated diseases and neoplasticity, developmental toxicity, chronic toxicity, sub-chronic toxicity, subacute toxicity, and reproductive toxicity from the EPA’s Generalized Read Across (GenRA) tool.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">This tool outputs a list of strings. Each string is formatted as follows:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">category:subcategory - effect</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Where category may be one of the following:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- SAC - Subacute Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- MGR - Multigenerational Reproductive Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- REP - Reproductive Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- CHR - Chronic Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- DEV - Developmental Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- SUB - Sub-chronic Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a GenRA prediction for the given chemical, formatted as follows: category:subcategory - effect. If no GenRA predictions are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">t3db_targets</td>
+<td style="text-align: left;">Given the name of a chemical, return corresponding targets as documented in the T3DB. This tool can provide information that can help inform how genes and organs interact with a chemical.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a target associated with the given chemical in T3DB. If no targets are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">toxrefdb_cancer_effects</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s toxicological cancer-related effects as reported from studies in ToxRefDB. This tool returns a list of strings, where each item is formatted as follows:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">effect; toxicity type; species; sex; life stage; target</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">The toxicity type may be one of the following:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- ACU - Acute Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- CHR - Chronic Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- DEV - Developmental Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- DNT - Developmental Neurotoxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- MGR - Multigenerational Reproductive Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- NEU - Neurological</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- OTH - Other</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- REP - Reproductive Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- SAC - Subacute Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- SUB - Sub-chronic Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a cancer-related effect for the given chemical in ToxRefDB, formatted as follows: effect; toxicity type; species; sex; life stage; target. If no cancer-related effects are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">toxrefdb_non_cancer_effects</td>
+<td style="text-align: left;">Given the name of a chemical, return that chemical’s toxicological non-cancer-related effects as reported from studies in ToxRefDB. This tool returns a list of strings, where each item is formatted as follows:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">effect; study type; species; sex; life stage; target</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">The study type may be one of the following:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- ACU - Acute Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- CHR - Chronic Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- DEV - Developmental Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- DNT - Developmental Neurotoxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- MGR - Multigenerational Reproductive Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- NEU - Neurological</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- OTH - Other</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- REP - Reproductive Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- SAC - Subacute Toxicity</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">- SUB - Sub-chronic Toxicity</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">chemical_name: A string representing the preferred name of a chemical. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings, where each string is a non-cancer-related effect for the given chemical in ToxRefDB, formatted as follows: effect; study type; species; sex; life stage; target. If no non-cancer-related effects are found for the given chemical, an empty list is returned.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">structural_similarity</td>
+<td style="text-align: left;">Given a chemical’s SMILES representation and a Tanimoto similarity threshold, return structurally similar chemicals with a Tanimoto similarity at or above the specified threshold. Similarity is calculated using Morgan fingerprints.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Chemicals returned by this tool may be structurally identical to the input chemical (i.e., synonyms of the input chemical).</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">smiles: A SMILES string representing a chemical’s structure. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">threshold: A float representing the Tanimoto similarity threshold. Unless specified, the threshold is set to a default value of 0.7. Only chemicals with a similarity at or above this threshold will be returned.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings representing structurally similar chemicals to the original input smiles, where each string is structured as follows: chemical_name</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">structural_similarity_nonidentical</td>
+<td style="text-align: left;">Given a chemical’s SMILES representation and a Tanimoto similarity threshold, return structurally similar chemicals with a Tanimoto similarity at or above the specified threshold. Similarity is calculated using Morgan fingerprints.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Chemicals returned by this tool cannot be structurally identical to the input chemical (i.e., no synonyms of the input chemical).</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Args:</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">smiles: A SMILES string representing a chemical’s structure. This should be a string of at least one character and at most 255 characters.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">threshold: A float representing the Tanimoto similarity threshold. Unless specified, the threshold is set to a default value of 0.7. Only chemicals with a similarity at or above this threshold will be returned.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Returns:</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;">A list of strings representing structurally similar chemicals to the original input smiles, where each string is structured as follows: chemical_name</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="query-sets" class="level3">
 <h3 class="anchored" data-anchor-id="query-sets">Query sets</h3>
@@ -443,16 +1169,18 @@ ul.task-list li input[type="checkbox"] {
 <p>Percentage of successful responses to queries in each evaluation sets by each ToxPipe level. For each evaluation the number of queries with assertion are mentioned in parenthesis.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 32%">
-<col style="width: 12%">
-<col style="width: 23%">
-<col style="width: 21%">
-<col style="width: 9%">
+<col style="width: 27%">
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 19%">
+<col style="width: 18%">
+<col style="width: 8%">
 </colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Model</th>
 <th style="text-align: right;">ABT Q/A (474)</th>
+<th style="text-align: right;">Agent focused Q/A (10)</th>
 <th style="text-align: right;">Tox type prompts (Human) (57)</th>
 <th style="text-align: right;">Tox type prompts (Rat) (12)</th>
 <th style="text-align: left;">Eval Group</th>
@@ -460,164 +1188,291 @@ ul.task-list li input[type="checkbox"] {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Toxpipe (Agentic) [Claude 4.5 Haiku]</td>
-<td style="text-align: right;">0.74</td>
-<td style="text-align: right;">0.72</td>
-<td style="text-align: right;">0.43</td>
-<td style="text-align: left;">Agentic</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Toxpipe (Agentic) [GPT-4o]</td>
-<td style="text-align: right;">0.78</td>
-<td style="text-align: right;">0.62</td>
-<td style="text-align: right;">0.3</td>
-<td style="text-align: left;">Agentic</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Toxpipe (Agentic) [GPT-5 Nano]</td>
-<td style="text-align: right;">0.82</td>
-<td style="text-align: right;">0.6</td>
-<td style="text-align: right;">0.41</td>
-<td style="text-align: left;">Agentic</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Claude 3.7 Sonnet</td>
 <td style="text-align: right;">0.84</td>
-<td style="text-align: right;">0.84</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.82</td>
 <td style="text-align: right;">0.5</td>
 <td style="text-align: left;">Base</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Claude 4.5 Haiku</td>
-<td style="text-align: right;">0.81</td>
 <td style="text-align: right;">0.8</td>
-<td style="text-align: right;">0.43</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.77</td>
+<td style="text-align: right;">0.39</td>
 <td style="text-align: left;">Base</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Claude 4.5 Sonnet</td>
-<td style="text-align: right;">0.83</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">0.9</td>
 <td style="text-align: right;">0.81</td>
 <td style="text-align: right;">0.59</td>
 <td style="text-align: left;">Base</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">GPT-4o</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.46</td>
+<td style="text-align: left;">Base</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GPT-5 (high reasoning)</td>
+<td style="text-align: right;">0.87</td>
+<td style="text-align: right;">0.7</td>
 <td style="text-align: right;">0.81</td>
-<td style="text-align: right;">0.78</td>
 <td style="text-align: right;">0.46</td>
 <td style="text-align: left;">Base</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">GPT-5 (low reasoning)</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: right;">0.54</td>
+<td style="text-align: left;">Base</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">GPT-5 Nano</td>
 <td style="text-align: right;">0.79</td>
-<td style="text-align: right;">0.66</td>
-<td style="text-align: right;">0.35</td>
-<td style="text-align: left;">Base</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Gemini 2.5 Flash</td>
-<td style="text-align: right;">0.84</td>
-<td style="text-align: right;">0.72</td>
-<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">0.65</td>
+<td style="text-align: right;">0.42</td>
 <td style="text-align: left;">Base</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Gemini 2.5 Flash</td>
+<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.56</td>
+<td style="text-align: left;">Base</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Gemini 2.5 Pro</td>
 <td style="text-align: right;">0.84</td>
-<td style="text-align: right;">0.79</td>
-<td style="text-align: right;">0.48</td>
-<td style="text-align: left;">Base</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Llama 4 Scout 17B (Instruct)</td>
-<td style="text-align: right;">nan</td>
-<td style="text-align: right;">0.8</td>
-<td style="text-align: right;">0.46</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">0.81</td>
+<td style="text-align: right;">0.52</td>
 <td style="text-align: left;">Base</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Mistral Large 2</td>
-<td style="text-align: right;">nan</td>
-<td style="text-align: right;">0.67</td>
-<td style="text-align: right;">0.47</td>
+<td style="text-align: left;">Llama 4 Scout 17B (Instruct)</td>
+<td style="text-align: right;">0.78</td>
+<td style="text-align: right;">0.2</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.43</td>
 <td style="text-align: left;">Base</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">Mistral Large 2</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.71</td>
+<td style="text-align: right;">0.44</td>
+<td style="text-align: left;">Base</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">o3</td>
-<td style="text-align: right;">0.86</td>
-<td style="text-align: right;">0.85</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">0.82</td>
 <td style="text-align: right;">0.49</td>
 <td style="text-align: left;">Base</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">Claude 3.7 Sonnet</td>
+<td style="text-align: right;">0.87</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">0.78</td>
+<td style="text-align: right;">0.43</td>
+<td style="text-align: left;">MCP</td>
+</tr>
 <tr class="even">
-<td style="text-align: left;">Toxpipe (RAG) [Claude 3.7 Sonnet]</td>
-<td style="text-align: right;">0.85</td>
-<td style="text-align: right;">0.73</td>
-<td style="text-align: right;">0.56</td>
-<td style="text-align: left;">RAG</td>
+<td style="text-align: left;">Claude 4.5 Haiku</td>
+<td style="text-align: right;">0.83</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.61</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: left;">MCP</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">Claude 4.5 Sonnet</td>
+<td style="text-align: right;">0.86</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">0.67</td>
+<td style="text-align: right;">0.33</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GPT-4o</td>
+<td style="text-align: right;">0.78</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.09</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GPT-5 (high reasoning)</td>
+<td style="text-align: right;">0.87</td>
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">0.77</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GPT-5 (low reasoning)</td>
+<td style="text-align: right;">0.88</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.79</td>
+<td style="text-align: right;">0.27</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GPT-5 Nano</td>
+<td style="text-align: right;">0.79</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gemini 2.5 Flash</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">0.19</td>
+<td style="text-align: right;">0.24</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Gemini 2.5 Pro</td>
+<td style="text-align: right;">0.81</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: right;">0.28</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Llama 4 Scout 17B (Instruct)</td>
+<td style="text-align: right;">0.74</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.02</td>
+<td style="text-align: right;">0.12</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mistral Large 2</td>
+<td style="text-align: right;">0.64</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">0.19</td>
+<td style="text-align: right;">0.1</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">o3</td>
+<td style="text-align: right;">0.88</td>
+<td style="text-align: right;">0.8</td>
+<td style="text-align: right;">0.72</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: left;">MCP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toxpipe (RAG) [Claude 3.7 Sonnet]</td>
+<td style="text-align: right;">0.86</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">0.77</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: left;">RAG</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">Toxpipe (RAG) [Claude 4.5 Haiku]</td>
 <td style="text-align: right;">0.82</td>
-<td style="text-align: right;">0.74</td>
-<td style="text-align: right;">0.43</td>
-<td style="text-align: left;">RAG</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Toxpipe (RAG) [Claude 4.5 Sonnet]</td>
-<td style="text-align: right;">0.86</td>
-<td style="text-align: right;">0.75</td>
-<td style="text-align: right;">0.59</td>
-<td style="text-align: left;">RAG</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Toxpipe (RAG) [GPT-4o]</td>
-<td style="text-align: right;">0.82</td>
-<td style="text-align: right;">0.75</td>
-<td style="text-align: right;">0.41</td>
-<td style="text-align: left;">RAG</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Toxpipe (RAG) [GPT-5 Nano]</td>
-<td style="text-align: right;">0.78</td>
-<td style="text-align: right;">0.61</td>
-<td style="text-align: right;">0.16</td>
-<td style="text-align: left;">RAG</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Toxpipe (RAG) [Gemini 2.5 Flash]</td>
+<td style="text-align: right;">0.6</td>
 <td style="text-align: right;">0.72</td>
-<td style="text-align: right;">0.67</td>
-<td style="text-align: right;">0.42</td>
-<td style="text-align: left;">RAG</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Toxpipe (RAG) [Gemini 2.5 Pro]</td>
-<td style="text-align: right;">0.84</td>
-<td style="text-align: right;">0.68</td>
 <td style="text-align: right;">0.39</td>
 <td style="text-align: left;">RAG</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Toxpipe (RAG) [Llama 4 Scout 17B (Instruct)]</td>
+<td style="text-align: left;">Toxpipe (RAG) [Claude 4.5 Sonnet]</td>
+<td style="text-align: right;">0.86</td>
+<td style="text-align: right;">0.75</td>
 <td style="text-align: right;">0.77</td>
-<td style="text-align: right;">0.72</td>
+<td style="text-align: right;">0.54</td>
+<td style="text-align: left;">RAG</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Toxpipe (RAG) [GPT-4o]</td>
+<td style="text-align: right;">0.84</td>
+<td style="text-align: right;">0.4</td>
+<td style="text-align: right;">0.74</td>
+<td style="text-align: right;">0.5</td>
+<td style="text-align: left;">RAG</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toxpipe (RAG) [GPT-5 High Reasoning]</td>
+<td style="text-align: right;">0.88</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">0.77</td>
 <td style="text-align: right;">0.45</td>
 <td style="text-align: left;">RAG</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Toxpipe (RAG) [Mistral Large 2]</td>
-<td style="text-align: right;">0.74</td>
-<td style="text-align: right;">0.39</td>
-<td style="text-align: right;">0.26</td>
+<td style="text-align: left;">Toxpipe (RAG) [GPT-5 Low Reasoning]</td>
+<td style="text-align: right;">0.89</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">0.31</td>
 <td style="text-align: left;">RAG</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">Toxpipe (RAG) [GPT-5 Nano]</td>
+<td style="text-align: right;">0.77</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">0.31</td>
+<td style="text-align: left;">RAG</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Toxpipe (RAG) [Gemini 2.5 Flash]</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">0.7</td>
+<td style="text-align: right;">0.67</td>
+<td style="text-align: right;">0.44</td>
+<td style="text-align: left;">RAG</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toxpipe (RAG) [Gemini 2.5 Pro]</td>
+<td style="text-align: right;">0.79</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">0.73</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: left;">RAG</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Toxpipe (RAG) [Llama 4 Scout 17B (Instruct)]</td>
+<td style="text-align: right;">0.75</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">0.69</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: left;">RAG</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Toxpipe (RAG) [Mistral Large 2]</td>
+<td style="text-align: right;">0.71</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">0.17</td>
+<td style="text-align: left;">RAG</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">Toxpipe (RAG) [o3]</td>
-<td style="text-align: right;">0.87</td>
-<td style="text-align: right;">0.84</td>
-<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">0.86</td>
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.76</td>
+<td style="text-align: right;">0.5</td>
 <td style="text-align: left;">RAG</td>
 </tr>
 </tbody>
