@@ -162,7 +162,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">Dec 16, 2025</p>
+      <p class="date">Mar 12, 2026</p>
     </div>
   </div>
   
@@ -187,6 +187,8 @@ ul.task-list li input[type="checkbox"] {
 <p>This level includes the following foundational models,</p>
 <ul>
 <li>o3</li>
+<li>GPT-5 (high reasoning)</li>
+<li>GPT-5 (low reasoning)</li>
 <li>GPT-5 Nano</li>
 <li>GPT-4o</li>
 <li>Claude 4.5 Haiku</li>
@@ -214,6 +216,58 @@ ul.task-list li input[type="checkbox"] {
 <p>Sub acute, Chronic, Developmental, Immune/lymphatic system, Reproductive system, Nervous system/Neurological, Digestive system, Urinary system, Integumentary system, Musculoskeletal system, Cardiovascular system, Endocrine system, Respiratory system, Hematological system</p>
 <p><a href="./abt-question-ocr.html"><strong>ABT Q/A</strong></a></p>
 <p>This query set contains the questions from American Board of Toxicology (ABT) certification from the year 2000-2007. These questions have multiple choices of answer. The questions, answer choices and correct answers were extracted from exam sheets of respective years. After filtering ambiguous and unknown answers, the total number of questions (or prompts) is 474. More information about the extraction process of ABT Q/A can be found <a href="./abt-question-ocr.html">here</a>.</p>
+<p><strong>Agent focused</strong></p>
+<p>This query set contains 10 questions that are not likely to be answered by an LLM without using the RAG step or tools that leverage the internal databases of ToxPipe.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Question</th>
+<th style="text-align: left;">Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">What human drugs that are structural analogs to CCC(C)(C)C(=O)O<span class="citation" data-cites="H">[C@@H]</span>1C<a href="C=C2[C@H]1[C@H]([C@H](C=C2)C)CC[C@@H]3C[C@H](CC(=O)O3)O">C@H</a>C?</td>
+<td style="text-align: left;">Simvastatin or Lovastatin or Pravastatin</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Identify the chemical is ToxRefDB with the highest structural similarity to [H][C@]12<a href="C[C@@H](C)C=C1C=C[C@H](C)[C@@H]2CC[C@@H]1C[C@@H](O)CC(=O)O1">C@H</a>OC(=O)C(C)(C)CC.</td>
+<td style="text-align: left;">Spirodiclofen</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">What is the Cramer Class of [H][C@]12<a href="C[C@@H](C)C=C1C=C[C@H](C)[C@@H]2CC[C@@H]1C[C@@H](O)CC(=O)O1">C@H</a>OC(=O)C(C)(C)CC?</td>
+<td style="text-align: left;">Class III</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">What enzyme is inhibited by [H][C@]12<a href="C[C@@H](C)C=C1C=C[C@H](C)[C@@H]2CC[C@@H]1C[C@@H](O)CC(=O)O1">C@H</a>OC(=O)C(C)(C)CC?</td>
+<td style="text-align: left;">HMGCoA Reductase</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">What are the most likely side effects of C1CC1C(=O)NC2=CC=CC(=C2)NC3=NC=NC(=C3)NC4=CC=CC(=C4)C(F)(F)F?</td>
+<td style="text-align: left;">Diarrhea, Rash</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">What is the most likely in vivo molecular/pharmacological target of C1CC1C(=O)NC2=CC=CC(=C2)NC3=NC=NC(=C3)NC4=CC=CC(=C4)C(F)(F)F?</td>
+<td style="text-align: left;">EGFR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Which of these 3 chemicals would be likely lower blood triglycerides: C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O or C[C@]12CC[C@H]3<a href="[C@@H]1CCC2=O">C@H</a>CCC4=CC(=O)CC[C@]34CO?</td>
+<td style="text-align: left;">C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Which of these 3 chemicals has a mode of action that is genotoxic: CCNC1=C(C(=O)C2=C(C1=O)<a href="[C@@]3(N2C[C@H]4[C@@H]3N4)OC">C@H</a>COC(=O)N)C or C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O?</td>
+<td style="text-align: left;">CCNC1=C(C(=O)C2=C(C1=O)<a href="[C@@]3(N2C[C@H]4[C@@H]3N4)OC">C@H</a>COC(=O)N)C</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Which of these 4 chemicals are likely to cross the blood brain barrier and be an effective neuroactive agent: CC1=CC(=C(C=C1)C(C)C)O or CCNC1=C(C(=O)C2=C(C1=O)<a href="[C@@]3(N2C[C@H]4[C@@H]3N4)OC">C@H</a>COC(=O)N)C or C1=CC(=CC=C1C(=O)/C=C/C2=CC(=C(C=C2)Cl)Cl)OCC(=O)O or CNC1=CC=C(C=C1)O?</td>
+<td style="text-align: left;">CC1=CC(=C(C=C1)C(C)C)O</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">What chemical is most likely to be exported from cells through MDR1/PGP (ie it is a high affinity subtrate for MDR1): CC<a href="C">C@H</a><span class="citation" data-cites="H">[C@@H]</span>1<a href="CC[C@@]2(O1)C[C@@H]3C[C@H](O2)C/C=C(/[C@H]([C@H](/C=C/C=C/4\CO[C@H]5[C@@]4([C@@H](CC([C@H]5O)C)C(=O)O3)O)C)O[C@H]6C[C@@H]([C@H]([C@@H](O6)C)O[C@H]7C[C@@H]([C@H]([C@@H](O7)C)O)OC)OC)\C">C@H</a>C or C1CCC(CC1)(CC(=O)[O-])C[NH3+] or CN(C)CCO?</td>
+<td style="text-align: left;">CC<a href="C">C@H</a><span class="citation" data-cites="H">[C@@H]</span>1<a href="CC[C@@]2(O1)C[C@@H]3C[C@H](O2)C/C=C(/[C@H]([C@H](/C=C/C=C/4\CO[C@H]5[C@@]4([C@@H](CC([C@H]5O)C)C(=O)O3)O)C)O[C@H]6C[C@@H]([C@H]([C@@H](O6)C)O[C@H]7C[C@@H]([C@H]([C@@H](O7)C)O)OC)OC)\C">C@H</a>C</td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="chemicals" class="level3">
 <h3 class="anchored" data-anchor-id="chemicals">Chemicals</h3>
