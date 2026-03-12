@@ -31,7 +31,7 @@ with open(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/prov
     d = yaml.safe_load(fp)
 
 for model in d['base-model']['providers']:
-    print(f'- {model['label']}')
+    print(f"- {model['label']}")
 ```
 *RAG*
 
