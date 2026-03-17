@@ -21,22 +21,22 @@
     "text": "Processing steps of the pdf files\nThe questions and the answers were processed using the following steps:\n\nStep 1:\n\nThe pdf files were uploaded to Amazon S3, as Amazon Textract does not allow “multipage” processing for on-premise files\nThe relevant pages with questions and answers were filtered and preprocessed using regular expressions\nGPT-4o were used to list the questions and answers (both in string and tabular format) using separate prompts\nEach pdf file was processed separately\nCommand\npython abt-question-ocr/src/extraction_questions.py\n\n\n\nStep 2:\n\nThe pdf outputs were combined with the non-pdf data\nNotebook\nabt-question-ocr/notebooks/combine_pdfs.ipynb"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
+    "objectID": "index1.html",
+    "href": "index1.html",
     "title": "Toxpipe Evaluation",
     "section": "",
     "text": "This website contains detailed information about the evaluation of Toxpipe architecture developed by folks from the Division of Translational Toxicology, NIEHS and Office of Data Science of National Institute of Environmental Health Sciences (NIEHS), National Institutes of Health (NIH)."
   },
   {
-    "objectID": "index.html#contribution",
-    "href": "index.html#contribution",
+    "objectID": "index1.html#contribution",
+    "href": "index1.html#contribution",
     "title": "Toxpipe Evaluation",
     "section": "Contribution",
     "text": "Contribution\nAmlan Talukder2, Trey Saddler1, Parker Combs1, David Reif1, Charles Schmitt2 and Scott Auerbach1\n\nDivision of Translational Toxicology, NIH/NIEHS\nOffice of Data Science, NIH/NIEHS"
   },
   {
-    "objectID": "index.html#contact",
-    "href": "index.html#contact",
+    "objectID": "index1.html#contact",
+    "href": "index1.html#contact",
     "title": "Toxpipe Evaluation",
     "section": "Contact",
     "text": "Contact\nFor more information about the evaluation, please contact\n\nAmlan Talukder, amlan.talukder@nih.gov\nParker Combs, parker.combs@nih.gov"

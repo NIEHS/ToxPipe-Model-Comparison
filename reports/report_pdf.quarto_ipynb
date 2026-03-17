@@ -1,0 +1,273 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Toxpipe Evaluation Process and Results\"\n",
+        "author: \"Amlan Talukder\"\n",
+        "date: today\n",
+        "date-format: \"MMM D, YYYY\"\n",
+        "format:\n",
+        "    pdf:\n",
+        "        toc: true\n",
+        "        number-sections: true\n",
+        "        colorlinks: true\n",
+        "execute:\n",
+        "  echo: false\n",
+        "  output: asis\n",
+        "toc: true\n",
+        "toc-depth: 3\n",
+        "---\n",
+        "\n",
+        "\n",
+        "## Description\n",
+        "\n",
+        "ToxPipe is evaluated in multiple levels with different sets of queries. The response at each stage was evaluated based on semantic similarity with the expected keywords or phrases.\n",
+        "\n",
+        "## Evaluation Sets\n",
+        "\n",
+        "### Levels\n",
+        "\n",
+        "ToxPipe system is evaluated at three levels.\n",
+        "\n",
+        "*Base model*\n",
+        "\n",
+        "This level includes the following foundational models,"
+      ],
+      "id": "cb881501"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import yaml\n",
+        "from pathlib import Path\n",
+        "\n",
+        "with open(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/providers.yaml')) as fp:\n",
+        "    d = yaml.safe_load(fp)\n",
+        "\n",
+        "for model in d['base-model']['providers']:\n",
+        "    print(f'- {model['label']}')"
+      ],
+      "id": "bf0abed9",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "*RAG*\n",
+        "\n",
+        "In this level, the aforementioned foundational models are used with an extra RAG (Retrieval Augmented Generation) step.\n",
+        "\n",
+        "*MCP*\n",
+        "\n",
+        "In this level, the LLMs are exposed to the tools that leverage the internal databases of ToxPipe using MCP (Model-Chain-Prompt) approach.\n"
+      ],
+      "id": "98fb78bf"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "pd.set_option('display.width', None)\n",
+        "from pathlib import Path\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/mcp_tools.csv'))\n",
+        "print(data.to_markdown(index=False))"
+      ],
+      "id": "d7bd6b41",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Query sets\n",
+        "\n",
+        "#### Basic\n",
+        "\n",
+        "This query set consists of 27 questions (or prompts) regarding the overall known or predicted functions and toxicological effects of a chemical on human and rat biology.\n",
+        "\n",
+        "#### Toxicity types\n",
+        "\n",
+        "This query set contains the following question for 15 toxicity types (listed below) and toxicokinetic parameters of a chemical on human and rat.\n",
+        "\n",
+        "**Question**\n",
+        "```\n",
+        "List the {effect_type} of {chem_casrn} on human\n",
+        "```\n",
+        "\n",
+        "**Effect Types**"
+      ],
+      "id": "34d758b6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/tox-type-prompts_human.txt'), sep='\\t')\n",
+        "print(', '.join([k for k in data['Toxicity'].values if not pd.isna(k)]))"
+      ],
+      "id": "331ec44d",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "#### ABT Q/A\n",
+        "\n",
+        "This query set contains the questions from American Board of Toxicology (ABT) certification from the year 2000-2007. These questions have multiple choices of answer. The questions, answer choices and correct answers were extracted from exam sheets of respective years. After filtering ambiguous and unknown answers, the total number of questions (or prompts) is 474. Questions from American Board of Toxicology (ABT) certification exams (2000-20007) were extracted. For a few exams (2005-2007), the answers were provided in tabulated format within a non-pdf file (e.g. MS Excel and MS Word). For the rest, both the questions and answers were provided as scanned pdf format. These pdf files were processed using [Amazon Textract](https://aws.amazon.com/textract/) which has OCR capability and \"Azure GPT-4o\" model.\n",
+        "\n",
+        "**Processing steps of the pdf files**\n",
+        "\n",
+        "The questions and the answers were processed using the following steps:\n",
+        "\n",
+        "*Step 1:*\n",
+        "\n",
+        "- The pdf files were uploaded to Amazon S3, as Amazon Textract does not allow \"multipage\" processing for on-premise files\n",
+        "- The relevant pages with questions and answers were filtered and preprocessed using regular expressions\n",
+        "- GPT-4o were used to list the questions and answers (both in string and tabular format) using separate prompts\n",
+        "- Each pdf file was processed separately with the following command\n",
+        "\n",
+        "  ```python\n",
+        "  python abt-question-ocr/src/extraction_questions.py\n",
+        "  ```\n",
+        "\n",
+        "*Step 2:*\n",
+        "\n",
+        "- The pdf outputs were combined with the non-pdf data using the python notebook below\n",
+        "\n",
+        "  ```\n",
+        "  abt-question-ocr/notebooks/combine_pdfs.ipynb\n",
+        "  ```\n",
+        "\n",
+        "**Output format**\n",
+        "\n",
+        "The output file contains the following columns:\n",
+        "\n",
+        "- *Question Index*: Consists of exam year, exam section (or part) and question number. For example, \"2000A Q1\" denotes the question 1 of the part A of the examination year 2000.\n",
+        "- *Questions*: The question extracted as it was in the pdf\n",
+        "- *Options*: The options extracted as they were in the pdf\n",
+        "- *Question Source*: The source pdf file name that contains the question\n",
+        "- *Answers*: The answer choice(s) for the question\n",
+        "- *Answer Source*: The source pdf file name that contains the answer\n",
+        "\n",
+        "**Agent focused**\n",
+        "\n",
+        "This query set contains 10 questions that are not likely to be answered by an LLM without using the RAG step or tools that leverage the internal databases of ToxPipe.\n"
+      ],
+      "id": "9bad1e2c"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "from pathlib import Path\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/agent_focused_qa.csv'))\n",
+        "print(data.to_markdown(index=False))"
+      ],
+      "id": "394c2525",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Chemicals\n",
+        "\n",
+        "The following 20 chemicals were tested with basic and toxicity types prompts."
+      ],
+      "id": "87251ee6"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "from pathlib import Path\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/chemical_casrn.txt'))\n",
+        "print(data.to_markdown(index=False))"
+      ],
+      "id": "de7ba728",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Number of queries\n",
+        "\n",
+        "The number of queries in an evaluation set is ```# base models x # prompts x # chemicals x # species```. For ABT Q/A, this ```# base models x # prompts```, as the prompts are not applicable for all chemicals or species.\n"
+      ],
+      "id": "c4862f3a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/config/raw/prompt_counts.csv'))\n",
+        "data[data.isna()] = ''\n",
+        "print(data.to_markdown(index=False))"
+      ],
+      "id": "846e1cb8",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Evaluation criteria\n",
+        "\n",
+        "Not all queries have expected keywords or phrases (or assertions). A response is evaluated by a separate LLM based on semantic similarity with each of the assertions. A response is labeled as \"Passed\", only if it has semantic similarity with all the assertions.\n",
+        "\n",
+        "## Results\n",
+        "\n",
+        "Percentage of successful responses to queries in each evaluation sets by each ToxPipe level. For each evaluation the number of queries with assertion are mentioned in parenthesis.\n"
+      ],
+      "id": "4337e540"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import pandas as pd\n",
+        "from pathlib import Path\n",
+        "\n",
+        "data = pd.read_csv(Path('../eval-app/src/evaluator/data/toxpipe_eval_info/results/eval_report.csv'))\n",
+        "data = data.set_index('Model').round(2).reset_index()\n",
+        "print(data.to_markdown(index=False))"
+      ],
+      "id": "5df1a1d5",
+      "execution_count": null,
+      "outputs": []
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": ".venv",
+      "language": "python",
+      "display_name": "Python (virtual)",
+      "path": "/Users/talukdera2/Library/Jupyter/kernels/.venv"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
