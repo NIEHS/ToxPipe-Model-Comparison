@@ -70,7 +70,7 @@ def mod_ui(input, output, session):
 
         eval_sets = getEvalSetToCompare()
 
-        df_report = pd.DataFrame()
+        df_report = pd.DataFrame(columns=['Model', 'Eval Group'])
         header_names = {}
 
         with ui.Progress(min=1, max=len(eval_sets)) as p:
@@ -114,10 +114,10 @@ def mod_ui(input, output, session):
 
                 if df_report.empty: df_report = df_report_eval.copy()
                 else: df_report = pd.merge(left=df_report, right=df_report_eval, on=['Model', 'Eval Group'], how='outer')
-
-        cols = ['Model'] + [col for col in df_report.columns if col not in ['Model', 'Eval Group']] + ['Eval Group']
         
+        cols = ['Model'] + [col for col in df_report.columns if col not in ['Model', 'Eval Group']] + ['Eval Group']
         df_report = df_report[cols].sort_values(by=['Eval Group', 'Model']).reset_index(drop=True)
+        
         df_report.to_csv(Config.DIR_CACHE / 'compare_evals_by_table.csv', index=None)
         
         with open(Config.DIR_CACHE / 'compare_evals_by_table_headers.json', mode='w') as fp:
@@ -126,9 +126,10 @@ def mod_ui(input, output, session):
         cache_reloaded_flag.set(not cache_reloaded_flag.get())
 
     @reactive.effect
-    @reactive.event(input.btn_reload_cache)
+    @reactive.event(input.btn_reload_cache, ignore_init=False, ignore_none=False)
     def reloadCache():
-        generateReport()
+        if input.btn_reload_cache() or not (Config.DIR_CACHE / 'compare_evals_by_table.csv').exists():
+            generateReport()
 
     @reactive.calc
     @reactive.event(cache_reloaded_flag, input.select_eval_set)
@@ -136,16 +137,11 @@ def mod_ui(input, output, session):
 
         if input.select_eval_set() is None:
             return pd.DataFrame()
-
-        cache_file_path = Config.DIR_CACHE / 'compare_evals_by_table.csv'
-
-        if not cache_file_path.exists():
-            generateReport()
         
         with open(Config.DIR_CACHE / 'compare_evals_by_table_headers.json') as fp:
             header_names = json.load(fp)
-
-        df = pd.read_csv(cache_file_path)
+        
+        df = pd.read_csv(Config.DIR_CACHE / 'compare_evals_by_table.csv')
         if input.select_eval_set() != 'any':
             return df[['Model', header_names[input.select_eval_set()], 'Eval Group']] 
         

@@ -79,7 +79,7 @@ def getRating(eval_id):
 class MongoDB():
 
     def __init__(self, db_name: str, collection: str | None = None):
-        client = MongoClient(f'mongodb://{db_config['MONGO_HOST']}:{db_config['MONGO_PORT']}')
+        client = MongoClient(f'mongodb://{db_config['MONGO_USERNAME']}:{db_config['MONGO_PASSWORD']}@{db_config['MONGO_HOST']}:{db_config['MONGO_PORT']}')
         self.db = client[db_name]
         if collection: self.collection = self.db[collection]
 

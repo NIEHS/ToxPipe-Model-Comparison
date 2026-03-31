@@ -4,7 +4,7 @@ from pymongo import MongoClient
 class MongoDB():
 
     def __init__(self, db_name):
-        client = MongoClient(f'mongodb://{Config.env_config['MONGO_HOST']}:{Config.env_config['MONGO_PORT']}')
+        client = MongoClient(f'mongodb://{Config.env_config['MONGO_USERNAME']}:{Config.env_config['MONGO_PASSWORD']}@{Config.env_config['MONGO_HOST']}:{Config.env_config['MONGO_PORT']}')
         self.db = client[db_name]
 
     def add(self, data: list[dict] | dict):
