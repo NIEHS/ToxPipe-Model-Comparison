@@ -25,7 +25,7 @@ dependencies = [
     "nbformat==5.10.4",
     "langchain>=1.2.8",
     "langchain-core>=1.2.8",
-    "langchain-openai>=1.1.7",
+    "langchain-openai>=1.1.14",
     "langchain-mcp-adapters>=0.2.1",
     "langfuse>=3.14.1",
 ]
