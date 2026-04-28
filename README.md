@@ -1,5 +1,15 @@
 [![DOI](https://zenodo.org/badge/779379487.svg)](https://doi.org/10.5281/zenodo.18987302)
 
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>🗂️ Documentation</summary>
+  <ol>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/eval.qmd">Evaluation Process and Results</a></li>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/eval_app.qmd">Evaluation Application</a></li>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/abt-question-ocr.qmd">ABT Q/A Documentation</a></li>
+  </ol>
+</details>
+
 # ToxPipe Evaluation
 
 This repository contains detailed information about the evaluation of Toxpipe architecture developed by folks from the Division of Translational Toxicology, NIEHS and Office of Data Science of National Institute of Environmental Health Sciences (NIEHS), National Institutes of Health (NIH).
