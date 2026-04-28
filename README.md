@@ -16,7 +16,7 @@ This repository contains detailed information about the evaluation of Toxpipe ar
 
 ## Contribution
 
-Amlan Talukder^5,2^, Trey Saddler^3^, Parker Combs^4,1^, David Reif^1^, Charles Schmitt^2^ and Scott Auerbach^1^
+Amlan Talukder<sup>5,2</sup>, Trey Saddler<sup>3</sup>, Parker Combs<sup>4,1</sup>, David Reif<sup>1</sup>, Charles Schmitt<sup>2</sup> and Scott Auerbach<sup>1</sup>
 
 1. Division of Translational Toxicology, NIH/NIEHS
 2. Office of Data Science, NIH/NIEHS
