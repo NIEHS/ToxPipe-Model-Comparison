@@ -4,9 +4,9 @@
 <details>
   <summary>🗂️ Documentation</summary>
   <ol>
-    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/eval.md">Evaluation Process and Results</a></li>
-    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/eval_app.md">Evaluation Application</a></li>
-    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/abt-question-ocr.md">ABT Q/A Documentation</a></li>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/_site/eval.md">Evaluation Process and Results</a></li>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/_site/eval_app.md">Evaluation Application</a></li>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/_site/abt-question-ocr.md">ABT Q/A Documentation</a></li>
   </ol>
 </details>
 
