@@ -4,7 +4,7 @@
 
 This repository contains detailed information about the evaluation of Toxpipe architecture developed by folks from the Division of Translational Toxicology, NIEHS and Office of Data Science of National Institute of Environmental Health Sciences (NIEHS), National Institutes of Health (NIH).
 
-**Access full report in this <a href="reports/_site/report_full.md">link</a>**
+**Access the full report in this <a href="reports/_site/report_full.md">link</a>**
 
 ## Contribution
 
