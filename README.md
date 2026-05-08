@@ -4,9 +4,9 @@
 <details>
   <summary>🗂️ Documentation</summary>
   <ol>
-    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/eval.qmd">Evaluation Process and Results</a></li>
-    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/eval_app.qmd">Evaluation Application</a></li>
-    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/abt-question-ocr.qmd">ABT Q/A Documentation</a></li>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/eval.md">Evaluation Process and Results</a></li>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/eval_app.md">Evaluation Application</a></li>
+    <li><a href="https://github.com/NIEHS/ToxPipe-Model-Comparison/blob/main/reports/abt-question-ocr.md">ABT Q/A Documentation</a></li>
   </ol>
 </details>
 
@@ -26,7 +26,7 @@ Amlan Talukder<sup>5,2</sup>, Trey Saddler<sup>3</sup>, Parker Combs<sup>4,1</su
 
 ## Contact
 
-For more information about the evaluation, please contact 
+For more information about the evaluation, please contact
 
 1. Amlan Talukder, <amlan.talukder@nih.gov>
 2. Parker Combs, <parker.combs@nih.gov>
