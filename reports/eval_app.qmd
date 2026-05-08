@@ -8,6 +8,7 @@ execute:
   output: asis
 toc: true
 toc-depth: 3
+back-to-top-navigation: true
 ---
 
 ToxPipe evaluation sets, evaluation results and the responses of the AI models are documented and compared in this [link](https://rstudio.niehs.nih.gov/tox-eval/){target="_blank"}

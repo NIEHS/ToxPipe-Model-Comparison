@@ -20,8 +20,10 @@ toc-depth: 3
 ToxPipe is evaluated in multiple levels with different sets of queries. The response at each stage was evaluated based on semantic similarity with the expected keywords or phrases.
 
 ## Evaluation Sets
+[Back to top ↑](#top)
 
 ### Levels
+[Back to top ↑](#top)
 
 ToxPipe system is evaluated at three levels.
 
@@ -56,6 +58,7 @@ print(data.to_markdown(index=False))
 ```
 
 ### Query sets
+[Back to top ↑](#top)
 
 #### Basic
 
@@ -129,6 +132,7 @@ print(data.to_markdown(index=False))
 ```
 
 ### Chemicals
+[Back to top ↑](#top)
 
 The following 20 chemicals were tested with basic and toxicity types prompts.
 ```{python}
@@ -140,6 +144,7 @@ print(data.to_markdown(index=False))
 ```
 
 ### Number of queries
+[Back to top ↑](#top)
 
 The number of queries in an evaluation set is ```# base models x # prompts x # chemicals x # species```. For ABT Q/A, this ```# base models x # prompts```, as the prompts are not applicable for all chemicals or species.
 
@@ -152,10 +157,12 @@ print(data.to_markdown(index=False))
 ```
 
 ## Evaluation criteria
+[Back to top ↑](#top)
 
 Not all queries have expected keywords or phrases (or assertions). A response is evaluated by a separate LLM based on semantic similarity with each of the assertions. A response is labeled as "Passed", only if it has semantic similarity with all the assertions.
 
 ## Results
+[Back to top ↑](#top)
 
 Percentage of successful responses to queries in each evaluation sets by each ToxPipe level. For each evaluation the number of queries with assertion are mentioned in parenthesis.
 

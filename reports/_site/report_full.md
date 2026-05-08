@@ -19,7 +19,11 @@ with the expected keywords or phrases.
 
 ## Evaluation Sets
 
+[Back to top ↑](#top)
+
 ### Levels
+
+[Back to top ↑](#top)
 
 ToxPipe system is evaluated at three levels.
 
@@ -962,6 +966,8 @@ string is structured as follows: chemical_name</td>
 
 ### Query sets
 
+[Back to top ↑](#top)
+
 #### Basic
 
 This query set consists of 27 questions (or prompts) regarding the
@@ -1138,6 +1144,8 @@ href="CC%5BC@@%5D2(O1)C%5BC@@H%5D3C%5BC@H%5D(O2)C/C=C(/%5BC@H%5D(%5BC@H%5D(/C=C/
 
 ### Chemicals
 
+[Back to top ↑](#top)
+
 The following 20 chemicals were tested with basic and toxicity types
 prompts.
 
@@ -1243,6 +1251,8 @@ style="text-align: left;">6-Methyl-2,5-diphenyl-6H-1,3,4-thiadiazine</td>
 
 ### Number of queries
 
+[Back to top ↑](#top)
+
 The number of queries in an evaluation set is
 `# base models x # prompts x # chemicals x # species`. For ABT Q/A, this
 `# base models x # prompts`, as the prompts are not applicable for all
@@ -1313,12 +1323,16 @@ chemicals or species.
 
 ## Evaluation criteria
 
+[Back to top ↑](#top)
+
 Not all queries have expected keywords or phrases (or assertions). A
 response is evaluated by a separate LLM based on semantic similarity
 with each of the assertions. A response is labeled as “Passed”, only if
 it has semantic similarity with all the assertions.
 
 ## Results
+
+[Back to top ↑](#top)
 
 Percentage of successful responses to queries in each evaluation sets by
 each ToxPipe level. For each evaluation the number of queries with
