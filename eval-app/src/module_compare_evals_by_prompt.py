@@ -142,7 +142,7 @@ def mod_ui(input, output, session):
                 with ui.hold() as content:
                     format()
                 
-                return content
+                return content.tagify()
             
             def getResultBasedOnScoreThreshold(score_val, result_val, threshold_pass):
                 if score_val >= threshold_pass: return 'Pass'

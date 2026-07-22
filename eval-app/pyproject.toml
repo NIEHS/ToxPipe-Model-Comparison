@@ -28,4 +28,6 @@ dependencies = [
     "langchain-openai>=1.1.7",
     "langchain-mcp-adapters>=0.2.1",
     "langfuse>=3.14.1",
+    "tornado>=6.5.5",
+    "htmltools==0.6.0",
 ]

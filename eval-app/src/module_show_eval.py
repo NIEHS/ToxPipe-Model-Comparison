@@ -175,7 +175,7 @@ def mod_ui(input, output, session, reload_evals_flag):
             with ui.hold() as content:
                 format()
 
-            return content
+            return content.tagify()
         
         def formatResponse(response):
 
@@ -187,7 +187,7 @@ def mod_ui(input, output, session, reload_evals_flag):
             with ui.hold() as content:
                 format()
 
-            return content
+            return content.tagify()
 
         match loadResultsTask.status():
             case 'initial':
