@@ -38,9 +38,9 @@ class EvaluateResponse:
     </Instructions>
     '''
 
-    def __init__(self, assert_info):
+    def __init__(self, model_info, assert_info):
         self.assert_info = assert_info
-        model = createOpenAIModel(model_name='azure-gpt-5', temperature=0)
+        model = createOpenAIModel(model_name=model_info['id'], **model_info['config'])
         self.evaluation_chain = create_agent(model=model, system_prompt=self.system_prompt, response_format=EvaluateResponseSchema)
 
     def getEvaluation(self, response: str, prompt: str) -> Union[bool, float, Dict[str, Any]]:

@@ -12,6 +12,30 @@ from datetime import datetime
 from functools import partial
 from .utils import Config
 
+eval_models = [
+    {
+        'id': 'azure-gpt-5.5',
+        'config': {
+            'temperature': 0,
+            'reasoning_effort': 'low'
+        }
+    },
+    {
+        'id': 'claude-4.5-haiku',
+        'config': {
+            'temperature': 0,
+            'reasoning_effort': 'low'
+        }                  
+    },
+    {
+        'id': 'gemini-3.5-flash',
+        'config': {
+            'temperature': 0,
+            'reasoning_effort': 'low'                  
+        }
+    }
+]
+
 def execute(model_info, prompt_info, vars_info):
 
     try:
@@ -23,26 +47,36 @@ def execute(model_info, prompt_info, vars_info):
     
     return response
 
-def evaluate(assert_info, response, prompt):
+def evaluate(assert_info, response, prompt, eval_model_info, index_group=None):
     
     try:
-        return EvaluateResponse(assert_info=assert_info).getEvaluation(response=response, prompt=prompt)
+        return EvaluateResponse(model_info=eval_model_info, assert_info=assert_info).getEvaluation(response=response, prompt=prompt), index_group
     except Exception as exp:
         error = f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}'
         print(error)
-        return {'output': '', 'error': f'Error in evaluation: {error}'}
+        return {'output': '', 'error': f'Error in evaluation: {error}', 'eval_model': eval_model_info}, index_group
 
 #@traceable 
-def executeAndEvaluate(model_info, prompt_info, vars_info, assert_info, num_runs=1):
+def executeAndEvaluate(model_info, prompt_info, vars_info, assert_info, record_id, num_runs=1):
 
     responses = []
     for _ in range(num_runs):
         response = execute(model_info, prompt_info, vars_info)
-        response['results'] = evaluate(assert_info=assert_info, response=response['output'], prompt=prompt_info['user'].format(**vars_info)) if len(assert_info) > 0 else {}
+        prompt = prompt_info['user'].format(**vars_info)
+        if len(eval_models) > 1:
+            response['results'] = [evaluate(assert_info=assert_info, 
+                                            response=response['output'], 
+                                            prompt=prompt, 
+                                            eval_model_info=eval_model_info)[0] if len(assert_info) > 0 else [] for eval_model_info in eval_models]
+        else:
+            response['results'] = evaluate(assert_info=assert_info, 
+                                           response=response['output'], 
+                                           prompt=prompt, 
+                                           eval_model_info=eval_models[0])[0] if len(assert_info) > 0 else {}
         responses.append(response)
 
-    if num_runs == 1: return responses[0]
-    return responses
+    if num_runs == 1: return responses[0], record_id
+    return responses, record_id
 
 def loadYML(file_path):
     data = None
@@ -63,24 +97,30 @@ def writeJSON(output_path, data):
 
 def resumeLastRun(eval_name, skip_run):
 
-    def runExecuteAndEvaluate(eval_sets, descs, indices, num_runs):
+    def runExecuteAndEvaluate(eval_sets, descs, num_runs):
         
         with concurrent.futures.ThreadPoolExecutor(2) as pool:
             results = pool.map(partial(executeAndEvaluate, num_runs=num_runs), *zip(*eval_sets))
-            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+            for i, (res, record_id) in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
-                db.update(filter={'_id': indices[i]}, value={'response': res})
+                db.update(filter={'_id': record_id}, value={'response': res})
 
-    def runEvaluate(eval_sets_eval, descs_eval, indices_eval, indices_response_eval, num_runs):
+    def runEvaluate(eval_sets_eval, descs_eval, num_runs):
         
         with concurrent.futures.ThreadPoolExecutor(2) as pool:
             results = pool.map(evaluate, *zip(*eval_sets_eval))
-            for i, res in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
+            for i, (res, (record_id, index_response, index_eval_model)) in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets_eval), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs_eval[i])
-                if num_runs > 1:
-                    db.update(filter={'_id': indices_eval[i]}, value={f'response.{indices_response_eval[i]}.results': res})
+                if len(eval_models) > 1:
+                    if num_runs > 1:
+                        db.update(filter={'_id': record_id}, value={f'response.{index_response}.results.{index_eval_model}': res})
+                    else:
+                        db.update(filter={'_id': record_id}, value={f'response.results.{index_eval_model}': res})
                 else:
-                    db.update(filter={'_id': indices_eval[i]}, value={'response.results': res})
+                    if num_runs > 1:
+                        db.update(filter={'_id': record_id}, value={f'response.{index_response}.results': res})
+                    else:
+                        db.update(filter={'_id': record_id}, value={'response.results': res})
 
     db = EvalDB(eval_name)
 
@@ -94,8 +134,8 @@ def resumeLastRun(eval_name, skip_run):
     
     while start < db_size:
 
-        eval_sets, descs, indices = [], [], []
-        eval_sets_eval, descs_eval, indices_eval, indices_response_eval = [], [], [], []
+        eval_sets, descs = [], []
+        eval_sets_eval, descs_eval = [], []
 
         records = [x for x in db.get({"_id": {"$in": list(range(start, start+threshold))}})]
 
@@ -110,53 +150,54 @@ def resumeLastRun(eval_name, skip_run):
             response_list = [record['response'].copy()] if num_runs == 1 else record['response'].copy()
             
             # Check for error in response to re-execute and re-evaluate
-            for i, response in enumerate(response_list):
+            for index_response, response in enumerate(response_list):
                 
-                is_response_error = (not skip_run) and (('error' in response and len(response['error'].strip()) > 0 and 
-                                                         (response['error'].startswith('Line number: 18, Description: unhandled errors in a TaskGroup'))) or
+                is_response_error = (not skip_run) and (('error' in response and len(response['error'].strip()) > 0) or
                                                         response['output'].lower().startswith('error'))
                 
                 if not is_response_error: continue
                 
                 descs.append(f"{model_info['label']} - {prompt[:30]}")
-                eval_sets.append([model_info, prompt_info, vars_info, assert_info])
-                indices.append(record['_id'])
+                eval_sets.append([model_info, prompt_info, vars_info, assert_info, record['_id']])
 
             # Check for error in evaluation to re-evaluate
             else:
-                for i, response in enumerate(response_list):
+                for index_response, response in enumerate(response_list):
 
                     if not len(record['assert']) > 0: continue 
-                    
-                    is_eval_error = False
-                    if 'results' in response:
-                        if isinstance(response['results'], dict):
-                            if 'error' in response['results']: is_eval_error = True
-                        else:
-                            for res in response['results']:
-                                if 'error' in res: 
-                                    is_eval_error = True
-                                    break
 
-                    if not is_eval_error: continue
+                    is_eval_error = 'results' not in response
+
+                    if len(eval_models) == 1:
+                        if isinstance(response['results'], dict) or not response['results'] or 'error' in response['results']:
+                            descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
+                            eval_sets_eval.append([assert_info, response['output'], prompt_info['user'].format(**vars_info), eval_model_info, (record['_id'], index_response, -1)])
+                    else:
+                        is_eval_error = is_eval_error or (not isinstance(response['results'], list)) or (len(response['results']) != len(eval_models))
+                        for index_eval_model, eval_model_info in enumerate(eval_models):
+                            if is_eval_error or (not response['results'][index_eval_model]) or 'error' in response['results'][index_eval_model]:
+                                descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
+                                eval_sets_eval.append([assert_info, response['output'], prompt_info['user'].format(**vars_info), eval_model_info, (record['_id'], index_response, index_eval_model)])
                     
-                    descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
-                    eval_sets_eval.append([assert_info, response['output'], prompt_info['user'].format(**vars_info)])
-                    indices_eval.append(record['_id'])
-                    indices_response_eval.append(i)
-            
         if not (len(eval_sets) or len(eval_sets_eval)): 
             start += threshold
             continue
         
         print(f'Processing from record id {start} to {start+threshold-1}')
-        if eval_sets: runExecuteAndEvaluate(eval_sets, descs, indices, num_runs)
-        if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, indices_eval, indices_response_eval, num_runs)
+        if eval_sets: runExecuteAndEvaluate(eval_sets, descs, num_runs)
+        if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, num_runs)
 
         start += threshold
-            
 
 def runTest(eval_name, replace=False, skip_run=False):
+
+    def setEvalResults():
+
+        if len(eval_models) > 1:
+            return [{} for _ in eval_models]
+        return {}
+
+    assert len(eval_models), f'No evaluator model was configured, {eval_models=}'
 
     # The original eval db
     db = EvalDB(eval_name)
@@ -190,11 +231,11 @@ def runTest(eval_name, replace=False, skip_run=False):
                 if num_runs == 1:
                     response_init_value = {'output': '', 
                                         'error': 'Init mode: Response has not been generated yet.', 
-                                        'results': {}}
+                                        'results': setEvalResults()}
                 else:
                     response_init_value = [{'output': '', 
                                         'error': 'Init mode: Response has not been generated yet.', 
-                                        'results': {}} for _ in range(num_runs)]
+                                        'results': setEvalResults()} for _ in range(num_runs)]
                 if not skip_run:
                     if replace:
                         tests.append(filter_value | {'_id': index, 'response': response_init_value})
@@ -213,16 +254,16 @@ def runTest(eval_name, replace=False, skip_run=False):
                         if not record['assert']:
                             if isinstance(record['response'], list):
                                 for i in range(len(record['response'])):
-                                    record['response'][i]['results'] = {}
+                                    record['response'][i]['results'] = setEvalResults()
                             else:
-                                record['response']['results'] = {}
+                                record['response']['results'] = setEvalResults()
                         tests.append(filter_value | {'_id': index, 'response': record['response']})
                     else:
                         if isinstance(record['response'], list):
                             for i in range(len(record['response'])):
-                                record['response'][i]['results'] = {}
+                                record['response'][i]['results'] = setEvalResults()
                         else:
-                            record['response']['results'] = {}
+                            record['response']['results'] = setEvalResults()
 
                         tests.append(filter_value | {'_id': index, 'response': record['response']})
                     

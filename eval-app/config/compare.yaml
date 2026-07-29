@@ -1,38 +1,51 @@
 abt-qa-assertion-prompts_mixed:
   Evals to compare:
-    - Eval Group Name: Agentic
-      Eval Name: agentic_abt-qa-assertion-prompts_mixed
     - Eval Group Name: Base
       Eval Name: base-model_abt-qa-assertion-prompts_mixed
+    - Eval Group Name: Review
+      Eval Name: for_review-base-model_abt-qa-assertion-prompts_mixed
     - Eval Group Name: MCP
       Eval Name: mcp_abt-qa-assertion-prompts_mixed
     - Eval Group Name: RAG
       Eval Name: rag_abt-qa-assertion-prompts_mixed
   Name: ABT Q/A
+agent-focused-qa-assertion-prompts_mixed:
+  Evals to compare:
+    - Eval Group Name: Base
+      Eval Name: base-model_agent-focused-qa-assertion-prompts_mixed
+    - Eval Group Name: Review
+      Eval Name: for_review-base-model_agent-focused-qa-assertion-prompts_mixed
+    - Eval Group Name: MCP
+      Eval Name: mcp_agent-focused-qa-assertion-prompts_mixed
+    - Eval Group Name: RAG
+      Eval Name: rag_agent-focused-qa-assertion-prompts_mixed
+  Name: Agent focused Q/A
 basic-prompts_human:
   Evals to compare:
     - Eval Group Name: Base
       Eval Name: base-model_basic-prompts_human
+    - Eval Group Name: MCP
+      Eval Name: mcp_basic-prompts_human
     - Eval Group Name: RAG
       Eval Name: rag_basic-prompts_human
-    - Eval Group Name: Agentic
-      Eval Name: agentic_basic-prompts_human
   Name: Basic prompts (Human)
 basic-prompts_rat:
   Evals to compare:
     - Eval Group Name: Base
       Eval Name: base-model_basic-prompts_rat
+    - Eval Group Name: MCP
+      Eval Name: mcp_basic-prompts_rat
     - Eval Group Name: RAG
       Eval Name: rag_basic-prompts_rat
-    - Eval Group Name: Agentic
-      Eval Name: agentic_basic-prompts_rat
   Name: Basic prompts (Rat)
 tox-type-assertion-prompts_human:
   Evals to compare:
-    - Eval Group Name: Agentic
-      Eval Name: agentic_tox-type-assertion-prompts_human
     - Eval Group Name: Base
       Eval Name: base-model_tox-type-assertion-prompts_human
+    - Eval Group Name: Review
+      Eval Name: for_review-base-model_tox-type-assertion-prompts_human
+    - Eval Group Name: MCP
+      Eval Name: mcp_tox-type-assertion-prompts_human
     - Eval Group Name: RAG
       Eval Name: rag_tox-type-assertion-prompts_human
   Name: Tox type prompts (Human)
@@ -40,8 +53,10 @@ tox-type-assertion-prompts_rat:
   Evals to compare:
     - Eval Group Name: Base
       Eval Name: base-model_tox-type-assertion-prompts_rat
+    - Eval Group Name: Review
+      Eval Name: for_review-mcp_tox-type-assertion-prompts_rat
+    - Eval Group Name: MCP
+      Eval Name: mcp_tox-type-assertion-prompts_rat
     - Eval Group Name: RAG
       Eval Name: rag_tox-type-assertion-prompts_rat
-    - Eval Group Name: Agentic
-      Eval Name: agentic_tox-type-assertion-prompts_rat
   Name: Tox type prompts (Rat)

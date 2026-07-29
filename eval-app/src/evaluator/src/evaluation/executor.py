@@ -63,7 +63,7 @@ class Executor:
         url = f'{Config.env_config['TOXPIPE_API_HOST']}/rag/'
         api_key = Config.env_config.get('TOXPIPE_API_API_KEY', '')
         headers = { "Authorization": f"Bearer {api_key}" } if api_key else {}
-        response = requests.get(url=f"{url}?q={prompt}&{model_params}", headers=headers, verify=self.cert_path)
+        response = requests.get(url=f"{url}?q={prompt}&model={self.model_info['id']}&{model_params}", headers=headers, verify=self.cert_path)
         if not response.ok: raise Exception(f'API url: {url}, query: {prompt}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()
 
