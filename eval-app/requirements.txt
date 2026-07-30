@@ -32,6 +32,8 @@ pydantic==2.9.2
     # via toxpipe-model-comparison (pyproject.toml)
 pymongo==4.14.1
     # via toxpipe-model-comparison (pyproject.toml)
+pytest==9.1.1
+    # via toxpipe-model-comparison (pyproject.toml)
 python-dotenv==1.0.1
     # via toxpipe-model-comparison (pyproject.toml)
 pyyaml==6.0.2
