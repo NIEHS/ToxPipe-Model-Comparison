@@ -48,7 +48,10 @@ def execute(model_info, prompt_info, vars_info):
 def evaluate(prompt, response, assert_info, eval_model_info, index_group=None):
     
     try:
-        response = Evaluator(response_query=prompt, response=response, assert_info=assert_info).evaluate(config={'func': 'evaluateByLLM', 'eval_model': eval_model_info})
+        response = Evaluator(response_query=prompt, 
+                             response=response, 
+                             assert_info=assert_info, 
+                             config={'func': 'evaluateByLLM', 'eval_model': eval_model_info}).evaluate()
     except Exception as exp:
         error = f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}'
         print(error)

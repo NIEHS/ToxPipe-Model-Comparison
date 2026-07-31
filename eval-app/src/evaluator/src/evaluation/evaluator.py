@@ -16,22 +16,23 @@ class EvaluateResponseSchema(BaseModel):
 
 class Evaluator:
 
-    def __init__(self, response_query, response, assert_info):
+    def __init__(self, response_query, response, assert_info, config):
         self.response_query = response_query
         self.response = response
         self.assert_info = assert_info
+        self.config = config
     
-    def evaluate(self, config):
-        result = self.evaluateByLLM(model_info=config['eval_model'])
+    def evaluate(self):
+        result = self.evaluateByLLM()
         try:
-            evalFunc = getattr(self, config['func'])
+            evalFunc = getattr(self, self.config['func'])
             result = evalFunc()
         except AttributeError:
-            raise Exception(f'Could not access evaluator function {config['func']}')
+            raise Exception(f'Could not access evaluator function {self.config['func']}')
         
         return dict(Response(**result))
 
-    def evaluateByLLM(self, model_info) -> Dict[str, Any]:
+    def evaluateByLLM(self) -> Dict[str, Any]:
 
         user_prompt_template = '''\
         <QUERY>
@@ -55,6 +56,8 @@ class Evaluator:
         - Check if the ANSWER is similar to the PHRASE and relevant to the QUERY. The PHRASE does not necessarily have to be in the ANSWER, but the PHRASE at least need to be semantically similar to the ANSWER.
         </Instructions>
         '''
+
+        model_info = self.config['eval_model']
 
         model = createOpenAIModel(model_name=model_info['id'], **model_info['config'])
         self.evaluation_chain = create_agent(model=model, system_prompt=system_prompt, response_format=EvaluateResponseSchema)
