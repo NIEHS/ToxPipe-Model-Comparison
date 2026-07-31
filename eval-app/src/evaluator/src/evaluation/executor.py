@@ -34,7 +34,7 @@ class Executor:
             else:
                 result = queryFunc()
         except AttributeError:
-           raise Exception(f'Could not access executor function {self.model_info['id']}')
+           raise Exception(f'Could not access executor function {self.model_info['func']}')
         
         return dict(Response(**result))
 

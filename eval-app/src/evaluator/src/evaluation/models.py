@@ -12,6 +12,6 @@ def createOpenAIModel(model_name, temperature=0, **kwargs):
         timeout=None,
         max_retries=10,
         seed=1000,
-        http_client=Config.http_client,
+        http_client=Config.httpx_client,
         **kwargs
         )

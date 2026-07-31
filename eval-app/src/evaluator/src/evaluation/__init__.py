@@ -1,7 +1,7 @@
 
 from langsmith import traceable
 from .executor import Executor
-from .evaluator import EvaluateResponse
+from .evaluator import Evaluator
 import concurrent.futures
 import tqdm
 import traceback
@@ -23,15 +23,13 @@ eval_models = [
     {
         'id': 'claude-4.5-haiku',
         'config': {
-            'temperature': 0,
-            'reasoning_effort': 'low'
+            'temperature': 0
         }                  
     },
     {
         'id': 'gemini-3.5-flash',
         'config': {
-            'temperature': 0,
-            'reasoning_effort': 'low'                  
+            'temperature': 0            
         }
     }
 ]
@@ -43,18 +41,20 @@ def execute(model_info, prompt_info, vars_info):
     except Exception as exp:
         error = f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}'
         print(error)
-        return {'output': '', 'error': error}
+        response = {'output': '', 'error': error}
     
     return response
 
-def evaluate(assert_info, response, prompt, eval_model_info, index_group=None):
+def evaluate(prompt, response, assert_info, eval_model_info, index_group=None):
     
     try:
-        return EvaluateResponse(model_info=eval_model_info, assert_info=assert_info).getEvaluation(response=response, prompt=prompt), index_group
+        response = Evaluator(response_query=prompt, response=response, assert_info=assert_info).evaluate(config={'eval_model': eval_model_info})
     except Exception as exp:
         error = f'Line number: {exp.__traceback__.tb_lineno}, Description: {exp}\n\n{traceback.format_exc()}'
         print(error)
-        return {'output': '', 'error': f'Error in evaluation: {error}', 'eval_model': eval_model_info}, index_group
+        response = {'output': '', 'error': f'Error in evaluation: {error}'}
+
+    return response | {'eval_model': eval_model_info}, index_group
 
 #@traceable 
 def executeAndEvaluate(model_info, prompt_info, vars_info, assert_info, record_id, num_runs=1):
@@ -64,14 +64,14 @@ def executeAndEvaluate(model_info, prompt_info, vars_info, assert_info, record_i
         response = execute(model_info, prompt_info, vars_info)
         prompt = prompt_info['user'].format(**vars_info)
         if len(eval_models) > 1:
-            response['results'] = [evaluate(assert_info=assert_info, 
-                                            response=response['output'], 
-                                            prompt=prompt, 
+            response['results'] = [evaluate(prompt=prompt,
+                                            response=response['output'],
+                                            assert_info=assert_info, 
                                             eval_model_info=eval_model_info)[0] if len(assert_info) > 0 else [] for eval_model_info in eval_models]
         else:
-            response['results'] = evaluate(assert_info=assert_info, 
-                                           response=response['output'], 
-                                           prompt=prompt, 
+            response['results'] = evaluate(prompt=prompt, 
+                                           response=response['output'],
+                                           assert_info=assert_info, 
                                            eval_model_info=eval_models[0])[0] if len(assert_info) > 0 else {}
         responses.append(response)
 
@@ -171,19 +171,19 @@ def resumeLastRun(eval_name, skip_run):
                     if len(eval_models) == 1:
                         if isinstance(response['results'], dict) or not response['results'] or 'error' in response['results']:
                             descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
-                            eval_sets_eval.append([assert_info, response['output'], prompt_info['user'].format(**vars_info), eval_model_info, (record['_id'], index_response, -1)])
+                            eval_sets_eval.append([prompt_info['user'].format(**vars_info), response['output'], assert_info, eval_model_info, (record['_id'], index_response, -1)])
                     else:
                         is_eval_error = is_eval_error or (not isinstance(response['results'], list)) or (len(response['results']) != len(eval_models))
                         for index_eval_model, eval_model_info in enumerate(eval_models):
                             if is_eval_error or (not response['results'][index_eval_model]) or 'error' in response['results'][index_eval_model]:
                                 descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
-                                eval_sets_eval.append([assert_info, response['output'], prompt_info['user'].format(**vars_info), eval_model_info, (record['_id'], index_response, index_eval_model)])
+                                eval_sets_eval.append([prompt_info['user'].format(**vars_info), response['output'], assert_info, eval_model_info, (record['_id'], index_response, index_eval_model)])
                     
         if not (len(eval_sets) or len(eval_sets_eval)): 
             start += threshold
             continue
         
-        print(f'Processing from record id {start} to {start+threshold-1}')
+        print(f'Processing from record id {start} to {start+threshold-1} [multiplied by number of runs ({num_runs}) x eval models ({len(eval_models)})]')
         if eval_sets: runExecuteAndEvaluate(eval_sets, descs, num_runs)
         if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, num_runs)
 
@@ -228,6 +228,7 @@ def runTest(eval_name, replace=False, skip_run=False):
                                 'vars': vars_info, 
                                 'assert': assert_info
                 } 
+                
                 if num_runs == 1:
                     response_init_value = {'output': '', 
                                         'error': 'Init mode: Response has not been generated yet.', 
@@ -251,7 +252,7 @@ def runTest(eval_name, replace=False, skip_run=False):
                     if record is None:
                         tests.append(filter_value | {'_id': index, 'response': response_init_value})
                     elif not replace:
-                        if not record['assert']:
+                        if record['assert']:
                             if isinstance(record['response'], list):
                                 for i in range(len(record['response'])):
                                     record['response'][i]['results'] = setEvalResults()
