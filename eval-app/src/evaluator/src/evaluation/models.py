@@ -1,12 +1,5 @@
 from langchain_openai import ChatOpenAI
 from .utils import Config
-import truststore
-from pathlib import Path
-import httpx
-
-truststore.inject_into_ssl()
-cert_path = str(Path(Config.DIR_HOME / 'certs/NIH-FULL.pem'))
-http_client = httpx.Client(verify=cert_path)
 
 def createOpenAIModel(model_name, temperature=0, **kwargs):
     
@@ -19,6 +12,6 @@ def createOpenAIModel(model_name, temperature=0, **kwargs):
         timeout=None,
         max_retries=10,
         seed=1000,
-        http_client=http_client,
+        http_client=Config.http_client,
         **kwargs
         )

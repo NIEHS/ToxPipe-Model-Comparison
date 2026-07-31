@@ -34,7 +34,7 @@ class Executor:
             else:
                 result = queryFunc()
         except AttributeError:
-            raise Exception(f'Could not access executor function {self.model_info['id']}')
+           raise Exception(f'Could not access executor function {self.model_info['id']}')
         
         return dict(Response(**result))
 
@@ -42,7 +42,7 @@ class Executor:
 
         from langchain_core.prompts import ChatPromptTemplate
         
-        model = createOpenAIModel(self.model_info['id'].split(':')[-1], **self.model_info['config'])
+        model = createOpenAIModel(self.model_info['id'], **self.model_info['config'])
 
         prompt = ChatPromptTemplate.from_messages(
                     [
@@ -50,8 +50,9 @@ class Executor:
                         ("user", self.prompt_info['user'])
                     ]
         )
-
-        response = (prompt | model).invoke(self.vars_info).content
+        response = (prompt | model).invoke(self.vars_info, 
+                                            config={"callbacks": [Config.langfuse_handler]} if Config.langfuse_handler else {}
+                                            ).content
 
         return {'output': response, 'error': ''}
 
@@ -105,7 +106,15 @@ class Executor:
                 )
         
         try:
-            result = await asyncio.wait_for(agent.ainvoke({'messages': [{'role': 'user', 'content': user_prompt}]}), timeout=Config.TIMEOUT_LONG_TASK)
+            result = await asyncio.wait_for(
+                        agent.ainvoke(
+                            {
+                                'messages': [{'role': 'user', 'content': user_prompt}]
+                            }, 
+                            config={"callbacks": [Config.langfuse_handler]} if Config.langfuse_handler else {}
+                        ), 
+                        timeout=Config.TIMEOUT_LONG_TASK
+                    )
             ai_messages = []
             for msg in result['messages'][:-1]: 
                 if msg.type != 'ai': continue
