@@ -125,6 +125,9 @@ def resumeLastRun(eval_name, skip_run):
                     else:
                         db.update(filter={'_id': record_id}, value={'response.results': res})
 
+    def hasError(response):
+        return 'error' in response and len(response['error'].strip()) > 0
+    
     db = EvalDB(eval_name)
 
     record = db.getOne({"_id": 0})
@@ -155,7 +158,7 @@ def resumeLastRun(eval_name, skip_run):
             # Check for error in response to re-execute and re-evaluate
             for index_response, response in enumerate(response_list):
                 
-                is_response_error = (not skip_run) and (('error' in response and len(response['error'].strip()) > 0) or
+                is_response_error = (not skip_run) and (hasError(response) or
                                                         response['output'].lower().startswith('error'))
                 
                 if not is_response_error: continue
@@ -172,13 +175,13 @@ def resumeLastRun(eval_name, skip_run):
                     is_eval_error = 'results' not in response
 
                     if len(eval_models) == 1:
-                        if isinstance(response['results'], dict) or not response['results'] or 'error' in response['results']:
+                        if isinstance(response['results'], dict) or not response['results'] or hasError(response['results']):
                             descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
                             eval_sets_eval.append([prompt_info['user'].format(**vars_info), response['output'], assert_info, eval_model_info, (record['_id'], index_response, -1)])
                     else:
                         is_eval_error = is_eval_error or (not isinstance(response['results'], list)) or (len(response['results']) != len(eval_models))
                         for index_eval_model, eval_model_info in enumerate(eval_models):
-                            if is_eval_error or (not response['results'][index_eval_model]) or 'error' in response['results'][index_eval_model]:
+                            if is_eval_error or (not response['results'][index_eval_model]) or hasError(response['results'][index_eval_model]):
                                 descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
                                 eval_sets_eval.append([prompt_info['user'].format(**vars_info), response['output'], assert_info, eval_model_info, (record['_id'], index_response, index_eval_model)])
                     
