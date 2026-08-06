@@ -10,7 +10,6 @@ import yaml
 from .db import EvalDB, EvalConfigDB
 from datetime import datetime
 from functools import partial
-from .utils import Config
 
 eval_models = [
     {
