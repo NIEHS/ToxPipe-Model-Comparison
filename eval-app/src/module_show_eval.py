@@ -2,7 +2,7 @@ from shiny import reactive, ui as core_ui
 from shiny.express import ui, render, module, expressify
 import pandas as pd
 import faicons as fa
-from .common import mod_vars, hasAssertion
+from .common import mod_vars, hasAssertion, getExplanationHTML
 from .utils_eval import Evaluator
 from .db import getRating, saveRating
 import re
@@ -135,29 +135,6 @@ def mod_ui(input, output, session, reload_evals_flag):
     
     @render.express
     def showReults():
-
-        def getExplanationHTML(result):
-
-            def resultStr(res):
-                return f"<span class='passed'>{fa.icon_svg('circle-check')}</span>" if res else f"<span class='failed'>{fa.icon_svg('circle-xmark')}</span>"
-
-            def getComponentExplanation(results):
-                text = ''
-                has_component = False
-                for result in results:
-                    if 'components' in result:
-                        text += f"<strong>{result['reason']} {resultStr(result['pass'])}</strong>"
-                        text += f"<ul>{getComponentExplanation(result['components'])}</ul>"
-                        has_component = True
-
-                if not has_component:
-                    for result in results:
-                        text += f"<li>{result['reason']} {resultStr(result['pass'])}</li>"
-                        
-                return text
-
-            if not isinstance(result, list): return "No reason found"
-            return getComponentExplanation(result)
 
         def addReason(x):
 

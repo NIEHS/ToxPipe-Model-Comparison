@@ -1,3 +1,5 @@
+from htmltools.tags import tr
+
 from .utils import Config
 from .db import EvalDB, EvalConfigDB
 import json
@@ -10,6 +12,7 @@ class Evaluator:
 
     PROMPT_VAR_FORMAT = r'\{(.*?)\}'
     NUM_NONVARS_COLS = 8
+    PASS_SCORE_THRESHOLD = 0.5 # More than 0.5 is "pass"
 
     def hasOutput(eval_name):
         if not eval_name: return False
@@ -91,7 +94,7 @@ class Evaluator:
         
     def processResults(eval_name: str, prompt: str = None, provider: str = None, d_vars: dict = None):
             
-        def getExplanation(result):
+        def getResultExplanation(result):
 
             def getComponentExplanation(results):
                 d_results = []
@@ -124,29 +127,61 @@ class Evaluator:
                 }]
             return d_results
         
-        def getResponseAndResult(item):
+        def getResponse(item):
+
+            response = item['response']
+            if isinstance(response, dict):
+                return response
+
+            if isinstance(response, list):
+                return response[0]
             
-            getResultLabel = lambda item, response: 'No assertion' if not item['assert'] else 'NA' if not response['results'] else 'Pass' if response['results']['pass'] else 'Fail'
+            raise ValueError(f"Invalid data type for response, expected dict or list, found {type(response)}")
+        
+        def getResult(item):
+            
+            def getResultScore(results):
+
+                if not results:
+                    return 'NA', 0, "No results found"
+                
+                if isinstance(results, dict):
+                    return 'Pass' if results['pass'] else 'Fail', results['score'], getResultExplanation(results)
+                
+                if isinstance(results, list):
+                    if len(results) == 0:
+                        return 'NA', 0, "No results found"
+                    total_score = 0
+                    reason = []
+                    for result in results:
+                        if not result: continue
+                        total_score += result['output']['score']
+                        reason.append({'eval_model': result['eval_model']['label'],
+                                       'reason': getResultExplanation(result['output'])})
+                    avg_score = total_score / len(results)
+                    result_label = 'Pass' if avg_score > Evaluator.PASS_SCORE_THRESHOLD else 'Fail'
+                    return result_label, avg_score, reason
+                
+                raise ValueError(f"Invalid data type for response['results'], expected dict or list, found {type(results)}")
+
+            if not item['assert']:
+                return 'No assertion', 0, 'No assertion'
             
             if isinstance(item['response'], dict):
-                response = item['response']
-                result = getResultLabel(item, response)
-                return response, result
-            
-            assert isinstance(item['response'], list), f"Invalid data type for response item, expected dict or list, found {type(item['response'])}"
-            count_result = 0
-            for response in item['response']:
-                result_item = getResultLabel(item, response)
-                if result_item == 'Pass':
-                    count_result += 1
-                elif result_item == 'Fail':
-                    count_result -= 1
-            result = 'Pass' if count_result > 0 else 'Fail' if count_result < 0 else 'No assertion'
-            for response in item['response']:
-                result_item = getResultLabel(item, response)
-                if result == result_item:
-                    break
-            return response, result
+                return getResultScore(item['response']['results'])
+
+            if isinstance(item['response'], list):
+                if len(item['response']) == 0:
+                    return 'No response', 0, ''
+                total_score = 0
+                for response in item['response']:
+                    _, result_score, reason = getResultScore(response['results'])
+                    total_score += result_score
+                avg_score = total_score / len(item['response'])
+                result_label = 'Pass' if avg_score > Evaluator.PASS_SCORE_THRESHOLD else 'Fail'
+                return result_label, avg_score, reason
+
+            raise ValueError(f"Invalid data type for response item, expected dict or list, found {type(item['response'])}")
         
         if not Evaluator.hasOutput(eval_name): return pd.DataFrame()
 
@@ -173,7 +208,8 @@ class Evaluator:
         for item in records_db:
             
             try:
-                response, result = getResponseAndResult(item)
+                response = getResponse(item)
+                result, score, reason = getResult(item)
 
                 content = {
                     'Id': f"{event_id}|{item['_id']}",
@@ -182,8 +218,8 @@ class Evaluator:
                     'Model': item['provider']['label'], 
                     'Response': response['output'],
                     'Result': result,
-                    'Score':  float(response['results']['score']) if response['results'] else 0,
-                    'Reason': getExplanation(response['results'])
+                    'Score':  score,
+                    'Reason': reason
                 } | item['vars']
                 
                 results.append(content)

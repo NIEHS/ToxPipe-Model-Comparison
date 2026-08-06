@@ -4,7 +4,7 @@ import pandas as pd
 import faicons as fa
 from .utils import Config, loadYML
 from .utils_eval import Evaluator
-from .common import mod_vars, hasAssertion
+from .common import mod_vars, hasAssertion, getExplanationHTML
 import re
 
 # -----------------------------------------------------------------------
@@ -100,31 +100,7 @@ def mod_ui(input, output, session):
                                     if data.empty: return
                                     mod_select_model(id=f'select_model_{i}', eval_name=eval_name, model_options=list(data['Model'].unique()))
         @render.express
-        def showResults():
-
-            def getExplanationHTML(result):
-
-                def resultStr(res):
-                    return f"<span class='passed'>{fa.icon_svg('circle-check')}</span>" if res else f"<span class='failed'>{fa.icon_svg('circle-xmark')}</span>"
-
-                def getComponentExplanation(results):
-                    text = ''
-                    has_component = False
-                    for result in results:
-                        if 'components' in result:
-                            text += f"<strong>{result['reason']} {resultStr(result['pass'])}</strong>"
-                            text += f"<ul>{getComponentExplanation(result['components'])}</ul>"
-                            has_component = True
-
-                    if not has_component:
-                        for result in results:
-                            text += f"<li>{result['reason']} {resultStr(result['pass'])}</li>"
-                            
-                    return text
-
-                if not isinstance(result, list): return "No reason found"
-                return getComponentExplanation(result)
-            
+        def showResults():            
 
             def formatResponse(x):
 

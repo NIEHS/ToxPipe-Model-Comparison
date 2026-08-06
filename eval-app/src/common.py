@@ -1,7 +1,9 @@
 from shiny import reactive
 from shiny.express import ui, module
-from .utils import Config
+import faicons as fa
 import plotly.express as px
+
+from .utils import Config
 
 @module
 def mod_vars(input, output, session, var_name, var_values, fn_reactive):
@@ -29,3 +31,30 @@ def getNoDataPlot(title):
 def hasAssertion(data, col_result='Result'):
     if data.empty: return False
     return bool((data[col_result] != 'No assertion').any())
+
+def getExplanationHTML(result):
+
+    def resultStr(res):
+        return f"<span class='passed'>{fa.icon_svg('circle-check')}</span>" if res else f"<span class='failed'>{fa.icon_svg('circle-xmark')}</span>"
+
+    def getComponentExplanation(results):
+        text = ''
+        has_component, has_multiple_eval_models = False, False
+        for result in results:
+            if 'components' in result:
+                text += f"<strong>{result['reason']} {resultStr(result['pass'])}</strong>"
+                text += f"<ul>{getComponentExplanation(result['components'])}</ul>"
+                has_component = True
+            if 'eval_model' in result:
+                text += f"<strong>Model: {result['eval_model']}</strong>"
+                text += f"<ul>{getComponentExplanation(result['reason'])}</ul>"
+                has_multiple_eval_models = True
+
+        if not (has_component or has_multiple_eval_models):
+            for result in results:
+                text += f"<li>{result['reason']} {resultStr(result['pass'])}</li>"
+            
+        return text
+
+    if not isinstance(result, list): return "No reason found"
+    return getComponentExplanation(result)

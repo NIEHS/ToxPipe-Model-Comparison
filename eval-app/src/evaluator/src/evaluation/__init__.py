@@ -15,6 +15,7 @@ from .utils import Config
 eval_models = [
     {
         'id': 'azure-gpt-5.5',
+        'label': 'GPT 5.5 (low reasoning)',
         'config': {
             'temperature': 0,
             'reasoning_effort': 'low'
@@ -22,12 +23,14 @@ eval_models = [
     },
     {
         'id': 'claude-4.5-haiku',
+        'label': 'Claude 4.5 Haiku',
         'config': {
             'temperature': 0
         }                  
     },
     {
         'id': 'gemini-3.5-flash',
+        'label': 'Gemini 3.5 Flash',
         'config': {
             'temperature': 0            
         }
