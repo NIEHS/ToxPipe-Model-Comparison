@@ -11,31 +11,6 @@ from .db import EvalDB, EvalConfigDB
 from datetime import datetime
 from functools import partial
 
-eval_models = [
-    {
-        'id': 'azure-gpt-5.5',
-        'label': 'GPT 5.5 (low reasoning)',
-        'config': {
-            'temperature': 0,
-            'reasoning_effort': 'low'
-        }
-    },
-    {
-        'id': 'claude-4.5-haiku',
-        'label': 'Claude 4.5 Haiku',
-        'config': {
-            'temperature': 0
-        }                  
-    },
-    {
-        'id': 'gemini-3.5-flash',
-        'label': 'Gemini 3.5 Flash',
-        'config': {
-            'temperature': 0            
-        }
-    }
-]
-
 def execute(model_info, prompt_info, vars_info):
 
     try:
@@ -62,7 +37,7 @@ def evaluate(prompt, response, assert_info, eval_model_info, index_group=None):
     return response | {'eval_model': eval_model_info}, index_group
 
 #@traceable 
-def executeAndEvaluate(model_info, prompt_info, vars_info, assert_info, record_id, num_runs=1):
+def executeAndEvaluate(model_info, prompt_info, vars_info, assert_info, record_id, num_runs=1, eval_models=[]):
 
     responses = []
     for _ in range(num_runs):
@@ -102,15 +77,15 @@ def writeJSON(output_path, data):
 
 def resumeLastRun(eval_name, skip_run):
 
-    def runExecuteAndEvaluate(eval_sets, descs, num_runs):
+    def runExecuteAndEvaluate(eval_sets, descs, num_runs, eval_models):
         
         with concurrent.futures.ThreadPoolExecutor(2) as pool:
-            results = pool.map(partial(executeAndEvaluate, num_runs=num_runs), *zip(*eval_sets))
+            results = pool.map(partial(executeAndEvaluate, num_runs=num_runs, eval_models=eval_models), *zip(*eval_sets))
             for i, (res, record_id) in enumerate(pbar := tqdm.tqdm(results, total=len(eval_sets), bar_format="{desc:<32.30}{percentage:3.0f}%|{bar:50}{r_bar}")):
                 pbar.set_description(descs[i])
                 db.update(filter={'_id': record_id}, value={'response': res})
 
-    def runEvaluate(eval_sets_eval, descs_eval, num_runs):
+    def runEvaluate(eval_sets_eval, descs_eval, num_runs, eval_models):
         
         with concurrent.futures.ThreadPoolExecutor(2) as pool:
             results = pool.map(evaluate, *zip(*eval_sets_eval))
@@ -134,6 +109,7 @@ def resumeLastRun(eval_name, skip_run):
 
     record = db.getOne({"_id": 0})
     system_prompt = record['system_prompt']
+    eval_models = record['eval_models']
     num_runs = record.get('num_runs', 1)
 
     threshold = 50
@@ -177,7 +153,8 @@ def resumeLastRun(eval_name, skip_run):
                     is_eval_error = 'results' not in response
 
                     if len(eval_models) == 1:
-                        if isinstance(response['results'], dict) or not response['results'] or hasError(response['results']):
+                        is_eval_error = is_eval_error or (not isinstance(response['results'], dict)) or (not response['results']) or hasError(response['results'])
+                        if is_eval_error:
                             descs_eval.append(f"{model_info['label']} - {prompt[:30]}")
                             eval_sets_eval.append([prompt_info['user'].format(**vars_info), response['output'], assert_info, eval_model_info, (record['_id'], index_response, -1)])
                     else:
@@ -192,8 +169,8 @@ def resumeLastRun(eval_name, skip_run):
             continue
         
         print(f'Processing from record id {start} to {start+threshold-1} [multiplied by number of runs ({num_runs}) x eval models ({len(eval_models)})]')
-        if eval_sets: runExecuteAndEvaluate(eval_sets, descs, num_runs)
-        if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, num_runs)
+        if eval_sets: runExecuteAndEvaluate(eval_sets, descs, num_runs, eval_models)
+        if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, num_runs, eval_models)
 
         start += threshold
 
@@ -201,11 +178,9 @@ def runTest(eval_name, replace=False, skip_run=False):
 
     def setEvalResults():
 
-        if len(eval_models) > 1:
-            return [{} for _ in eval_models]
+        if len(config['eval_models']) > 1:
+            return [{} for _ in config['eval_models']]
         return {}
-
-    assert len(eval_models), f'No evaluator model was configured, {eval_models=}'
 
     # The original eval db
     db = EvalDB(eval_name)
@@ -217,9 +192,11 @@ def runTest(eval_name, replace=False, skip_run=False):
     db_config = EvalConfigDB(eval_name)
     config = db_config.getAll()[0]
 
+    assert len(config['eval_models']), f'No evaluator model was configured, {config['eval_models']=}'
+
     event_id = str(datetime.now().timestamp())
     num_runs = config.get('num_runs', 1)
-    db_temp.add({'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt'], 'num_runs': num_runs})
+    db_temp.add({'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt'], 'num_runs': num_runs, 'eval_models': config['eval_models']})
 
     tests = []
     index = 1
