@@ -133,21 +133,21 @@ def resumeLastRun(eval_name, skip_run):
 
             response_list = [record['response'].copy()] if num_runs == 1 else record['response'].copy()
             
-            # Check for error in response to re-execute and re-evaluate
+            # Check for error to re-execute and re-evaluate
             for index_response, response in enumerate(response_list):
                 
                 is_response_error = (not skip_run) and (hasError(response) or
                                                         response['output'].lower().startswith('error'))
-                
-                if not is_response_error: continue
-                
-                descs.append(f"{model_info['label']} - {prompt[:30]}")
-                eval_sets.append([model_info, prompt_info, vars_info, assert_info, record['_id']])
 
-            # Check for error in evaluation to re-evaluate
-            else:
-                for index_response, response in enumerate(response_list):
+                # Check for error in response to re-execute
+                if is_response_error:
 
+                    descs.append(f"{model_info['label']} - {prompt[:30]}")
+                    eval_sets.append([model_info, prompt_info, vars_info, assert_info, record['_id']])
+
+                # Check for error in response['results'] to re-evaluate
+                else:
+                    
                     if not len(record['assert']) > 0: continue 
 
                     is_eval_error = 'results' not in response
