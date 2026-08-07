@@ -27,5 +27,5 @@ class Config():
         httpx_client = httpx.Client(verify=context)
         async_http_client = httpx.AsyncClient(verify=context)
     else:
-        httpx_client = None
-        async_http_client = None
+        httpx_client = httpx.Client()
+        async_http_client = httpx.AsyncClient()
