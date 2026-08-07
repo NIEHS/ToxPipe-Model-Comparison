@@ -92,8 +92,7 @@ class Executor:
                 pass
 
         model_name = self.model_info['id'].split(':')[-1]
-        async_http_client = httpx.AsyncClient()
-        model = createOpenAIModel(model_name, http_async_client=async_http_client, **self.model_info['config'])
+        model = createOpenAIModel(model_name, http_async_client=Config.async_http_client, **self.model_info['config'])
 
         client = MultiServerMCPClient(
             {

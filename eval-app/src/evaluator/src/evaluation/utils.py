@@ -25,5 +25,7 @@ class Config():
     if cert_path.exists():
         context = ssl.create_default_context(cafile=cert_path)
         httpx_client = httpx.Client(verify=context)
+        async_http_client = httpx.AsyncClient(verify=context)
     else:
         httpx_client = None
+        async_http_client = None
