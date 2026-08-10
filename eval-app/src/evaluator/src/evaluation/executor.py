@@ -153,7 +153,7 @@ class Executor:
 
             return {"output": result, "error": error}
         finally:
-            await _close_async_resource(async_http_client)
+            await _close_async_resource(Config.async_http_client)
 
     def queryToxPipeAgentic(self):
 
