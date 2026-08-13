@@ -73,26 +73,10 @@ class Executor:
                     'error': res.get('error', '')}
     
     async def queryToxPipeMCP(self):
-
-        async def _close_async_resource(resource):
-            if resource is None:
-                return
-
-            close_method = getattr(resource, 'aclose', None)
-            if close_method is None:
-                close_method = getattr(resource, 'close', None)
-            if close_method is None:
-                return
-
-            try:
-                maybe_awaitable = close_method()
-                if asyncio.iscoroutine(maybe_awaitable):
-                    await maybe_awaitable
-            except Exception:
-                pass
-
         model_name = self.model_info['id'].split(':')[-1]
-        model = createOpenAIModel(model_name, http_async_client=Config.async_http_client, **self.model_info['config'])
+        verify_ssl = Config.context if hasattr(Config, 'context') else True
+        async_http_client = httpx.AsyncClient(verify=verify_ssl)
+        model = createOpenAIModel(model_name, http_async_client=async_http_client, **self.model_info['config'])
 
         client = MultiServerMCPClient(
             {
@@ -113,10 +97,10 @@ class Executor:
 
             user_prompt = self.prompt_info['user'].format(**self.vars_info)
             agent = create_agent(model=model, 
-                                 tools=tools, 
-                                 system_prompt=self.prompt_info['system'],
-                                 middleware=[
-                                     ToolCallLimitMiddleware(
+                                    tools=tools, 
+                                    system_prompt=self.prompt_info['system'],
+                                    middleware=[
+                                        ToolCallLimitMiddleware(
                                         tool_name=None,
                                         run_limit=3,
                                         thread_limit=3
@@ -140,9 +124,6 @@ class Executor:
                     tool_messages = '\n'.join([f'[{i+1}] {msg_tool["name"]}, args: {", ".join([f"{k}: {v}" for k, v in msg_tool["args"].items()])}' for i, msg_tool in enumerate(msg.tool_calls)])
                     ai_messages.append(f'{msg.content}\n\n*Tools called:*\n{tool_messages}')
                 result = result['messages'][-1].content + '\n\n---\n\n**Agent Messages**\n\n' + '\n\n'.join(ai_messages)
-
-                #print(result)
-
                 error = ''
             except asyncio.TimeoutError:
                 result = ''
@@ -153,7 +134,7 @@ class Executor:
 
             return {"output": result, "error": error}
         finally:
-            await _close_async_resource(Config.async_http_client)
+            await async_http_client.aclose()
 
     def queryToxPipeAgentic(self):
 

@@ -147,7 +147,6 @@ def resumeLastRun(eval_name, skip_run):
 
                 # Check for error in response['results'] to re-evaluate
                 else:
-                    
                     if not len(record['assert']) > 0: continue 
 
                     is_eval_error = 'results' not in response
@@ -168,9 +167,12 @@ def resumeLastRun(eval_name, skip_run):
             start += threshold
             continue
         
-        print(f'Processing from record id {start} to {start+threshold-1} [multiplied by number of runs ({num_runs}) x eval models ({len(eval_models)})]')
-        if eval_sets: runExecuteAndEvaluate(eval_sets, descs, num_runs, eval_models)
-        if eval_sets_eval: runEvaluate(eval_sets_eval, descs_eval, num_runs, eval_models)
+        if eval_sets: 
+            print(f'Processing from record id {start} to {start+threshold-1} [multiplied by number of runs ({num_runs})]')
+            runExecuteAndEvaluate(eval_sets, descs, num_runs, eval_models)
+        if eval_sets_eval:
+            print(f'Processing from record id {start} to {start+threshold-1} [multiplied by number of runs ({num_runs}) x eval models ({len(eval_models)})]')
+            runEvaluate(eval_sets_eval, descs_eval, num_runs, eval_models)
 
         start += threshold
 
@@ -213,7 +215,7 @@ def runTest(eval_name, replace=False, skip_run=False):
                                 'vars': vars_info, 
                                 'assert': assert_info
                 } 
-                
+        
                 if num_runs == 1:
                     response_init_value = {'output': '', 
                                         'error': 'Init mode: Response has not been generated yet.', 
@@ -234,23 +236,18 @@ def runTest(eval_name, replace=False, skip_run=False):
 
                 else:
                     record = db.collection.find_one(filter_value)
-                    if record is None:
-                        tests.append(filter_value | {'_id': index, 'response': response_init_value})
-                    elif not replace:
-                        if record['assert']:
+
+                    if record is not None:
+                        print(f"Expected record not found _id: {index}, filter_value: {filter_value}")
+                    else:
+                        # If the record exists and it has assertion and we are replacing, reset the results to empty
+                        # Otherwise, keep the existing record as is. This is to avoid overwriting existing results when not replacing.
+                        if record['assert'] and replace:
                             if isinstance(record['response'], list):
                                 for i in range(len(record['response'])):
                                     record['response'][i]['results'] = setEvalResults()
                             else:
                                 record['response']['results'] = setEvalResults()
-                        tests.append(filter_value | {'_id': index, 'response': record['response']})
-                    else:
-                        if isinstance(record['response'], list):
-                            for i in range(len(record['response'])):
-                                record['response'][i]['results'] = setEvalResults()
-                        else:
-                            record['response']['results'] = setEvalResults()
-
                         tests.append(filter_value | {'_id': index, 'response': record['response']})
                     
                 index += 1
