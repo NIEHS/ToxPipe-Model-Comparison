@@ -3,9 +3,10 @@ from pymongo import MongoClient
 
 class MongoDB():
 
-    def __init__(self, db_name):
+    def __init__(self, db_name, collection_name):
         client = MongoClient(f'mongodb://{Config.env_config['MONGO_USERNAME']}:{Config.env_config['MONGO_PASSWORD']}@{Config.env_config['MONGO_HOST']}:{Config.env_config['MONGO_PORT']}')
         self.db = client[db_name]
+        self.collection = self.db[collection_name]
 
     def add(self, data: list[dict] | dict):
         if isinstance(data, list):
@@ -15,9 +16,12 @@ class MongoDB():
         else:
             raise Exception('Invalid data type. Data type must be either dict or list of dicts.')
 
-    def exists(self, value):
-        return self.getOne(value) is not None
-    
+    def exists(self, value=None):
+        if value is not None:
+            return self.getOne(value) is not None
+        
+        return self.collection.name in self.db.list_collection_names()
+            
     def get(self, value):
         return self.collection.find(value)
     
@@ -44,12 +48,10 @@ class MongoDB():
 
 class EvalDB(MongoDB):
 
-    def __init__(self, collection: str):
-        super().__init__(Config.env_config['MONGO_EVAL_DB_NAME'])
-        self.collection = self.db[collection]
+    def __init__(self, collection_name: str):
+        super().__init__(db_name=Config.env_config['MONGO_EVAL_DB_NAME'], collection_name=collection_name)
 
 class EvalConfigDB(MongoDB):
 
-    def __init__(self, collection: str):
-        super().__init__(Config.env_config['MONGO_EVAL_CONFIG_DB_NAME'])
-        self.collection = self.db[collection]
+    def __init__(self, collection_name: str):
+        super().__init__(db_name=Config.env_config['MONGO_EVAL_CONFIG_DB_NAME'], collection_name=collection_name)

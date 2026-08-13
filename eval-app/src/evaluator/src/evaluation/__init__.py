@@ -189,11 +189,11 @@ def runTest(eval_name, replace=False, skip_run=False):
 
     # Temporary eval db to store new test results
     db_temp = EvalDB(f'{eval_name}_temp')
-    db_temp.drop()
 
     db_config = EvalConfigDB(eval_name)
-    config = db_config.getAll()[0]
+    assert db_config.exists(), f'Could not find the config file for the provided eval "{eval_name}", please re-check the eval name'
 
+    config = db_config.getAll()[0]
     assert len(config['eval_models']), f'No evaluator model was configured, {config['eval_models']=}'
 
     event_id = str(datetime.now().timestamp())
@@ -237,7 +237,7 @@ def runTest(eval_name, replace=False, skip_run=False):
                 else:
                     record = db.collection.find_one(filter_value)
 
-                    if record is not None:
+                    if record is None:
                         print(f"Expected record not found _id: {index}, filter_value: {filter_value}")
                     else:
                         # If the record exists and it has assertion and we are replacing, reset the results to empty
@@ -248,6 +248,7 @@ def runTest(eval_name, replace=False, skip_run=False):
                                     record['response'][i]['results'] = setEvalResults()
                             else:
                                 record['response']['results'] = setEvalResults()
+
                         tests.append(filter_value | {'_id': index, 'response': record['response']})
                     
                 index += 1
@@ -260,5 +261,6 @@ def runTest(eval_name, replace=False, skip_run=False):
     
     # Replace the original eval db with the temp db
     db_temp.collection.rename(eval_name, dropTarget=True)
+    db_temp.drop()
 
     resumeLastRun(eval_name, skip_run=skip_run)
