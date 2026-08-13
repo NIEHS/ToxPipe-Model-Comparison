@@ -118,7 +118,6 @@ tests:
       - expected_phrases:
           - Adrenal atrophy
           - Lypmphatic organ atrophy
-          - ''
     description: Test similarity
     vars:
       chemical_and_CASRN: 'Prednisone (CAS number: 53-03-2)'
@@ -130,7 +129,6 @@ tests:
   - assert:
       - expected_phrases:
           - decreased femoral bone marrow cellularity
-          - ''
     description: Test similarity
     vars:
       chemical_and_CASRN: 'Benzene (CAS number: 71-43-2)'
