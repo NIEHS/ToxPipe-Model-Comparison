@@ -98,11 +98,15 @@ def module_graph(input, output, session, eval_name):
     def plotAssertionStat():
 
         def getAssertionCount(reason, result):
+            
             if result == 'No assertion': return (1, result, 1)
             if not isinstance(reason, list): return (0, result, 1)
+
             s = 0
-            for y in reason:
-                s += y['pass']
+            for eval_model_reason in reason:
+                for y in eval_model_reason['reason']:
+                    s += y['pass']
+            
             return (s, 'Pass', len(reason))
 
         if not var_selected.get(): return
@@ -111,10 +115,8 @@ def module_graph(input, output, session, eval_name):
         data = filterDataByVars(data, var_selected.get())
 
         if data.empty: return getNoDataPlot(title='Correct Assertions in Responses')
-       
         df_assertion_count = (data.apply(lambda x: getAssertionCount(x['Reason'], x['Result']), axis=1, result_type='expand')
-                                .rename(columns={0: 'Count', 1: 'Result', 2: 'Total assertions'})
-        )
+                                .rename(columns={0: 'Count', 1: 'Result', 2: 'Total assertions'}))
         df_assertion_count['Model'] = data['Model']
 
         indices_no_assertion = (df_assertion_count['Result'] == 'No assertion')
