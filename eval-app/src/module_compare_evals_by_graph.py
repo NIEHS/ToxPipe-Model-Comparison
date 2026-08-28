@@ -31,7 +31,14 @@ def module_graph(input, output, session, eval_name):
                     with ui.div(class_='d-flex justify-content-center align-items-center'):
                         @render_plotly
                         def showPassFailStatPlot():
-                            return plotPassFailStat()
+                            return plotPassFailCount()
+
+            with ui.div(class_='col'):
+                with ui.card(fill=True):
+                    with ui.div(class_='d-flex justify-content-center align-items-center'):
+                        @render_plotly
+                        def showPassFailDistributionPlot():
+                            return plotPassFailDistribution()
                     
             with ui.div(class_='col'):
                 with ui.card(fill=True):
@@ -72,7 +79,43 @@ def module_graph(input, output, session, eval_name):
 
     @reactive.calc
     @reactive.event(var_selected)
-    def plotPassFailStat():
+    def plotPassFailCount():
+
+        if not var_selected.get(): return
+
+        data = loadEvalResults().copy()
+        data = filterDataByVars(data, var_selected.get())
+
+        if data.empty: return getNoDataPlot(title='Correct Responses')
+
+        df_plot = (data[['Id', 'Model', 'Result']]
+                    .groupby(['Model', 'Result'])
+                    .count()['Id']
+                    .reset_index()
+                    .rename(columns={'Id': 'Count'})
+                    .sort_values('Model'))
+        
+        category_orders = {'Result':['Pass', 'Fail', 'No assertion']}
+        category_colors = ["#b2cdff", "#f8adad", '#dbd8d0']
+        
+        fig = px.bar(df_plot, x='Count', y='Model', color='Result', orientation='h',
+                        category_orders=category_orders, 
+                        color_discrete_sequence=category_colors,
+                        text_auto=True)
+
+        fig.update_layout(
+            title="Correct Responses",
+            barmode='stack',
+            **Config.CONFIG_PLOT
+        )
+
+        fig.update_xaxes(visible=False)
+
+        return fig
+
+    @reactive.calc
+    @reactive.event(var_selected)
+    def plotPassFailDistribution():
 
         if not var_selected.get(): return
 
@@ -86,7 +129,7 @@ def module_graph(input, output, session, eval_name):
         fig = px.violin(df_plot, x='Score', y='Model', orientation='h', box=True)
 
         fig.update_layout(
-            title="Correct Responses",
+            title="Response Scores",
             barmode='stack',
             **Config.CONFIG_PLOT
         )
