@@ -18,6 +18,12 @@ abt-qa-assertion-prompts_mixed:
       Eval Name: for_review_round_2-mcp_abt-qa-assertion-prompts_mixed
     - Eval Group Name: Review (RAG) Round 2
       Eval Name: for_review_round_2-rag_abt-qa-assertion-prompts_mixed
+    - Eval Group Name: Review (Base) Round 3
+      Eval Name: for_review_round_3-base-model_abt-qa-assertion-prompts_mixed
+    - Eval Group Name: Review (MCP) Round 3
+      Eval Name: for_review_round_3-mcp_abt-qa-assertion-prompts_mixed
+    - Eval Group Name: Review (RAG) Round 3
+      Eval Name: for_review_round_3-rag_abt-qa-assertion-prompts_mixed
   Name: ABT Q/A
 agent-focused-qa-assertion-prompts_mixed:
   Evals to compare:
@@ -39,6 +45,12 @@ agent-focused-qa-assertion-prompts_mixed:
       Eval Name: for_review_round_2-mcp_agent-focused-qa-assertion-prompts_mixed
     - Eval Group Name: Review (RAG) Round 2
       Eval Name: for_review_round_2-rag_agent-focused-qa-assertion-prompts_mixed
+    - Eval Group Name: Review (Base) Round 3
+      Eval Name: for_review_round_3-base-model_agent-focused-qa-assertion-prompts_mixed
+    - Eval Group Name: Review (MCP) Round 3
+      Eval Name: for_review_round_3-mcp_agent-focused-qa-assertion-prompts_mixed
+    - Eval Group Name: Review (RAG) Round 3
+      Eval Name: for_review_round_3-rag_agent-focused-qa-assertion-prompts_mixed
   Name: Agent focused Q/A
 # basic-prompts_human:
 #   Evals to compare:
@@ -78,6 +90,12 @@ tox-type-assertion-prompts_human:
       Eval Name: for_review_round_2-mcp_tox-type-assertion-prompts_human
     - Eval Group Name: Review (RAG) Round 2
       Eval Name: for_review_round_2-rag_tox-type-assertion-prompts_human
+    - Eval Group Name: Review (Base) Round 3
+      Eval Name: for_review_round_3-base-model_tox-type-assertion-prompts_human
+    - Eval Group Name: Review (MCP) Round 3
+      Eval Name: for_review_round_3-mcp_tox-type-assertion-prompts_human
+    - Eval Group Name: Review (RAG) Round 3
+      Eval Name: for_review_round_3-rag_tox-type-assertion-prompts_human
   Name: Tox type prompts (Human)
 tox-type-assertion-prompts_rat:
   Evals to compare:
@@ -99,4 +117,10 @@ tox-type-assertion-prompts_rat:
       Eval Name: for_review_round_2-mcp_tox-type-assertion-prompts_rat
     - Eval Group Name: Review (RAG) Round 2
       Eval Name: for_review_round_2-rag_tox-type-assertion-prompts_rat
+    - Eval Group Name: Review (Base) Round 3
+      Eval Name: for_review_round_3-base-model_tox-type-assertion-prompts_rat
+    - Eval Group Name: Review (MCP) Round 3
+      Eval Name: for_review_round_3-mcp_tox-type-assertion-prompts_rat
+    - Eval Group Name: Review (RAG) Round 3
+      Eval Name: for_review_round_3-rag_tox-type-assertion-prompts_rat
   Name: Tox type prompts (Rat)
