@@ -197,7 +197,9 @@ def runTest(eval_name, replace=False, skip_run=False):
     num_runs = config.get('num_runs', 1)
 
     # Temporary eval db to store new test results
-    db_temp = EvalDB(f'{eval_name}_temp_{event_id}')
+    db_temp = EvalDB(f'{eval_name}_temp')
+    # Drop if exists
+    db_temp.drop()
     db_temp.add({'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt'], 'num_runs': num_runs, 'eval_models': config['eval_models']})
 
     tests = []
