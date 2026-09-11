@@ -187,9 +187,6 @@ def runTest(eval_name, replace=False, skip_run=False):
     # The original eval db
     db = EvalDB(eval_name)
 
-    # Temporary eval db to store new test results
-    db_temp = EvalDB(f'{eval_name}_temp')
-
     db_config = EvalConfigDB(eval_name)
     assert db_config.exists(), f'Could not find the config file for the provided eval "{eval_name}", please re-check the eval name'
 
@@ -198,6 +195,9 @@ def runTest(eval_name, replace=False, skip_run=False):
 
     event_id = str(datetime.now().timestamp())
     num_runs = config.get('num_runs', 1)
+
+    # Temporary eval db to store new test results
+    db_temp = EvalDB(f'{eval_name}_temp_{event_id}')
     db_temp.add({'_id': 0, 'event_id': event_id, 'system_prompt': config['system_prompt'], 'num_runs': num_runs, 'eval_models': config['eval_models']})
 
     tests = []
