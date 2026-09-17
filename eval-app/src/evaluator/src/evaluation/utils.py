@@ -19,6 +19,8 @@ class Config():
 
     TIMEOUT_LONG_TASK = 240 # 4 minute
 
+    META_DATA_BLOCK_TAG = '[Meta data: The content below contains additional information about this response generation]'
+
     langfuse_handler = CallbackHandler(public_key=env_config['LANGFUSE_PUBLIC_KEY']) if bool(env_config.get('LANGFUSE_TRACING', False)) else None
 
     cert_path = DIR_HOME / "certs" / "NIH-FULL.pem"

@@ -69,7 +69,15 @@ class Executor:
         if not response.ok: raise Exception(f'API url: {url}, query: {prompt}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()
 
-        return {'output': res.get('response', str(res)), 
+        used_rag_context = res['steps_taken'] and (res['steps_taken'][-1] == 'query_with_context')
+        response_source_msg = (f'*[The following response was taken from ' + ("RAG resources" if used_rag_context else "model's training knowledge") + ']*\n\n' + 
+                            '**Searched Keyphrases:**\n' + '\n'.join([f'- {x}' for x in res['searched_keyphrases']]))
+
+        response = (res.get('response', str(res)) + '\n\n' + 
+                    Config.META_DATA_BLOCK_TAG + '\n\n' + 
+                    response_source_msg)
+
+        return {'output': response, 
                     'error': res.get('error', '')}
     
     async def queryToxPipeMCP(self):
@@ -121,8 +129,8 @@ class Executor:
                 ai_messages = []
                 for msg in result['messages'][:-1]: 
                     if msg.type != 'ai': continue
-                    tool_messages = '\n'.join([f'[{i+1}] {msg_tool["name"]}, args: {", ".join([f"{k}: {v}" for k, v in msg_tool["args"].items()])}' for i, msg_tool in enumerate(msg.tool_calls)])
-                    ai_messages.append(f'{msg.content}\n\n*Tools called:*\n{tool_messages}')
+                    tool_messages = '\n'.join([f'*[{i+1}] Tool*: {msg_tool["name"]}\n\n*Args*: {", ".join([f"{k}: {v}" for k, v in msg_tool["args"].items()])}\n\n*Output*: {msg_tool["content"]}' for i, msg_tool in enumerate(msg.tool_calls)])
+                    ai_messages.append(f'{msg.content}\n\n{Config.META_DATA_BLOCK_TAG}\n*Tools called:*\n{tool_messages}')
                 result = result['messages'][-1].content + '\n\n---\n\n**Agent Messages**\n\n' + '\n\n'.join(ai_messages)
                 error = ''
             except asyncio.TimeoutError:

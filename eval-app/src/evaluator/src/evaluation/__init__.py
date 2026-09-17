@@ -1,15 +1,17 @@
 
 from langsmith import traceable
-from .executor import Executor
-from .evaluator import Evaluator
 import concurrent.futures
 import tqdm
 import traceback
 import json
 import yaml
-from .db import EvalDB, EvalConfigDB
 from datetime import datetime
 from functools import partial
+
+from .db import EvalDB, EvalConfigDB
+from .executor import Executor
+from .evaluator import Evaluator
+from .utils import Config
 
 def execute(model_info, prompt_info, vars_info):
 
@@ -25,6 +27,8 @@ def execute(model_info, prompt_info, vars_info):
 def evaluate(prompt, response, assert_info, eval_model_info, index_group=None):
     
     try:
+        if Config.META_DATA_BLOCK_TAG in response:
+            response = response.split(Config.META_DATA_BLOCK_TAG)[0].strip()
         response = Evaluator(response_query=prompt, 
                              response=response, 
                              assert_info=assert_info, 
