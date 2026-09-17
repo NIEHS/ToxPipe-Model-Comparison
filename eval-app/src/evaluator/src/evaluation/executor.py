@@ -69,13 +69,16 @@ class Executor:
         if not response.ok: raise Exception(f'API url: {url}, query: {prompt}, Model params: {model_params}, Response status code: {response.status_code}, Response: {response.text}')
         res = response.json()
 
-        used_rag_context = res['steps_taken'] and (res['steps_taken'][-1] == 'query_with_context')
-        response_source_msg = (f'*[The following response was taken from ' + ("RAG resources" if used_rag_context else "model's training knowledge") + ']*\n\n' + 
-                            '**Searched Keyphrases:**\n' + '\n'.join([f'- {x}' for x in res['searched_keyphrases']]))
+        if 'steps_taken' in res:
+            used_rag_context = res['steps_taken'] and (res['steps_taken'][-1] == 'query_with_context')
+            response_source_msg = (f'*[The following response was taken from ' + ("RAG resources" if used_rag_context else "model's training knowledge") + ']*\n\n' + 
+                                   '**Searched Keyphrases:**\n' + '\n'.join([f'- {x}' for x in res['searched_keyphrases']]))
 
-        response = (res.get('response', str(res)) + '\n\n' + 
-                    Config.META_DATA_BLOCK_TAG + '\n\n' + 
-                    response_source_msg)
+            response = (res.get('response', str(res)) + '\n\n' + 
+                        Config.META_DATA_BLOCK_TAG + '\n\n' + 
+                        response_source_msg)
+        else:
+            response = res['response']
 
         return {'output': response, 
                     'error': res.get('error', '')}
