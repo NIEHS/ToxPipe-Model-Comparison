@@ -129,12 +129,24 @@ class Executor:
                             ), 
                             timeout=Config.TIMEOUT_LONG_TASK
                         )
+                messages = result['messages']
+                tool_outputs = {
+                    msg.tool_call_id: msg.content
+                    for msg in messages
+                    if msg.type == 'tool'
+                }
+
                 ai_messages = []
-                for msg in result['messages'][:-1]: 
+                for msg in messages[:-1]:
                     if msg.type != 'ai': continue
-                    tool_messages = '\n'.join([f'*[{i+1}] Tool*: {msg_tool["name"]}\n\n*Args*: {", ".join([f"{k}: {v}" for k, v in msg_tool["args"].items()])}\n\n*Output*: {msg_tool["content"]}' for i, msg_tool in enumerate(msg.tool_calls)])
+                    tool_messages = '\n'.join([
+                        f'*[{i+1}] Tool*: {msg_tool["name"]}\n\n'
+                        f'*Args*: {", ".join([f"{k}: {v}" for k, v in msg_tool["args"].items()])}\n\n'
+                        f'*Output*: {tool_outputs.get(msg_tool["id"], "")}'
+                        for i, msg_tool in enumerate(msg.tool_calls)
+                    ])
                     ai_messages.append(f'{msg.content}\n\n{Config.META_DATA_BLOCK_TAG}\n*Tools called:*\n{tool_messages}')
-                result = result['messages'][-1].content + '\n\n---\n\n**Agent Messages**\n\n' + '\n\n'.join(ai_messages)
+                result = messages[-1].content + '\n\n---\n\n**Agent Messages**\n\n' + '\n\n'.join(ai_messages)
                 error = ''
             except asyncio.TimeoutError:
                 result = ''
